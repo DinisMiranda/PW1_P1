@@ -1,0 +1,82 @@
+<template>
+  <div>
+    <h2 class="mb-6 text-2xl font-semibold font-display">Badges</h2>
+
+    <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+      <BadgeCard
+        title="Primeiro Passo"
+        description="Completa o 1º hábito"
+        icon="footprint"
+        :isLocked="!userStore.badges.includes('primeiro-passo')"
+      />
+      <BadgeCard
+        title="Foco Diário"
+        description="7 dias seguidos"
+        icon="local_fire_department"
+        :isLocked="!userStore.badges.includes('foco-diario')"
+      />
+      <BadgeCard
+        title="Produtivo"
+        description="5 hábitos num dia"
+        icon="workspace_premium"
+        :isLocked="!userStore.badges.includes('produtivo')"
+      />
+      <BadgeCard
+        title="Mestre do Hábito"
+        description="Atinge nível 10"
+        icon="military_tech"
+        :isLocked="!userStore.badges.includes('mestre')"
+      />
+      <BadgeCard
+        title="Ecológico"
+        description="Hábito verde"
+        icon="ecology"
+        :isLocked="!userStore.badges.includes('ecologico')"
+      />
+      <BadgeCard
+        title="Leitor"
+        description="100 páginas"
+        icon="menu_book"
+        :isLocked="!userStore.badges.includes('leitor')"
+      />
+    </div>
+
+    <div class="mt-8 rounded-xl border border-slate-200 bg-white p-6 shadow-card">
+      <h3 class="mb-4 font-semibold">Badges Desbloqueadas: {{ userStore.badges.length }}</h3>
+      <div v-if="userStore.badges.length === 0" class="text-sm text-slate-500">
+        Ainda não desbloqueaste nenhuma badge. Continua a completar hábitos!
+      </div>
+      <div v-else class="flex flex-wrap gap-2">
+        <span
+          v-for="badge in userStore.badges"
+          :key="badge"
+          class="rounded-full bg-primary/10 px-3 py-1 text-sm text-primary"
+        >
+          {{ getBadgeName(badge) }}
+        </span>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import BadgeCard from '../components/BadgeCard.vue'
+import { useUserStore } from '../stores/user'
+
+const userStore = useUserStore()
+
+function getBadgeName(badge) {
+  const names = {
+    'primeiro-passo': 'Primeiro Passo',
+    'foco-diario': 'Foco Diário',
+    'produtivo': 'Produtivo',
+    'mestre': 'Mestre do Hábito',
+    'ecologico': 'Ecológico',
+    'leitor': 'Leitor'
+  }
+  return names[badge] || badge
+}
+</script>
+
+<style scoped></style>
+

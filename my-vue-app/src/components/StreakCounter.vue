@@ -3,12 +3,16 @@
     <span class="material-symbols-rounded text-amber-500">local_fire_department</span>
     <div class="leading-tight">
       <p class="text-xs text-slate-500">Streak</p>
-      <p class="text-sm font-semibold">12 dias</p>
+      <p class="text-sm font-semibold">{{ userStore.streak }} dias</p>
     </div>
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+import { useUserStore } from '../stores/user'
+
+const userStore = useUserStore()
+</script>
 
 <style scoped></style>
 

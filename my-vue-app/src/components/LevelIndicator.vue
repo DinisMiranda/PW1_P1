@@ -3,12 +3,16 @@
     <span class="material-symbols-rounded text-xp">military_tech</span>
     <div class="leading-tight">
       <p class="text-xs text-slate-500">Nível</p>
-      <p class="text-sm font-semibold">7</p>
+      <p class="text-sm font-semibold">{{ userStore.level }}</p>
     </div>
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+import { useUserStore } from '../stores/user'
+
+const userStore = useUserStore()
+</script>
 
 <style scoped></style>
 
