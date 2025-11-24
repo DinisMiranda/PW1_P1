@@ -1,5 +1,5 @@
 <template>
-  <footer class="border-t border-slate-200 bg-white/80">
+  <footer class="w-full border-t border-slate-200 bg-white/80 backdrop-blur">
     <div class="mx-auto max-w-6xl px-4 py-6 text-sm text-slate-500 flex items-center justify-between">
       <p>© 2025 LevelUp Habits</p>
       <div class="flex items-center gap-4">
