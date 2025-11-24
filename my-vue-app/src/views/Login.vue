@@ -1,5 +1,5 @@
 <template>
-  <div class="flex min-h-[60vh] items-center justify-center">
+ <div class="fixed inset-0 flex items-center justify-center">
     <div class="w-full max-w-md rounded-xl border border-slate-200 bg-white p-8 shadow-card">
       <h2 class="mb-6 text-2xl font-semibold font-display">Login</h2>
       <form @submit.prevent="handleLogin" class="space-y-4">
@@ -32,7 +32,6 @@
       </form>
       <p v-if="error" class="mt-4 text-sm text-red-500">{{ error }}</p>
       <p class="mt-4 text-xs text-slate-500 text-center">
-        Nota: Qualquer username/password funciona (autenticação mock)
       </p>
     </div>
   </div>

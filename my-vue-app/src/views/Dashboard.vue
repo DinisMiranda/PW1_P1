@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="min-h-screen p-4">
     <!-- Gamification widgets -->
     <section class="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
       <LevelIndicator />
@@ -13,24 +13,24 @@
     <section class="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
       <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-card">
         <p class="text-xs uppercase tracking-wide text-slate-500">Streak atual</p>
-        <p class="mt-2 text-3xl font-bold">{{ maxStreak }} 🔥</p>
+        <p class="mt-2 text-2xl font-bold">{{ maxStreak }} 🔥</p>
       </div>
       <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-card">
         <p class="text-xs uppercase tracking-wide text-slate-500">Hábitos ativos</p>
-        <p class="mt-2 text-3xl font-bold">{{ habitStore.activeHabits.length }}</p>
+        <p class="mt-2 text-2xl font-bold">{{ habitStore.activeHabits.length }}</p>
       </div>
       <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-card">
         <p class="text-xs uppercase tracking-wide text-slate-500">Conclusão hoje</p>
-        <p class="mt-2 text-3xl font-bold">{{ completionRate }}%</p>
+        <p class="mt-2 text-2xl font-bold">{{ completionRate }}%</p>
       </div>
     </section>
 
     <!-- Habit list + Calendar -->
     <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
       <!-- Habit list -->
-      <section class="lg:col-span-1 space-y-3">
-        <h3 class="mb-3 text-sm font-semibold text-slate-600">Hábitos de hoje</h3>
-        <div v-if="habitStore.activeHabits.length === 0" class="rounded-xl border border-slate-200 bg-white p-8 text-center text-slate-500">
+      <section class="lg:col-span-1 space-y-4">
+        <h3 class="text-base font-semibold text-slate-600">Hábitos de hoje</h3>
+        <div v-if="habitStore.activeHabits.length === 0" class="rounded-xl border border-slate-200 bg-white p-6 text-center text-slate-500">
           <p>Nenhum hábito criado ainda.</p>
           <router-link to="/habits" class="mt-2 inline-block text-primary hover:underline">
             Criar primeiro hábito →
@@ -43,7 +43,7 @@
         >
           <div class="flex items-start justify-between">
             <div>
-              <h3 class="font-medium">{{ habit.name }}</h3>
+              <h3 class="text-base font-medium">{{ habit.name }}</h3>
               <p class="text-sm text-slate-500">{{ habit.category }}</p>
             </div>
             <span class="rounded-full bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700">
@@ -60,14 +60,14 @@
                   : 'border border-slate-200 hover:bg-slate-50'
               ]"
             >
-              <span class="material-symbols-rounded">{{ isCompletedToday(habit.id) ? 'check_circle' : 'radio_button_unchecked' }}</span>
+              <span class="material-symbols-rounded text-sm">{{ isCompletedToday(habit.id) ? 'check_circle' : 'radio_button_unchecked' }}</span>
               {{ isCompletedToday(habit.id) ? 'Concluído' : 'Marcar' }}
             </button>
             <router-link
               :to="`/habits?edit=${habit.id}`"
               class="inline-flex items-center gap-2 rounded-xl border border-slate-200 px-3 py-2 text-sm hover:bg-slate-50"
             >
-              <span class="material-symbols-rounded">edit</span>
+              <span class="material-symbols-rounded text-sm">edit</span>
               Editar
             </router-link>
           </div>
@@ -92,16 +92,18 @@
         </div>
 
         <!-- Grid -->
-        <div class="mt-2 grid grid-cols-7 gap-2">
+        <div class="mt-2 grid grid-cols-7 gap-1">
           <div
             v-for="day in calendarDays"
             :key="day.date"
             :class="[
-              'aspect-square rounded-xl',
-              day.completed ? 'bg-primary' : day.isToday ? 'bg-slate-200' : 'bg-slate-100'
+              'aspect-square rounded-md text-xs flex items-center justify-center',
+              day.completed ? 'bg-primary text-white' : day.isToday ? 'bg-slate-200' : 'bg-slate-100'
             ]"
             :title="day.date"
-          ></div>
+          >
+            <span v-if="day.date">{{ new Date(day.date).getDate() }}</span>
+          </div>
         </div>
       </section>
     </div>
@@ -181,4 +183,3 @@ const calendarDays = computed(() => {
 </script>
 
 <style scoped></style>
-
