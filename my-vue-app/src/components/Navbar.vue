@@ -4,7 +4,7 @@
       <!-- left group: logo + nav -->
       <div class="flex items-center gap-6">
         <router-link to="/" class="flex items-center gap-2 pl-4 group">
-          <img :src="logo" alt="LevelUp Habits" class="h-6 w-6 filter brightness-0 invert">
+          <span class="material-symbols-rounded text-primary">bolt</span>
           <h1 class="text-xl font-bold font-solo tracking-tight text-glow text-primary">LevelUp Habits</h1>
         </router-link>
 
