@@ -32,6 +32,24 @@ const router = createRouter({
       name: 'Badges',
       component: () => import('../views/Badges.vue'),
       meta: { requiresAuth: true }
+    },
+    {
+      path: '/character',
+      name: 'Character',
+      component: () => import('../views/Character.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/inventory',
+      name: 'Inventory',
+      component: () => import('../views/Inventory.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/battle',
+      name: 'Battle',
+      component: () => import('../views/Battle.vue'),
+      meta: { requiresAuth: true }
     }
   ]
 })

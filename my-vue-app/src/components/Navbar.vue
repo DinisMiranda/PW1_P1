@@ -41,6 +41,30 @@
             Badges
             <span v-if="$route.path === '/badges'" class="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary glow-cyan"></span>
           </router-link>
+          <router-link 
+            to="/character" 
+            class="hover:text-primary transition-all duration-200 relative font-semibold text-white"
+            active-class="text-primary"
+          >
+            Personagem
+            <span v-if="$route.path === '/character'" class="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary glow-cyan"></span>
+          </router-link>
+          <router-link 
+            to="/inventory" 
+            class="hover:text-primary transition-all duration-200 relative font-semibold text-white"
+            active-class="text-primary"
+          >
+            Inventário
+            <span v-if="$route.path === '/inventory'" class="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary glow-cyan"></span>
+          </router-link>
+          <router-link 
+            to="/battle" 
+            class="hover:text-primary transition-all duration-200 relative font-semibold text-white"
+            active-class="text-primary"
+          >
+            Batalha
+            <span v-if="$route.path === '/battle'" class="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary glow-cyan"></span>
+          </router-link>
         </nav>
       </div>
 

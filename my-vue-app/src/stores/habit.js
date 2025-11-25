@@ -63,8 +63,23 @@ export const useHabitStore = defineStore('habit', () => {
       // Ganhar XP
       const userStore = useUserStore()
       const xpGained = 10
+      const oldLevel = userStore.level
       userStore.gainXP(xpGained)
       habit.xpEarned += xpGained
+      
+      // Se subiu de nível e tem personagem, dar pontos
+      if (userStore.level > oldLevel) {
+        import('./character.js').then(({ useCharacterStore }) => {
+          const characterStore = useCharacterStore()
+          if (characterStore.characterType) {
+            for (let i = oldLevel; i < userStore.level; i++) {
+              characterStore.levelUp()
+            }
+          }
+        }).catch(() => {
+          // Character store pode não estar inicializado
+        })
+      }
     } else {
       // Desmarcar
       habit.completedDays.splice(index, 1)

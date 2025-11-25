@@ -118,12 +118,14 @@
 import { computed, onMounted } from 'vue'
 import { useHabitStore } from '../stores/habit'
 import { useUserStore } from '../stores/user'
+import { useCharacterStore } from '../stores/character'
 import LevelIndicator from '../components/LevelIndicator.vue'
 import StreakCounter from '../components/StreakCounter.vue'
 import XPBar from '../components/XPBar.vue'
 
 const habitStore = useHabitStore()
 const userStore = useUserStore()
+const characterStore = useCharacterStore()
 
 onMounted(() => {
   // Atualizar streak ao carregar

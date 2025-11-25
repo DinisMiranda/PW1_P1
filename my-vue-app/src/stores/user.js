@@ -23,8 +23,12 @@ export const useUserStore = defineStore('user', () => {
     // Verificar subida de nível
     const newLevel = Math.floor(xp.value / 100) + 1
     if (newLevel > level.value) {
+      const oldLevel = level.value
       level.value = newLevel
       checkBadges()
+      
+      // Notificar character store sobre level up (será chamado externamente)
+      // Para evitar dependência circular, o componente que chama gainXP também chama characterStore.levelUp()
     }
     
     saveState()
