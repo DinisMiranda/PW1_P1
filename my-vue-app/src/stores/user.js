@@ -17,20 +17,25 @@ export const useUserStore = defineStore('user', () => {
     localStorage.setItem('streak', streak.value.toString())
   }
 
-  function gainXP(amount) {
-    xp.value += amount
-    
-    // Verificar subida de nível
-    const newLevel = Math.floor(xp.value / 100) + 1
+  function recalcLevel() {
+    const newLevel = Math.max(1, Math.floor(xp.value / 100) + 1)
     if (newLevel > level.value) {
-      const oldLevel = level.value
       level.value = newLevel
       checkBadges()
-      
-      // Notificar character store sobre level up (será chamado externamente)
-      // Para evitar dependência circular, o componente que chama gainXP também chama characterStore.levelUp()
+    } else if (newLevel < level.value) {
+      level.value = newLevel
     }
-    
+  }
+
+  function gainXP(amount) {
+    xp.value += amount
+    recalcLevel()
+    saveState()
+  }
+
+  function loseXP(amount) {
+    xp.value = Math.max(0, xp.value - amount)
+    recalcLevel()
     saveState()
   }
 
@@ -74,6 +79,7 @@ export const useUserStore = defineStore('user', () => {
     xpForNextLevel,
     xpProgress,
     gainXP,
+    loseXP,
     updateStreak,
     checkBadges,
     init

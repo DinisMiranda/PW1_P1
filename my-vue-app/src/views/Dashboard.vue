@@ -1,34 +1,35 @@
 <template>
-  <div class="min-h-screen">
-    <!-- Gamification widgets -->
-    <section class="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
-      <LevelIndicator />
-      <StreakCounter />
-      <div class="border-2 border-primary/50 bg-card-solo p-4">
-        <XPBar />
-      </div>
-    </section>
+  <div class="min-h-screen w-full px-4 sm:px-6 lg:px-10 py-6">
+    <div class="grid gap-6 lg:grid-cols-3">
+      <!-- Left column: widgets, stats, habits -->
+      <div class="space-y-6 lg:col-span-2">
+        <!-- Gamification widgets -->
+        <section class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <LevelIndicator />
+          <StreakCounter />
+          <div class="border-2 border-primary/50 bg-card-solo p-4">
+            <XPBar />
+          </div>
+        </section>
 
-    <!-- Stats -->
-    <section class="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
-      <div class="border-2 border-primary/50 bg-card-solo p-4 hover:border-primary hover:glow-cyan transition-all">
-        <p class="text-xs font-solo uppercase tracking-widest text-primary/80 mb-2">Streak atual</p>
-        <p class="text-3xl font-bold font-solo text-white text-glow">{{ maxStreak }} 🔥</p>
-      </div>
-      <div class="border-2 border-primary/50 bg-card-solo p-4 hover:border-primary hover:glow-cyan transition-all">
-        <p class="text-xs font-solo uppercase tracking-widest text-primary/80 mb-2">Hábitos ativos</p>
-        <p class="text-3xl font-bold font-solo text-white text-glow">{{ habitStore.activeHabits.length }}</p>
-      </div>
-      <div class="border-2 border-primary/50 bg-card-solo p-4 hover:border-primary hover:glow-cyan transition-all">
-        <p class="text-xs font-solo uppercase tracking-widest text-primary/80 mb-2">Conclusão hoje</p>
-        <p class="text-3xl font-bold font-solo text-white text-glow">{{ completionRate }}%</p>
-      </div>
-    </section>
+        <!-- Stats -->
+        <section class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <div class="border-2 border-primary/50 bg-card-solo p-4 hover:border-primary hover:glow-cyan transition-all">
+            <p class="text-xs font-solo uppercase tracking-widest text-primary/80 mb-2">Streak atual</p>
+            <p class="text-3xl font-bold font-solo text-white text-glow">{{ maxStreak }} 🔥</p>
+          </div>
+          <div class="border-2 border-primary/50 bg-card-solo p-4 hover:border-primary hover:glow-cyan transition-all">
+            <p class="text-xs font-solo uppercase tracking-widest text-primary/80 mb-2">Hábitos ativos</p>
+            <p class="text-3xl font-bold font-solo text-white text-glow">{{ habitStore.activeHabits.length }}</p>
+          </div>
+          <div class="border-2 border-primary/50 bg-card-solo p-4 hover:border-primary hover:glow-cyan transition-all">
+            <p class="text-xs font-solo uppercase tracking-widest text-primary/80 mb-2">Conclusão hoje</p>
+            <p class="text-3xl font-bold font-solo text-white text-glow">{{ completionRate }}%</p>
+          </div>
+        </section>
 
-    <!-- Habit list + Calendar -->
-    <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
-      <!-- Habit list -->
-      <section class="lg:col-span-1 space-y-4">
+        <!-- Habit list -->
+        <section class="space-y-4">
         <h3 class="text-base font-bold font-solo text-white uppercase tracking-wider">Hábitos de hoje</h3>
         <div v-if="habitStore.activeHabits.length === 0" class="border-2 border-primary/30 bg-card-solo p-6 text-center text-white/60">
           <p>Nenhum hábito criado ainda.</p>
@@ -72,16 +73,17 @@
             </router-link>
           </div>
         </div>
-      </section>
+        </section>
+      </div>
 
-      <!-- Calendar heatmap -->
-      <section class="lg:col-span-2 border-2 border-primary/50 bg-card-solo p-4">
+      <!-- Right column: calendar heatmap -->
+      <section class="border-2 border-primary/50 bg-card-solo p-3 sm:p-4 w-full lg:col-span-1 lg:ml-auto">
         <div class="flex items-center justify-between mb-4">
           <h2 class="text-lg font-bold font-solo text-white uppercase tracking-wider">{{ currentMonth }}</h2>
         </div>
 
         <!-- Weekday labels -->
-        <div class="mt-4 grid grid-cols-7 text-center text-xs font-solo text-primary/80 uppercase tracking-wider">
+        <div class="mt-4 grid grid-cols-7 text-center text-xs font-solo text-primary/80 uppercase tracking-wider justify-items-center">
           <div>Dom</div>
           <div>Seg</div>
           <div>Ter</div>
@@ -92,12 +94,12 @@
         </div>
 
         <!-- Grid -->
-        <div class="mt-2 grid grid-cols-7 gap-1">
+        <div class="mt-2 grid grid-cols-7 gap-1 justify-items-center">
           <div
             v-for="day in calendarDays"
             :key="day.date"
             :class="[
-              'aspect-square text-xs flex items-center justify-center font-bold transition-all border-2',
+              'w-8 h-8 sm:w-9 sm:h-9 text-[11px] flex items-center justify-center font-bold transition-all border-2 rounded-full',
               day.completed 
                 ? 'border-primary bg-primary text-black glow-cyan' 
                 : day.isToday 
