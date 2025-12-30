@@ -57,7 +57,7 @@
               :class="[
                 'inline-flex items-center gap-2 px-3 py-2 text-sm font-semibold transition-all',
                 isCompletedToday(habit.id)
-                  ? 'border-2 border-primary bg-primary text-black glow-cyan'
+                  ? 'border-2 border-xp bg-xp text-[#0f131c] glow-cyan'
                   : 'border-2 border-primary/50 bg-primary/10 hover:border-primary hover:bg-primary/20 text-white'
               ]"
             >
@@ -101,7 +101,7 @@
             :class="[
               'w-8 h-8 sm:w-9 sm:h-9 text-[11px] flex items-center justify-center font-bold transition-all border-2 rounded-full',
               day.completed 
-                ? 'border-primary bg-primary text-black glow-cyan' 
+                ? 'border-xp bg-xp text-[#0f131c] glow-cyan' 
                 : day.isToday 
                   ? 'border-primary/70 bg-primary/20 text-primary' 
                   : 'border-primary/20 bg-black/30 text-white/40'
