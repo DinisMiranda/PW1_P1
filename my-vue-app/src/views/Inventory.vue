@@ -2,12 +2,16 @@
   <div>
     <div class="mb-6 flex items-center justify-between">
       <h2 class="text-2xl font-bold font-solo text-white uppercase tracking-wider">Inventário</h2>
-      <button
-        @click="openBox"
-        class="border-2 border-primary bg-primary/20 px-4 py-2 text-white font-bold hover:bg-primary/30 glow-cyan transition-all"
-      >
-        Abrir Caixa de Itens
-      </button>
+      <div class="flex items-center gap-3">
+        <span class="text-sm text-white/70">Caixas: {{ boxCount }}</span>
+        <button
+          @click="openBox"
+          :disabled="boxCount === 0"
+          class="border-2 border-primary bg-primary/20 px-4 py-2 text-white font-bold hover:bg-primary/30 glow-cyan transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          Abrir Caixa ({{ boxCount }})
+        </button>
+      </div>
     </div>
 
     <!-- Personagem com Slots de Equipamento -->
@@ -108,12 +112,28 @@
             <div v-if="item.stats.agi">AGI: +{{ item.stats.agi }}</div>
             <div v-if="item.stats.int">INT: +{{ item.stats.int }}</div>
           </div>
-          <button
-            @click.stop="equipItem(item.id)"
-            class="w-full border-2 border-primary/50 bg-primary/10 px-2 py-1 text-xs text-white hover:bg-primary/20 transition-all font-semibold"
-          >
-            Equipar
-          </button>
+          <div class="grid grid-cols-1 gap-2">
+            <button
+              @click.stop="equipItem(item.id)"
+              class="w-full border-2 border-primary/50 bg-primary/10 px-2 py-1 text-xs text-white hover:bg-primary/20 transition-all font-semibold"
+            >
+              Equipar
+            </button>
+            <div class="grid grid-cols-2 gap-2">
+              <button
+                @click.stop="upgradeItem(item.id)"
+                class="border-2 border-secondary/60 bg-secondary/15 px-2 py-1 text-[11px] text-white hover:bg-secondary/25 transition-all font-semibold"
+              >
+                Upgrade
+              </button>
+              <button
+                @click.stop="deleteItem(item.id)"
+                class="border-2 border-error/60 bg-error/10 px-2 py-1 text-[11px] text-white hover:bg-error/20 transition-all font-semibold"
+              >
+                Apagar
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -121,12 +141,14 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import { useItemStore } from '../stores/items'
 import { useCharacterStore } from '../stores/character'
 import EquipmentSlot from '../components/EquipmentSlot.vue'
 
 const itemStore = useItemStore()
 const characterStore = useCharacterStore()
+const boxCount = computed(() => itemStore.lootBoxes.phase1 || 0)
 
 function getEquippedItem(slot) {
   return itemStore.equippedItems.find(item => item.slot === slot)
@@ -141,7 +163,29 @@ function unequipItem(itemId) {
 }
 
 function openBox() {
-  itemStore.generateItem()
+  if (boxCount.value <= 0) {
+    alert('Não tens caixas para abrir.')
+    return
+  }
+  itemStore.openBox('phase1', 'common', characterStore.characterType || 'generic')
+}
+
+function deleteItem(itemId) {
+  itemStore.removeItem(itemId)
+}
+
+function upgradeItem(itemId) {
+  const base = itemStore.inventory.find(i => i.id === itemId)
+  if (!base) return
+  const material = itemStore.inventory.find(i => i.id !== itemId && i.slot === base.slot && i.rarity === base.rarity)
+  if (!material) {
+    alert('Precisas de outro item do mesmo slot e raridade para fazer upgrade.')
+    return
+  }
+  const upgraded = itemStore.upgradeItems(base.id, material.id)
+  if (!upgraded) {
+    alert('Não foi possível fazer upgrade.')
+  }
 }
 
 function getRarityClass(rarity) {

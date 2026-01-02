@@ -95,20 +95,26 @@ export const useBattleStore = defineStore('battle', () => {
 
     const won = playerHP > 0
     
+    let boxesGained = 0
     if (won) {
       // Avançar para próxima fase
       if (currentPhase.value < phases.value.length) {
         currentPhase.value++
       }
       
-      // Dar recompensa
-      itemStore.generateItem(currentPhaseData.value.reward)
+      // Dar recompensa de item, alinhado ao tipo de personagem
+      itemStore.generateItem(currentPhaseData.value.reward, characterStore.characterType || 'generic')
+
+      // Caixas: ganha entre 1 e 6 por fase vencida
+      boxesGained = Math.floor(Math.random() * 6) + 1
+      itemStore.addBox('phase1', boxesGained)
     }
 
     battleResult.value = {
       won,
       playerHP: Math.max(0, playerHP),
-      enemyHP: Math.max(0, enemyHP)
+      enemyHP: Math.max(0, enemyHP),
+      boxesGained
     }
 
     isInBattle.value = false
