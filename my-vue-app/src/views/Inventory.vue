@@ -100,7 +100,7 @@
           v-for="item in itemStore.inventory"
           :key="item.id"
           :class="getRarityClass(item.rarity)"
-          class="p-3 border-2 cursor-pointer hover:border-primary transition-all"
+          class="p-3 border-2 cursor-pointer hover:border-primary transition-all flex flex-col h-full"
           @click="equipItem(item.id)"
         >
           <p class="font-bold text-white mb-1 text-sm">{{ item.name }}</p>
@@ -112,23 +112,23 @@
             <div v-if="item.stats.agi">AGI: +{{ item.stats.agi }}</div>
             <div v-if="item.stats.int">INT: +{{ item.stats.int }}</div>
           </div>
-          <div class="grid grid-cols-1 gap-2">
-            <button
-              @click.stop="equipItem(item.id)"
-              class="w-full border-2 border-primary/50 bg-primary/10 px-2 py-1 text-xs text-white hover:bg-primary/20 transition-all font-semibold"
-            >
-              Equipar
-            </button>
-            <div class="grid grid-cols-2 gap-2">
+          <div class="mt-auto pt-2">
+            <div class="flex items-center gap-2">
+              <button
+                @click.stop="equipItem(item.id)"
+                class="flex-1 border-2 border-primary/50 bg-primary/10 px-2 py-1 text-xs text-white hover:bg-primary/20 transition-all font-semibold"
+              >
+                Equipar
+              </button>
               <button
                 @click.stop="upgradeItem(item.id)"
-                class="border-2 border-secondary/60 bg-secondary/15 px-2 py-1 text-[11px] text-white hover:bg-secondary/25 transition-all font-semibold"
+                class="flex-1 border-2 border-secondary/60 bg-secondary/15 px-2 py-1 text-[11px] text-white hover:bg-secondary/25 transition-all font-semibold"
               >
                 Upgrade
               </button>
               <button
                 @click.stop="deleteItem(item.id)"
-                class="border-2 border-error/60 bg-error/10 px-2 py-1 text-[11px] text-white hover:bg-error/20 transition-all font-semibold"
+                class="flex-1 border-2 border-error/60 bg-error/10 px-2 py-1 text-[11px] text-white hover:bg-error/20 transition-all font-semibold"
               >
                 Apagar
               </button>
