@@ -103,16 +103,29 @@
           class="p-3 border-2 cursor-pointer hover:border-primary transition-all flex flex-col h-full"
           @click="equipItem(item.id)"
         >
-          <p class="font-bold text-white mb-1 text-sm">{{ item.name }}</p>
-          <p class="text-xs text-white/60 mb-2">{{ itemStore.getRarityInfo(item.rarity).name }}</p>
-          <p class="text-xs text-primary/80 mb-2">{{ itemStore.getSlotName(item.slot) }}</p>
-          <div class="text-xs text-white/80 space-y-0.5 mb-2">
-            <div v-if="item.stats.str">STR: +{{ item.stats.str }}</div>
-            <div v-if="item.stats.vit">VIT: +{{ item.stats.vit }}</div>
-            <div v-if="item.stats.agi">AGI: +{{ item.stats.agi }}</div>
-            <div v-if="item.stats.int">INT: +{{ item.stats.int }}</div>
+          <div class="flex gap-3">
+            <div class="flex-1 space-y-1">
+              <p class="font-bold text-white text-sm">{{ item.name }}</p>
+              <p class="text-xs text-white/60">{{ itemStore.getRarityInfo(item.rarity).name }}</p>
+              <p class="text-xs text-primary/80">{{ itemStore.getSlotName(item.slot) }}</p>
+              <div class="text-xs text-white/80 space-y-0.5">
+                <div v-if="item.stats.str">STR: +{{ item.stats.str }}</div>
+                <div v-if="item.stats.vit">VIT: +{{ item.stats.vit }}</div>
+                <div v-if="item.stats.agi">AGI: +{{ item.stats.agi }}</div>
+                <div v-if="item.stats.int">INT: +{{ item.stats.int }}</div>
+              </div>
+            </div>
+            <div class="flex items-center justify-center bg-black/30 px-2">
+              <img
+                v-if="item.image"
+                :src="item.image"
+                :alt="'Imagem de ' + item.name"
+                class="max-h-20 max-w-[72px] object-contain"
+              />
+              <span v-else class="material-symbols-rounded text-primary/60 text-3xl">image_not_supported</span>
+            </div>
           </div>
-          <div class="mt-auto pt-2">
+          <div class="mt-auto pt-3">
             <div class="flex items-center gap-2">
               <button
                 @click.stop="equipItem(item.id)"

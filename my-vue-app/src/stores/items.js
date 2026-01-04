@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 
 const RARITIES = {
   common: { name: 'Comum', color: '#94A3B8', glow: 'rgba(148, 163, 184, 0.3)' },
@@ -7,6 +7,106 @@ const RARITIES = {
   rare: { name: 'Raro', color: '#7B2CBF', glow: 'rgba(123, 44, 191, 0.3)' },
   epic: { name: 'Épico', color: '#FF6B00', glow: 'rgba(255, 107, 0, 0.3)' },
   legendary: { name: 'Lendário', color: '#FFD700', glow: 'rgba(255, 215, 0, 0.3)' }
+}
+
+const ROLE_KEYS = {
+  guerreiro: 'warrior',
+  warrior: 'warrior',
+  mago: 'mage',
+  mage: 'mage',
+  arqueiro: 'archer',
+  archer: 'archer',
+  assassino: 'assassin',
+  assassin: 'assassin'
+}
+
+const ITEM_IMAGES = {
+  warrior: {
+    mainhand: new URL('../imagens/personagens/guerreiro/espada.png', import.meta.url).href,
+    offhand: new URL('../imagens/personagens/guerreiro/escudo.png', import.meta.url).href,
+    helmet: new URL('../imagens/personagens/guerreiro/capacete.png', import.meta.url).href,
+    chestplate: new URL('../imagens/personagens/guerreiro/peitoral.png', import.meta.url).href,
+    leggings: new URL('../imagens/personagens/guerreiro/calcas.png', import.meta.url).href,
+    boots: new URL('../imagens/personagens/guerreiro/botas.png', import.meta.url).href,
+    belt: new URL('../imagens/personagens/guerreiro/cinto.png', import.meta.url).href
+  },
+  mage: {
+    mainhand: new URL('../imagens/personagens/mago/cajado.png', import.meta.url).href,
+    offhand: new URL('../imagens/personagens/mago/orbe.png', import.meta.url).href,
+    helmet: new URL('../imagens/personagens/mago/capuz arcano.png', import.meta.url).href,
+    chestplate: new URL('../imagens/personagens/mago/manto arcano.png', import.meta.url).href,
+    leggings: new URL('../imagens/personagens/mago/calcas arcanas.png', import.meta.url).href,
+    boots: new URL('../imagens/personagens/mago/botas arcanas.png', import.meta.url).href,
+    belt: new URL('../imagens/personagens/mago/cinto arcano.png', import.meta.url).href
+  },
+  archer: {
+    mainhand: new URL('../imagens/personagens/arqueiro/arco.png', import.meta.url).href,
+    offhand: new URL('../imagens/personagens/arqueiro/besta.png', import.meta.url).href,
+    helmet: new URL('../imagens/personagens/arqueiro/capuz cacador.png', import.meta.url).href,
+    chestplate: new URL('../imagens/personagens/arqueiro/peitural cacador.png', import.meta.url).href,
+    leggings: new URL('../imagens/personagens/arqueiro/calcas cacador.png', import.meta.url).href,
+    boots: new URL('../imagens/personagens/arqueiro/botas cacador.png', import.meta.url).href,
+    belt: new URL('../imagens/personagens/arqueiro/cinto cacador.png', import.meta.url).href
+  },
+  assassin: {
+    mainhand: new URL('../imagens/personagens/assassino/adaga.png', import.meta.url).href,
+    offhand: new URL('../imagens/personagens/assassino/lamina curta.png', import.meta.url).href,
+    helmet: new URL('../imagens/personagens/assassino/capuz sombrio.png', import.meta.url).href,
+    chestplate: new URL('../imagens/personagens/assassino/peitural sombrio.png', import.meta.url).href,
+    leggings: new URL('../imagens/personagens/assassino/calcas sobrio.png', import.meta.url).href,
+    boots: new URL('../imagens/personagens/assassino/botas sobrio.png', import.meta.url).href,
+    belt: new URL('../imagens/personagens/assassino/cinto leve.png', import.meta.url).href
+  }
+}
+
+const ROLE_SLOT_NAMES = {
+  mage: {
+    mainhand: 'Cajado',
+    offhand: 'Orbe',
+    helmet: 'Capuz Arcano',
+    chestplate: 'Manto Arcano',
+    leggings: 'Calças Arcanas',
+    boots: 'Botas Etéreas',
+    belt: 'Faixa Rúnica'
+  },
+  assassin: {
+    mainhand: 'Adaga',
+    offhand: 'Lâmina Curta',
+    helmet: 'Capuz Sombrio',
+    chestplate: 'Couraça Leve',
+    leggings: 'Calças Ágeis',
+    boots: 'Botas Silenciosas',
+    belt: 'Cinto Oculto'
+  },
+  archer: {
+    mainhand: 'Arco',
+    offhand: 'Besta',
+    helmet: 'Capuz do Caçador',
+    chestplate: 'Peitoral de Couro',
+    leggings: 'Calças do Ranger',
+    boots: 'Botas do Ranger',
+    belt: 'Cinto de Flechas'
+  },
+  warrior: {
+    mainhand: 'Espada',
+    offhand: 'Escudo',
+    helmet: 'Capacete de Guerra',
+    chestplate: 'Peitoral Reforçado',
+    leggings: 'Calças de Placas',
+    boots: 'Botas Blindadas',
+    belt: 'Cinto de Batalha'
+  }
+}
+
+function normalizeRole(role) {
+  if (!role) return 'generic'
+  const key = role.toString().trim().toLowerCase()
+  return ROLE_KEYS[key] || 'generic'
+}
+
+function getItemImage(role, slot) {
+  const roleKey = normalizeRole(role)
+  return ITEM_IMAGES[roleKey]?.[slot] || null
 }
 
 export const useItemStore = defineStore('items', () => {
@@ -21,36 +121,6 @@ export const useItemStore = defineStore('items', () => {
   }
 
   function resolveSlotName(slot, role = 'generic') {
-    const roleMap = {
-      mage: {
-        mainhand: 'Cajado',
-        offhand: 'Orbe',
-        helmet: 'Capuz Arcano',
-        chestplate: 'Manto Arcano',
-        leggings: 'Calças Arcanas',
-        boots: 'Botas Etéreas',
-        belt: 'Faixa Rúnica'
-      },
-      assassin: {
-        mainhand: 'Adaga',
-        offhand: 'Lâmina Curta',
-        helmet: 'Capuz Sombrio',
-        chestplate: 'Couraça Leve',
-        leggings: 'Calças Ágeis',
-        boots: 'Botas Silenciosas',
-        belt: 'Cinto Oculto'
-      },
-      archer: {
-        mainhand: 'Arco',
-        offhand: 'Besta',
-        helmet: 'Capuz do Caçador',
-        chestplate: 'Peitoral de Couro',
-        leggings: 'Calças do Ranger',
-        boots: 'Botas do Ranger',
-        belt: 'Cinto de Flechas'
-      }
-    }
-
     const genericMap = {
       mainhand: 'Mão Principal',
       offhand: 'Mão Secundária',
@@ -61,7 +131,8 @@ export const useItemStore = defineStore('items', () => {
       belt: 'Cinto'
     }
 
-    const map = roleMap[role] || roleMap[role?.toLowerCase?.()] || genericMap
+    const roleKey = normalizeRole(role)
+    const map = ROLE_SLOT_NAMES[roleKey] || genericMap
     return map[slot] || genericMap[slot] || slot
   }
 
@@ -76,7 +147,6 @@ export const useItemStore = defineStore('items', () => {
       else rarity = 'legendary'
     }
 
-    const rarityData = RARITIES[rarity]
     const statPoints = {
       common: 2,
       uncommon: 4,
@@ -97,15 +167,17 @@ export const useItemStore = defineStore('items', () => {
     const slots = ['mainhand', 'offhand', 'helmet', 'chestplate', 'leggings', 'boots', 'belt']
     const slot = slots[Math.floor(Math.random() * slots.length)]
 
-    const slotName = resolveSlotName(slot, role)
+    const roleKey = normalizeRole(role)
+    const slotName = resolveSlotName(slot, roleKey)
 
-    const item = {
+    const item = enrichItem({
       id: Date.now() + Math.random(),
       name: slotName,
       rarity,
       stats,
-      slot
-    }
+      slot,
+      role: roleKey
+    })
 
     inventory.value.push(item)
     saveState()
@@ -139,7 +211,7 @@ export const useItemStore = defineStore('items', () => {
     const nextRarity = NEXT_RARITY[base.rarity]
     if (!nextRarity) return null
 
-    const rarityData = RARITIES[nextRarity]
+    const roleKey = normalizeRole(base.role || 'generic')
     const mergedStats = {
       str: (base.stats.str || 0) + (material.stats.str || 0) + 1,
       vit: (base.stats.vit || 0) + (material.stats.vit || 0) + 1,
@@ -147,13 +219,14 @@ export const useItemStore = defineStore('items', () => {
       int: (base.stats.int || 0) + (material.stats.int || 0) + 1
     }
 
-    const upgraded = {
+    const upgraded = enrichItem({
       id: Date.now() + Math.random(),
       name: base.name, // mantém o nome original
       rarity: nextRarity,
       stats: mergedStats,
-      slot: base.slot
-    }
+      slot: base.slot,
+      role: roleKey
+    })
 
     // Remove material and replace base
     const kept = inventory.value.filter((_, idx) => idx !== matIdx && idx !== baseIdx)
@@ -178,6 +251,15 @@ export const useItemStore = defineStore('items', () => {
     const item = generateItem(rarity, role)
     saveState()
     return item
+  }
+
+  function enrichItem(item) {
+    const roleKey = normalizeRole(item.role || 'generic')
+    return {
+      ...item,
+      role: roleKey,
+      image: item.image || getItemImage(roleKey, item.slot)
+    }
   }
 
   function equipItem(itemId) {
@@ -227,6 +309,8 @@ export const useItemStore = defineStore('items', () => {
   }
 
   function init() {
+    inventory.value = inventory.value.map(enrichItem)
+    equippedItems.value = equippedItems.value.map(enrichItem)
     saveState()
   }
 
