@@ -1,0 +1,370 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "username": "admin",
+      "email": "admin@example.com",
+      "password": "admin123",
+      "role": "admin",
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    },
+    {
+      "id": 2,
+      "username": "user",
+      "email": "user@example.com",
+      "password": "user123",
+      "role": "user",
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    }
+  ],
+  "userData": [
+    {
+      "id": 1,
+      "userId": 1,
+      "xp": 0,
+      "level": 1,
+      "badges": [],
+      "streak": 0
+    },
+    {
+      "id": 2,
+      "userId": 2,
+      "xp": 150,
+      "level": 2,
+      "badges": ["primeiro-passo"],
+      "streak": 5
+    }
+  ],
+  "habits": [
+    {
+      "id": 1,
+      "userId": 1,
+      "name": "Exercitar-se",
+      "category": "Saúde",
+      "frequency": "daily",
+      "goalCount": 1,
+      "streak": 0,
+      "xpEarned": 0,
+      "completedDays": [],
+      "active": true,
+      "createdAt": "2024-01-15T10:00:00.000Z"
+    },
+    {
+      "id": 2,
+      "userId": 2,
+      "name": "Ler 30 minutos",
+      "category": "Educação",
+      "frequency": "daily",
+      "goalCount": 1,
+      "streak": 5,
+      "xpEarned": 50,
+      "completedDays": [
+        "2024-01-10",
+        "2024-01-11",
+        "2024-01-12",
+        "2024-01-13",
+        "2024-01-14"
+      ],
+      "active": true,
+      "createdAt": "2024-01-10T08:00:00.000Z"
+    },
+    {
+      "id": 3,
+      "userId": 2,
+      "name": "Meditar",
+      "category": "Bem-estar",
+      "frequency": "daily",
+      "goalCount": 1,
+      "streak": 3,
+      "xpEarned": 30,
+      "completedDays": [
+        "2024-01-12",
+        "2024-01-13",
+        "2024-01-14"
+      ],
+      "active": true,
+      "createdAt": "2024-01-12T09:00:00.000Z"
+    }
+  ],
+  "items": [
+    {
+      "id": 1,
+      "userId": 2,
+      "name": "Espada Simples",
+      "slot": "mainhand",
+      "rarity": "common",
+      "stats": {
+        "str": 2,
+        "vit": 0,
+        "agi": 0,
+        "int": 0
+      },
+      "inInventory": true,
+      "equipped": false
+    },
+    {
+      "id": 2,
+      "userId": 2,
+      "name": "Capacete de Ferro",
+      "slot": "helmet",
+      "rarity": "uncommon",
+      "stats": {
+        "str": 1,
+        "vit": 2,
+        "agi": 1,
+        "int": 0
+      },
+      "inInventory": false,
+      "equipped": true
+    },
+    {
+      "id": 3,
+      "userId": 2,
+      "name": "Peitoral de Couro",
+      "slot": "chestplate",
+      "rarity": "rare",
+      "stats": {
+        "str": 2,
+        "vit": 4,
+        "agi": 0,
+        "int": 0
+      },
+      "inInventory": true,
+      "equipped": false
+    },
+    {
+      "id": 4,
+      "userId": 2,
+      "name": "Botas Ágeis",
+      "slot": "boots",
+      "rarity": "uncommon",
+      "stats": {
+        "str": 0,
+        "vit": 1,
+        "agi": 3,
+        "int": 0
+      },
+      "inInventory": true,
+      "equipped": false
+    }
+  ],
+  "lootBoxes": [
+    {
+      "id": 1,
+      "userId": 1,
+      "boxes": {
+        "phase1": 0
+      }
+    },
+    {
+      "id": 2,
+      "userId": 2,
+      "boxes": {
+        "phase1": 3,
+        "phase2": 0,
+        "phase3": 0
+      }
+    }
+  ],
+  "characters": [
+    {
+      "id": 1,
+      "userId": 1,
+      "characterType": null,
+      "stats": {
+        "str": 10,
+        "vit": 10,
+        "agi": 10,
+        "int": 10
+      },
+      "availablePoints": 0,
+      "level": 1
+    },
+    {
+      "id": 2,
+      "userId": 2,
+      "characterType": "warrior",
+      "stats": {
+        "str": 12,
+        "vit": 11,
+        "agi": 10,
+        "int": 10
+      },
+      "availablePoints": 3,
+      "level": 2
+    }
+  ],
+  "battles": [
+    {
+      "id": 1,
+      "userId": 1,
+      "currentPhase": 1,
+      "phases": [
+        {
+          "id": 1,
+          "name": "Fase 1: Iniciante",
+          "enemyHP": 100,
+          "enemyAttack": 10,
+          "reward": "common",
+          "completed": false
+        },
+        {
+          "id": 2,
+          "name": "Fase 2: Aprendiz",
+          "enemyHP": 200,
+          "enemyAttack": 20,
+          "reward": "uncommon",
+          "completed": false
+        },
+        {
+          "id": 3,
+          "name": "Fase 3: Competente",
+          "enemyHP": 350,
+          "enemyAttack": 35,
+          "reward": "rare",
+          "completed": false
+        },
+        {
+          "id": 4,
+          "name": "Fase 4: Experiente",
+          "enemyHP": 500,
+          "enemyAttack": 50,
+          "reward": "rare",
+          "completed": false
+        },
+        {
+          "id": 5,
+          "name": "Fase 5: Mestre",
+          "enemyHP": 700,
+          "enemyAttack": 70,
+          "reward": "epic",
+          "completed": false
+        },
+        {
+          "id": 6,
+          "name": "Fase 6: Lendário",
+          "enemyHP": 1000,
+          "enemyAttack": 100,
+          "reward": "epic",
+          "completed": false
+        },
+        {
+          "id": 7,
+          "name": "Fase 7: Épico",
+          "enemyHP": 1500,
+          "enemyAttack": 150,
+          "reward": "legendary",
+          "completed": false
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "userId": 2,
+      "currentPhase": 3,
+      "phases": [
+        {
+          "id": 1,
+          "name": "Fase 1: Iniciante",
+          "enemyHP": 100,
+          "enemyAttack": 10,
+          "reward": "common",
+          "completed": true
+        },
+        {
+          "id": 2,
+          "name": "Fase 2: Aprendiz",
+          "enemyHP": 200,
+          "enemyAttack": 20,
+          "reward": "uncommon",
+          "completed": true
+        },
+        {
+          "id": 3,
+          "name": "Fase 3: Competente",
+          "enemyHP": 350,
+          "enemyAttack": 35,
+          "reward": "rare",
+          "completed": false
+        },
+        {
+          "id": 4,
+          "name": "Fase 4: Experiente",
+          "enemyHP": 500,
+          "enemyAttack": 50,
+          "reward": "rare",
+          "completed": false
+        },
+        {
+          "id": 5,
+          "name": "Fase 5: Mestre",
+          "enemyHP": 700,
+          "enemyAttack": 70,
+          "reward": "epic",
+          "completed": false
+        },
+        {
+          "id": 6,
+          "name": "Fase 6: Lendário",
+          "enemyHP": 1000,
+          "enemyAttack": 100,
+          "reward": "epic",
+          "completed": false
+        },
+        {
+          "id": 7,
+          "name": "Fase 7: Épico",
+          "enemyHP": 1500,
+          "enemyAttack": 150,
+          "reward": "legendary",
+          "completed": false
+        }
+      ]
+    }
+  ],
+  "badges": [
+    {
+      "id": "primeiro-passo",
+      "name": "Primeiro Passo",
+      "description": "Completa o 1º hábito",
+      "icon": "footprint",
+      "requirement": "level >= 1"
+    },
+    {
+      "id": "foco-diario",
+      "name": "Foco Diário",
+      "description": "7 dias seguidos",
+      "icon": "local_fire_department",
+      "requirement": "streak >= 7"
+    },
+    {
+      "id": "produtivo",
+      "name": "Produtivo",
+      "description": "5 hábitos num dia",
+      "icon": "workspace_premium",
+      "requirement": "habits_completed_today >= 5"
+    },
+    {
+      "id": "mestre",
+      "name": "Mestre do Hábito",
+      "description": "Atinge nível 10",
+      "icon": "military_tech",
+      "requirement": "level >= 10"
+    },
+    {
+      "id": "ecologico",
+      "name": "Ecológico",
+      "description": "Hábito verde",
+      "icon": "ecology",
+      "requirement": "habit_category === 'Ambiente'"
+    },
+    {
+      "id": "leitor",
+      "name": "Leitor",
+      "description": "100 páginas",
+      "icon": "menu_book",
+      "requirement": "reading_pages >= 100"
+    }
+  ]
+}
+
