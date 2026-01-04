@@ -6,11 +6,13 @@ export const useAuthStore = defineStore('auth', () => {
   const token = ref(localStorage.getItem('token') || null)
 
   const isAuthenticated = computed(() => !!token.value)
+  const isAdmin = computed(() => user.value?.role === 'admin' || user.value?.username === 'admin')
 
   function login(username, password) {
     // Autenticação simples - em produção usar API real
     if (username && password) {
-      user.value = { id: 1, username, email: `${username}@example.com` }
+      const role = username === 'admin' ? 'admin' : 'user'
+      user.value = { id: 1, username, email: `${username}@example.com`, role }
       token.value = 'mock-token-' + Date.now()
       localStorage.setItem('token', token.value)
       localStorage.setItem('user', JSON.stringify(user.value))
@@ -34,6 +36,6 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  return { user, token, isAuthenticated, login, logout, init }
+  return { user, token, isAuthenticated, isAdmin, login, logout, init }
 })
 

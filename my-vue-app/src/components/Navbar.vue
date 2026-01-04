@@ -65,6 +65,15 @@
             Batalha
             <span v-if="$route.path === '/battle'" class="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary glow-cyan"></span>
           </router-link>
+          <router-link 
+            v-if="authStore.isAdmin"
+            to="/admin" 
+            class="hover:text-primary transition-all duration-200 relative font-semibold text-white"
+            active-class="text-primary"
+          >
+            Admin
+            <span v-if="$route.path === '/admin'" class="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary glow-cyan"></span>
+          </router-link>
         </nav>
       </div>
 
