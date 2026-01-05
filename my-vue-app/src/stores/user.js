@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
+import { get } from '../api/client'
 
 export const useUserStore = defineStore('user', () => {
   const xp = ref(parseInt(localStorage.getItem('xp') || '0'))
@@ -66,6 +67,18 @@ export const useUserStore = defineStore('user', () => {
     saveState()
   }
 
+  async function loadUserData(userId) {
+    const data = await get('/userData', { userId })
+    const record = data?.[0]
+    if (!record) return false
+    xp.value = record.xp ?? 0
+    level.value = record.level ?? 1
+    badges.value = record.badges ?? []
+    streak.value = record.streak ?? 0
+    saveState()
+    return true
+  }
+
   function init() {
     // Restaurar do localStorage já está feito nos refs
     saveState()
@@ -81,6 +94,7 @@ export const useUserStore = defineStore('user', () => {
     gainXP,
     loseXP,
     updateStreak,
+    loadUserData,
     checkBadges,
     init
   }

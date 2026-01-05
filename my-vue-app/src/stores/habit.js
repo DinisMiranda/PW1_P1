@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { useUserStore } from './user'
+import { fetchHabits } from '../api/habits'
 
 export const useHabitStore = defineStore('habit', () => {
   const habits = ref(JSON.parse(localStorage.getItem('habits') || '[]'))
@@ -8,6 +9,12 @@ export const useHabitStore = defineStore('habit', () => {
   // Salvar no localStorage sempre que hábitos mudarem
   function saveHabits() {
     localStorage.setItem('habits', JSON.stringify(habits.value))
+  }
+
+  async function loadHabits(userId) {
+    const data = await fetchHabits(userId)
+    habits.value = data || []
+    saveHabits()
   }
 
   function createHabit(habitData) {
@@ -135,7 +142,8 @@ export const useHabitStore = defineStore('habit', () => {
     createHabit,
     updateHabit,
     deleteHabit,
-    toggleHabitDone
+    toggleHabitDone,
+    loadHabits
   }
 })
 

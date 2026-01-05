@@ -49,13 +49,11 @@ const username = ref('')
 const password = ref('')
 const error = ref('')
 
-function handleLogin() {
+async function handleLogin() {
   error.value = ''
-  if (authStore.login(username.value, password.value)) {
-    router.push('/')
-  } else {
-    error.value = 'Credenciais inválidas'
-  }
+  const success = await authStore.login(username.value, password.value)
+  if (success) router.push('/')
+  else error.value = 'Credenciais inválidas'
 }
 </script>
 
