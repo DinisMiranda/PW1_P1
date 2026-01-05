@@ -106,7 +106,7 @@ function normalizeRole(role) {
 
 function getItemImage(role, slot) {
   const roleKey = normalizeRole(role)
-  return ITEM_IMAGES[roleKey]?.[slot] || null
+  return ITEM_IMAGES[roleKey]?.[slot] || ITEM_IMAGES.warrior?.[slot] || null
 }
 
 export const useItemStore = defineStore('items', () => {

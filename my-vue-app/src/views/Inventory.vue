@@ -100,20 +100,20 @@
           v-for="item in itemStore.inventory"
           :key="item.id"
           :class="getRarityClass(item.rarity)"
-          class="p-3 border-2 cursor-pointer hover:border-primary transition-all flex flex-col h-full"
+          class="p-3 border-2 cursor-pointer hover:border-primary transition-all flex h-full"
           @click="equipItem(item.id)"
         >
-          <p class="font-bold text-white mb-1 text-sm">{{ item.name }}</p>
-          <p class="text-xs text-white/60 mb-2">{{ itemStore.getRarityInfo(item.rarity).name }}</p>
-          <p class="text-xs text-primary/80 mb-2">{{ itemStore.getSlotName(item.slot) }}</p>
-          <div class="text-xs text-white/80 space-y-0.5 mb-2">
-            <div v-if="item.stats.str">STR: +{{ item.stats.str }}</div>
-            <div v-if="item.stats.vit">VIT: +{{ item.stats.vit }}</div>
-            <div v-if="item.stats.agi">AGI: +{{ item.stats.agi }}</div>
-            <div v-if="item.stats.int">INT: +{{ item.stats.int }}</div>
-          </div>
-          <div class="mt-auto pt-2">
-            <div class="flex items-center gap-2">
+          <div class="flex-1 flex flex-col gap-1 pr-2">
+            <p class="font-bold text-white text-sm">{{ item.name }}</p>
+            <p class="text-xs text-white/60">{{ itemStore.getRarityInfo(item.rarity).name }}</p>
+            <p class="text-xs text-primary/80">{{ itemStore.getSlotName(item.slot) }}</p>
+            <div class="text-xs text-white/80 space-y-0.5">
+              <div v-if="item.stats.str">STR: +{{ item.stats.str }}</div>
+              <div v-if="item.stats.vit">VIT: +{{ item.stats.vit }}</div>
+              <div v-if="item.stats.agi">AGI: +{{ item.stats.agi }}</div>
+              <div v-if="item.stats.int">INT: +{{ item.stats.int }}</div>
+            </div>
+            <div class="mt-auto pt-2 flex items-center gap-2">
               <button
                 @click.stop="equipItem(item.id)"
                 class="flex-1 border-2 border-primary/50 bg-primary/10 px-2 py-1 text-xs text-white hover:bg-primary/20 transition-all font-semibold"
@@ -133,6 +133,9 @@
                 Apagar
               </button>
             </div>
+          </div>
+          <div class="flex items-start justify-center w-16" v-if="item.image">
+            <img :src="item.image" :alt="item.name" class="h-16 object-contain" />
           </div>
         </div>
       </div>
