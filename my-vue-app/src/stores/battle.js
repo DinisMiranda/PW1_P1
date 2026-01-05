@@ -137,7 +137,9 @@ export const useBattleStore = defineStore('battle', () => {
     battleResult,
     startBattle,
     calculatePlayerStats,
-    init
+    init,
+    initPhases,
+    saveState
   }
 })
 
