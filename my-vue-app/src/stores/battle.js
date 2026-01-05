@@ -106,7 +106,7 @@ export const useBattleStore = defineStore('battle', () => {
       itemStore.generateItem(currentPhaseData.value.reward, characterStore.characterType || 'generic')
 
       // Caixas: ganha entre 1 e 6 por fase vencida
-      boxesGained = Math.floor(Math.random() * 6) + 1
+      boxesGained = Math.floor(Math.random() * 3) + 1
       itemStore.addBox('phase1', boxesGained)
     }
 
