@@ -1,37 +1,37 @@
 <template>
- <div class="fixed inset-0 flex items-center justify-center">
-    <div class="w-full max-w-md rounded-xl border border-slate-200 bg-white p-8 shadow-card">
-      <h2 class="mb-6 text-2xl font-semibold font-display">Login</h2>
+ <div class="fixed inset-0 flex items-center justify-center bg-background">
+    <div class="w-full max-w-md border-2 border-primary bg-card-solo p-8 glow-cyan">
+      <h2 class="mb-6 text-3xl font-bold font-solo text-primary text-glow uppercase tracking-wider">Login</h2>
       <form @submit.prevent="handleLogin" class="space-y-4">
         <div>
-          <label class="mb-2 block text-sm font-medium">Username</label>
+          <label class="mb-2 block text-sm font-bold font-solo text-primary/80 uppercase tracking-wider">Username</label>
           <input
             v-model="username"
             type="text"
             required
-            class="w-full rounded-xl border border-slate-200 px-4 py-2 focus:border-primary focus:outline-none"
+            class="w-full border-2 border-primary/50 bg-black/50 px-4 py-3 focus:border-primary focus:outline-none text-white placeholder:text-white/40 transition-all font-semibold"
             placeholder="Digite o seu username"
           />
         </div>
         <div>
-          <label class="mb-2 block text-sm font-medium">Password</label>
+          <label class="mb-2 block text-sm font-bold font-solo text-primary/80 uppercase tracking-wider">Password</label>
           <input
             v-model="password"
             type="password"
             required
-            class="w-full rounded-xl border border-slate-200 px-4 py-2 focus:border-primary focus:outline-none"
+            class="w-full border-2 border-primary/50 bg-black/50 px-4 py-3 focus:border-primary focus:outline-none text-white placeholder:text-white/40 transition-all font-semibold"
             placeholder="Digite a sua password"
           />
         </div>
         <button
           type="submit"
-          class="w-full rounded-xl bg-primary px-4 py-2 text-white hover:brightness-95 font-medium"
+          class="w-full border-2 border-primary bg-primary/20 px-4 py-3 text-white hover:bg-primary/30 font-bold font-solo uppercase tracking-wider glow-cyan transition-all"
         >
           Entrar
         </button>
       </form>
-      <p v-if="error" class="mt-4 text-sm text-red-500">{{ error }}</p>
-      <p class="mt-4 text-xs text-slate-500 text-center">
+      <p v-if="error" class="mt-4 text-sm text-red-400 font-semibold">{{ error }}</p>
+      <p class="mt-4 text-xs text-white/60 text-center">
       </p>
     </div>
   </div>

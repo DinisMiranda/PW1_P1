@@ -1,68 +1,68 @@
 <template>
   <div>
-    <h2 class="mb-6 text-2xl font-semibold font-display">Estatísticas</h2>
+    <h2 class="mb-6 text-2xl font-bold font-solo text-white uppercase tracking-wider">Estatísticas</h2>
 
     <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
       <!-- XP Stats -->
-      <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-card">
-        <h3 class="mb-4 font-semibold">Progresso de XP</h3>
-        <div class="space-y-2">
+      <div class="border-2 border-primary/50 bg-card-solo p-6 hover:border-primary hover:glow-cyan transition-all">
+        <h3 class="mb-4 font-bold font-solo text-primary uppercase tracking-wider">Progresso de XP</h3>
+        <div class="space-y-3">
           <div class="flex justify-between text-sm">
-            <span>XP Total</span>
-            <span class="font-semibold">{{ userStore.xp }}</span>
+            <span class="text-white/70 font-semibold">XP Total</span>
+            <span class="font-bold font-solo text-white text-glow">{{ userStore.xp }}</span>
           </div>
           <div class="flex justify-between text-sm">
-            <span>Nível Atual</span>
-            <span class="font-semibold">{{ userStore.level }}</span>
+            <span class="text-white/70 font-semibold">Nível Atual</span>
+            <span class="font-bold font-solo text-white text-glow">{{ userStore.level }}</span>
           </div>
           <div class="flex justify-between text-sm">
-            <span>XP para próximo nível</span>
-            <span class="font-semibold">{{ userStore.xpForNextLevel - (userStore.xp % 100) }}</span>
+            <span class="text-white/70 font-semibold">XP para próximo nível</span>
+            <span class="font-bold font-solo text-white text-glow">{{ userStore.xpForNextLevel - (userStore.xp % 100) }}</span>
           </div>
         </div>
       </div>
 
       <!-- Habits Stats -->
-      <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-card">
-        <h3 class="mb-4 font-semibold">Hábitos</h3>
-        <div class="space-y-2">
+      <div class="border-2 border-primary/50 bg-card-solo p-6 hover:border-primary hover:glow-cyan transition-all">
+        <h3 class="mb-4 font-bold font-solo text-primary uppercase tracking-wider">Hábitos</h3>
+        <div class="space-y-3">
           <div class="flex justify-between text-sm">
-            <span>Total de hábitos</span>
-            <span class="font-semibold">{{ habitStore.totalHabits }}</span>
+            <span class="text-white/70 font-semibold">Total de hábitos</span>
+            <span class="font-bold font-solo text-white text-glow">{{ habitStore.totalHabits }}</span>
           </div>
           <div class="flex justify-between text-sm">
-            <span>Hábitos ativos</span>
-            <span class="font-semibold">{{ habitStore.activeHabits.length }}</span>
+            <span class="text-white/70 font-semibold">Hábitos ativos</span>
+            <span class="font-bold font-solo text-white text-glow">{{ habitStore.activeHabits.length }}</span>
           </div>
           <div class="flex justify-between text-sm">
-            <span>Streak máximo</span>
-            <span class="font-semibold">{{ maxStreak }} dias</span>
+            <span class="text-white/70 font-semibold">Streak máximo</span>
+            <span class="font-bold font-solo text-white text-glow">{{ maxStreak }} dias</span>
           </div>
         </div>
       </div>
 
       <!-- Completion Rate -->
-      <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-card">
-        <h3 class="mb-4 font-semibold">Taxa de Conclusão</h3>
+      <div class="border-2 border-primary/50 bg-card-solo p-6 hover:border-primary hover:glow-cyan transition-all">
+        <h3 class="mb-4 font-bold font-solo text-primary uppercase tracking-wider">Taxa de Conclusão</h3>
         <div class="text-center">
-          <div class="text-4xl font-bold text-primary">{{ completionRate }}%</div>
-          <p class="mt-2 text-sm text-slate-500">Esta semana</p>
+          <div class="text-5xl font-bold font-solo text-white text-glow">{{ completionRate }}%</div>
+          <p class="mt-2 text-sm text-white/70 font-semibold">Esta semana</p>
         </div>
       </div>
 
       <!-- Top Habits -->
-      <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-card">
-        <h3 class="mb-4 font-semibold">Hábitos com maior streak</h3>
+      <div class="border-2 border-primary/50 bg-card-solo p-6 hover:border-primary hover:glow-cyan transition-all">
+        <h3 class="mb-4 font-bold font-solo text-primary uppercase tracking-wider">Hábitos com maior streak</h3>
         <div class="space-y-2">
           <div
             v-for="habit in topHabits"
             :key="habit.id"
-            class="flex items-center justify-between rounded-lg bg-slate-50 p-2"
+            class="flex items-center justify-between border-2 border-primary/30 bg-black/30 p-3 hover:border-primary/50 transition-all"
           >
-            <span class="text-sm">{{ habit.name }}</span>
-            <span class="text-sm font-semibold text-primary">{{ habit.streak }} dias</span>
+            <span class="text-sm text-white font-semibold">{{ habit.name }}</span>
+            <span class="text-sm font-bold font-solo text-primary text-glow">{{ habit.streak }} dias</span>
           </div>
-          <p v-if="topHabits.length === 0" class="text-sm text-slate-500">Nenhum hábito ainda</p>
+          <p v-if="topHabits.length === 0" class="text-sm text-white/60">Nenhum hábito ainda</p>
         </div>
       </div>
     </div>

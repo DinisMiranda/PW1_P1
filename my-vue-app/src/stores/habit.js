@@ -55,20 +55,40 @@ export const useHabitStore = defineStore('habit', () => {
     const dateStr = date
     const index = habit.completedDays.indexOf(dateStr)
 
+    const userStore = useUserStore()
+    const xpGained = 10
+
     if (index === -1) {
       // Marcar como feito
       habit.completedDays.push(dateStr)
       habit.streak = calculateStreak(habit.completedDays)
       
       // Ganhar XP
-      const userStore = useUserStore()
-      const xpGained = 10
+      const oldLevel = userStore.level
       userStore.gainXP(xpGained)
       habit.xpEarned += xpGained
+      
+      // Se subiu de nível e tem personagem, dar pontos
+      if (userStore.level > oldLevel) {
+        import('./character.js').then(({ useCharacterStore }) => {
+          const characterStore = useCharacterStore()
+          if (characterStore.characterType) {
+            for (let i = oldLevel; i < userStore.level; i++) {
+              characterStore.levelUp()
+            }
+          }
+        }).catch(() => {
+          // Character store pode não estar inicializado
+        })
+      }
     } else {
       // Desmarcar
       habit.completedDays.splice(index, 1)
       habit.streak = calculateStreak(habit.completedDays)
+
+      // Remover XP ganho anteriormente
+      userStore.loseXP(xpGained)
+      habit.xpEarned = Math.max(0, habit.xpEarned - xpGained)
     }
 
     saveHabits()

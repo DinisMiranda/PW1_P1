@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2 class="mb-6 text-2xl font-semibold font-display">Badges</h2>
+    <h2 class="mb-6 text-2xl font-bold font-solo text-white uppercase tracking-wider">Badges</h2>
 
     <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
       <BadgeCard
@@ -41,16 +41,16 @@
       />
     </div>
 
-    <div class="mt-8 rounded-xl border border-slate-200 bg-white p-6 shadow-card">
-      <h3 class="mb-4 font-semibold">Badges Desbloqueadas: {{ userStore.badges.length }}</h3>
-      <div v-if="userStore.badges.length === 0" class="text-sm text-slate-500">
+    <div class="mt-8 border-2 border-primary/50 bg-card-solo p-6 hover:border-primary hover:glow-cyan transition-all">
+      <h3 class="mb-4 font-bold font-solo text-primary uppercase tracking-wider">Badges Desbloqueadas: <span class="text-white text-glow">{{ userStore.badges.length }}</span></h3>
+      <div v-if="userStore.badges.length === 0" class="text-sm text-white/60">
         Ainda não desbloqueaste nenhuma badge. Continua a completar hábitos!
       </div>
       <div v-else class="flex flex-wrap gap-2">
         <span
           v-for="badge in userStore.badges"
           :key="badge"
-          class="rounded-full bg-primary/10 px-3 py-1 text-sm text-primary"
+          class="px-3 py-1 text-sm font-bold font-solo border-2 border-primary/50 bg-primary/10 text-primary"
         >
           {{ getBadgeName(badge) }}
         </span>

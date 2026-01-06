@@ -9,7 +9,7 @@
     <!-- Fonts: Poppins (titles) and Inter (text) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Orbitron:wght@400;500;600;700;800;900&family=Poppins:wght@500;600;700;800;900&display=swap" rel="stylesheet">
     <!-- Material Symbols for icons -->
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
     <script>
@@ -17,21 +17,32 @@
         theme: {
           extend: {
             colors: {
-              primary: '#4CAF50', // verde motivacional
-              secondary: '#81C784',
-              xp: '#FFD700', // dourado
-              background: '#F9FAFB',
-              textmain: '#1E293B'
+                  primary: '#6B5FA7',        // Botão principal / roxo
+                  secondary: '#4C6FFF',      // Estado ativo / seleção
+                  xp: '#5FAF8E',             // Hábito concluído / XP
+                  success: '#5FAF8E',        // Alias para concluído
+                  error: '#C56B6B',          // Erro / falha
+                  neon: '#4C6FFF',
+                  neonPurple: '#6B5FA7',
+
+                  background: '#1E1F26',     // Fundo principal
+                  backgroundLight: '#2A2D3A', // Cards / listas
+
+                  textmain: '#E6E8F0',        // Texto principal
+                  textSecondary: '#9A9DB0'    // Texto secundário / datas
             },
             borderRadius: {
               'xl': '1rem'
             },
             fontFamily: {
               sans: ['Inter', 'system-ui', 'Avenir', 'Helvetica', 'Arial', 'sans-serif'],
-              display: ['Poppins', 'Inter', 'system-ui', 'sans-serif']
+              display: ['Orbitron', 'Poppins', 'Inter', 'system-ui', 'sans-serif'],
+              mono: ['Orbitron', 'monospace']
             },
             boxShadow: {
-              card: '0 1px 2px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.06)'
+              card: '0 0 20px rgba(0, 217, 255, 0.1), 0 0 40px rgba(0, 217, 255, 0.05)',
+              neon: '0 0 10px rgba(0, 217, 255, 0.5), 0 0 20px rgba(0, 217, 255, 0.3)',
+              neonPurple: '0 0 10px rgba(123, 44, 191, 0.5), 0 0 20px rgba(123, 44, 191, 0.3)'
             }
           }
         }
@@ -39,9 +50,120 @@
     </script>
     <style>
       /* Tailwind preflight resets are applied via CDN */
-      html, body, #app { height: 100%; }
-      body { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"; color: #1E293B; background: #F9FAFB; }
+      html, body, #app { 
+        height: 100%; 
+        position: relative;
+      }
+      
+      /* Textura de fundo com padrões de circuito */
+      body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: 
+          linear-gradient(135deg, #1E1F26 0%, #1E1F26 45%, #2A2D3A 100%),
+          url("data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cpattern id='circuit' x='0' y='0' width='100' height='100' patternUnits='userSpaceOnUse'%3E%3Cpath d='M0 50h100M50 0v100M25 25h50v50h-50z' stroke='%234C6FFF' stroke-width='0.5' fill='none' opacity='0.08'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='100%25' height='100%25' fill='url(%23circuit)'/%3E%3C/svg%3E");
+        background-attachment: fixed;
+        z-index: -2;
+      }
+      
+      /* Efeito de luz suave no canto */
+      body::after {
+        content: '';
+        position: fixed;
+        top: -50%;
+        right: -20%;
+        width: 800px;
+        height: 800px;
+        background: radial-gradient(circle, rgba(75, 111, 255, 0.12) 0%, transparent 70%);
+        filter: blur(120px);
+        z-index: -1;
+        pointer-events: none;
+      }
+      
+      body { 
+        font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"; 
+        color: #E6E8F0; 
+        font-weight: 500;
+        background-color: #1E1F26;
+      }
+      
       .material-symbols-rounded { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+      
+      /* Efeitos Solo Leveling - Bordas Retangulares com Glow */
+      .glow-cyan {
+        box-shadow: 
+          0 0 5px rgba(76, 111, 255, 0.55),
+          0 0 12px rgba(76, 111, 255, 0.35),
+          0 0 18px rgba(107, 95, 167, 0.25);
+      }
+      
+      .glow-purple {
+        box-shadow: 0 0 10px rgba(107, 95, 167, 0.45), 0 0 18px rgba(76, 111, 255, 0.25);
+      }
+      
+      .border-neon {
+        border: 2px solid rgba(76, 111, 255, 0.5);
+        box-shadow: 
+          0 0 5px rgba(76, 111, 255, 0.35) inset,
+          0 0 12px rgba(107, 95, 167, 0.25);
+      }
+      
+      .text-glow {
+        text-shadow: 
+          0 0 4px rgba(107, 95, 167, 0.75),
+          0 0 10px rgba(76, 111, 255, 0.45);
+      }
+      
+      .bg-card-solo {
+        background: rgba(42, 45, 58, 0.92);
+        backdrop-filter: blur(8px);
+        border: 2px solid rgba(107, 95, 167, 0.35);
+        box-shadow: 
+          0 0 10px rgba(107, 95, 167, 0.18) inset,
+          0 0 20px rgba(76, 111, 255, 0.15);
+      }
+      
+      /* Estilo de barra HP/MP */
+      .bar-hp-mp {
+        position: relative;
+        background: rgba(0, 0, 0, 0.4);
+        border: 2px solid rgba(76, 111, 255, 0.6);
+        box-shadow: 
+          0 0 5px rgba(76, 111, 255, 0.4) inset,
+          0 0 10px rgba(107, 95, 167, 0.25);
+      }
+      
+      /* Tipografia Solo Leveling */
+      .font-solo {
+        font-family: 'Orbitron', 'Poppins', sans-serif;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+      }
+      
+      /* Animação de brilho pulsante */
+      @keyframes pulse-glow {
+        0%, 100% {
+          box-shadow: 
+            0 0 5px rgba(0, 217, 255, 0.8),
+            0 0 10px rgba(0, 217, 255, 0.6),
+            0 0 15px rgba(0, 217, 255, 0.4);
+        }
+        50% {
+          box-shadow: 
+            0 0 10px rgba(0, 217, 255, 1),
+            0 0 20px rgba(0, 217, 255, 0.8),
+            0 0 30px rgba(0, 217, 255, 0.6);
+        }
+      }
+      
+      .animate-pulse-glow {
+        animation: pulse-glow 2s ease-in-out infinite;
+      }
     </style>
   </head>
   <body>

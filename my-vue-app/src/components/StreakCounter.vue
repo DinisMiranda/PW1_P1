@@ -1,9 +1,9 @@
 <template>
-  <div class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 shadow-card">
-    <span class="material-symbols-rounded text-amber-500">local_fire_department</span>
+  <div class="inline-flex items-center gap-3 border-2 border-primary bg-card-solo px-5 py-3 glow-cyan">
+    <span class="material-symbols-rounded text-primary text-3xl text-glow">local_fire_department</span>
     <div class="leading-tight">
-      <p class="text-xs text-slate-500">Streak</p>
-      <p class="text-sm font-semibold">{{ userStore.streak }} dias</p>
+      <p class="text-xs font-solo text-primary/80 uppercase tracking-widest mb-1">Streak</p>
+      <p class="text-2xl font-bold font-solo text-white text-glow">{{ userStore.streak }} dias</p>
     </div>
   </div>
 </template>

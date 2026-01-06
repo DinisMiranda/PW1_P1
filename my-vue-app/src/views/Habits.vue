@@ -1,10 +1,10 @@
 <template>
   <div>
     <div class="mb-6 flex items-center justify-between">
-      <h2 class="text-2xl font-semibold font-display">Hábitos</h2>
+      <h2 class="text-2xl font-bold font-solo text-white uppercase tracking-wider">Hábitos</h2>
       <button
         @click="showForm = true; editingHabit = null"
-        class="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2 text-white hover:brightness-95"
+        class="inline-flex items-center gap-2 border-2 border-primary bg-primary/20 px-4 py-2 text-white font-bold hover:bg-primary/30 glow-cyan transition-all"
       >
         <span class="material-symbols-rounded">add</span>
         Novo Hábito
@@ -14,62 +14,62 @@
     <!-- Form Modal -->
     <div
       v-if="showForm"
-      class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm"
       @click.self="showForm = false"
     >
-      <div class="w-full max-w-md rounded-xl border border-slate-200 bg-white p-6 shadow-lg">
-        <h3 class="mb-4 text-xl font-semibold">{{ editingHabit ? 'Editar Hábito' : 'Novo Hábito' }}</h3>
+      <div class="w-full max-w-md border-2 border-primary bg-card-solo p-6 glow-cyan">
+        <h3 class="mb-4 text-xl font-bold font-solo text-primary text-glow uppercase tracking-wider">{{ editingHabit ? 'Editar Hábito' : 'Novo Hábito' }}</h3>
         <form @submit.prevent="saveHabit" class="space-y-4">
           <div>
-            <label class="mb-2 block text-sm font-medium">Nome</label>
+            <label class="mb-2 block text-sm font-bold font-solo text-primary/80 uppercase tracking-wider">Nome</label>
             <input
               v-model="formData.name"
               type="text"
               required
-              class="w-full rounded-xl border border-slate-200 px-4 py-2 focus:border-primary focus:outline-none"
+              class="w-full border-2 border-primary/50 bg-black/50 px-4 py-2 focus:border-primary focus:outline-none text-white placeholder:text-white/40 transition-all font-semibold"
               placeholder="Ex: Beber água"
             />
           </div>
           <div>
-            <label class="mb-2 block text-sm font-medium">Categoria</label>
+            <label class="mb-2 block text-sm font-bold font-solo text-primary/80 uppercase tracking-wider">Categoria</label>
             <input
               v-model="formData.category"
               type="text"
-              class="w-full rounded-xl border border-slate-200 px-4 py-2 focus:border-primary focus:outline-none"
+              class="w-full border-2 border-primary/50 bg-black/50 px-4 py-2 focus:border-primary focus:outline-none text-white placeholder:text-white/40 transition-all font-semibold"
               placeholder="Ex: Saúde"
             />
           </div>
           <div>
-            <label class="mb-2 block text-sm font-medium">Frequência</label>
+            <label class="mb-2 block text-sm font-bold font-solo text-primary/80 uppercase tracking-wider">Frequência</label>
             <select
               v-model="formData.frequency"
-              class="w-full rounded-xl border border-slate-200 px-4 py-2 focus:border-primary focus:outline-none"
+              class="w-full border-2 border-primary/50 bg-black/50 px-4 py-2 focus:border-primary focus:outline-none text-white transition-all font-semibold"
             >
-              <option value="daily">Diário</option>
-              <option value="weekly">Semanal</option>
+              <option value="daily" class="bg-black">Diário</option>
+              <option value="weekly" class="bg-black">Semanal</option>
             </select>
           </div>
           <div>
-            <label class="mb-2 block text-sm font-medium">Meta</label>
+            <label class="mb-2 block text-sm font-bold font-solo text-primary/80 uppercase tracking-wider">Meta</label>
             <input
               v-model.number="formData.goalCount"
               type="number"
               min="1"
-              class="w-full rounded-xl border border-slate-200 px-4 py-2 focus:border-primary focus:outline-none"
+              class="w-full border-2 border-primary/50 bg-black/50 px-4 py-2 focus:border-primary focus:outline-none text-white placeholder:text-white/40 transition-all font-semibold"
               placeholder="1"
             />
           </div>
           <div class="flex gap-2">
             <button
               type="submit"
-              class="flex-1 rounded-xl bg-primary px-4 py-2 text-white hover:brightness-95"
+              class="flex-1 border-2 border-primary bg-primary/20 px-4 py-2 text-white font-bold font-solo uppercase tracking-wider hover:bg-primary/30 glow-cyan transition-all"
             >
               {{ editingHabit ? 'Atualizar' : 'Criar' }}
             </button>
             <button
               type="button"
               @click="showForm = false; editingHabit = null; formData = getDefaultForm()"
-              class="flex-1 rounded-xl border border-slate-200 px-4 py-2 hover:bg-slate-50"
+              class="flex-1 border-2 border-primary/50 bg-primary/10 px-4 py-2 hover:border-primary hover:bg-primary/20 text-white transition-all font-semibold"
             >
               Cancelar
             </button>
@@ -79,11 +79,11 @@
     </div>
 
     <!-- Habits List -->
-    <div v-if="habitStore.habits.length === 0" class="rounded-xl border border-slate-200 bg-white p-12 text-center">
-      <p class="text-slate-500">Nenhum hábito criado ainda.</p>
+    <div v-if="habitStore.habits.length === 0" class="border-2 border-primary/30 bg-card-solo p-12 text-center">
+      <p class="text-white/60">Nenhum hábito criado ainda.</p>
       <button
         @click="showForm = true"
-        class="mt-4 inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2 text-white hover:brightness-95"
+        class="mt-4 inline-flex items-center gap-2 border-2 border-primary bg-primary/20 px-4 py-2 text-white font-bold hover:bg-primary/30 glow-cyan transition-all"
       >
         <span class="material-symbols-rounded">add</span>
         Criar primeiro hábito
@@ -94,31 +94,31 @@
       <div
         v-for="habit in habitStore.habits"
         :key="habit.id"
-        class="rounded-xl border border-slate-200 bg-white p-4 shadow-card"
+        class="border-2 border-primary/50 bg-card-solo p-4 hover:border-primary hover:glow-cyan transition-all"
       >
         <div class="flex items-start justify-between">
           <div>
-            <h3 class="font-medium">{{ habit.name }}</h3>
-            <p class="text-sm text-slate-500">{{ habit.category || 'Geral' }}</p>
-            <p class="mt-1 text-xs text-slate-400">Streak: {{ habit.streak }} dias</p>
+            <h3 class="font-bold text-white mb-1">{{ habit.name }}</h3>
+            <p class="text-sm text-white/70">{{ habit.category || 'Geral' }}</p>
+            <p class="mt-1 text-xs text-white/60">Streak: <span class="text-primary font-bold text-glow">{{ habit.streak }} dias</span></p>
           </div>
-          <span class="rounded-full bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700">
+          <span class="px-2 py-1 text-xs font-bold font-solo border-2 border-primary/50 bg-primary/10 text-primary">
             {{ habit.frequency === 'daily' ? 'Diário' : 'Semanal' }}
           </span>
         </div>
         <div class="mt-4 flex items-center gap-2">
           <button
             @click="editHabit(habit)"
-            class="inline-flex items-center gap-2 rounded-xl border border-slate-200 px-3 py-2 text-sm hover:bg-slate-50"
+            class="inline-flex items-center gap-2 border-2 border-primary/50 bg-primary/10 px-3 py-2 text-sm hover:border-primary hover:bg-primary/20 transition-all text-white font-semibold"
           >
-            <span class="material-symbols-rounded">edit</span>
+            <span class="material-symbols-rounded text-sm">edit</span>
             Editar
           </button>
           <button
             @click="deleteHabit(habit.id)"
-            class="inline-flex items-center gap-2 rounded-xl border border-red-200 px-3 py-2 text-sm text-red-600 hover:bg-red-50"
+            class="inline-flex items-center gap-2 border-2 border-red-500/50 bg-red-500/10 px-3 py-2 text-sm text-red-400 hover:border-red-500 hover:bg-red-500/20 transition-all font-semibold"
           >
-            <span class="material-symbols-rounded">delete</span>
+            <span class="material-symbols-rounded text-sm">delete</span>
             Eliminar
           </button>
         </div>

@@ -1,11 +1,12 @@
 <template>
-  <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-card text-center">
-    <div class="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full"
-         :class="isLocked ? 'bg-slate-100 text-slate-400' : 'bg-primary/10 text-primary'">
-      <span class="material-symbols-rounded text-2xl">{{ icon }}</span>
+  <div class="border-2 bg-card-solo p-4 text-center transition-all"
+       :class="isLocked ? 'opacity-40 border-primary/20' : 'border-primary/50 hover:border-primary hover:glow-cyan'">
+    <div class="mx-auto mb-3 flex h-16 w-16 items-center justify-center border-2"
+         :class="isLocked ? 'bg-black/50 border-primary/20 text-white/30' : 'bg-primary/20 border-primary text-primary glow-cyan'">
+      <span class="material-symbols-rounded text-4xl">{{ icon }}</span>
     </div>
-    <p class="font-medium">{{ title }}</p>
-    <p class="text-sm text-slate-500">{{ description }}</p>
+    <p class="font-bold text-white mb-1">{{ title }}</p>
+    <p class="text-xs text-white/60">{{ description }}</p>
   </div>
 </template>
 

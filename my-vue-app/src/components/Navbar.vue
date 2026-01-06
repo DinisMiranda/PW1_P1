@@ -1,29 +1,87 @@
 <template>
-  <header class="sticky top-0 z-10 border-b border-slate-200 bg-white/80 backdrop-blur">
+  <header class="sticky top-0 z-10 border-b-2 border-primary/50 bg-black/40 backdrop-blur-md">
     <div class="w-full px-0 py-4 flex items-center justify-between">
       <!-- left group: logo + nav -->
       <div class="flex items-center gap-6">
-        <router-link to="/" class="flex items-center gap-2 pl-4">
-          <img :src="logo" alt="LevelUp Habits" class="h-6 w-6">
-          <h1 class="text-xl font-semibold tracking-tight font-display">LevelUp Habits</h1>
+        <router-link to="/" class="flex items-center gap-2 pl-4 group">
+          <span class="material-symbols-rounded text-primary">bolt</span>
+          <h1 class="text-xl font-bold font-solo tracking-tight text-glow text-primary">LevelUp Habits</h1>
         </router-link>
 
         <nav v-if="authStore.isAuthenticated" class="hidden md:flex items-center gap-6 text-sm ml-6">
-          <router-link to="/" class="hover:text-primary" active-class="text-primary font-medium">Dashboard</router-link>
-          <router-link to="/habits" class="hover:text-primary" active-class="text-primary font-medium">Hábitos</router-link>
-          <router-link to="/stats" class="hover:text-primary" active-class="text-primary font-medium">Estatísticas</router-link>
-          <router-link to="/badges" class="hover:text-primary" active-class="text-primary font-medium">Badges</router-link>
+          <router-link 
+            to="/" 
+            class="hover:text-primary transition-all duration-200 relative font-semibold text-white"
+            active-class="text-primary"
+          >
+            Dashboard
+            <span v-if="$route.path === '/'" class="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary glow-cyan"></span>
+          </router-link>
+          <router-link 
+            to="/habits" 
+            class="hover:text-primary transition-all duration-200 relative font-semibold text-white"
+            active-class="text-primary"
+          >
+            Hábitos
+            <span v-if="$route.path === '/habits'" class="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary glow-cyan"></span>
+          </router-link>
+          <router-link 
+            to="/stats" 
+            class="hover:text-primary transition-all duration-200 relative font-semibold text-white"
+            active-class="text-primary"
+          >
+            Estatísticas
+            <span v-if="$route.path === '/stats'" class="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary glow-cyan"></span>
+          </router-link>
+          <router-link 
+            to="/badges" 
+            class="hover:text-primary transition-all duration-200 relative font-semibold text-white"
+            active-class="text-primary"
+          >
+            Badges
+            <span v-if="$route.path === '/badges'" class="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary glow-cyan"></span>
+          </router-link>
+          <router-link 
+            to="/character" 
+            class="hover:text-primary transition-all duration-200 relative font-semibold text-white"
+            active-class="text-primary"
+          >
+            Personagem
+            <span v-if="$route.path === '/character'" class="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary glow-cyan"></span>
+          </router-link>
+          <router-link 
+            to="/inventory" 
+            class="hover:text-primary transition-all duration-200 relative font-semibold text-white"
+            active-class="text-primary"
+          >
+            Inventário
+            <span v-if="$route.path === '/inventory'" class="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary glow-cyan"></span>
+          </router-link>
+          <router-link 
+            to="/battle" 
+            class="hover:text-primary transition-all duration-200 relative font-semibold text-white"
+            active-class="text-primary"
+          >
+            Batalha
+            <span v-if="$route.path === '/battle'" class="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary glow-cyan"></span>
+          </router-link>
         </nav>
       </div>
 
       <!-- right group: action buttons -->
       <div v-if="authStore.isAuthenticated" class="flex items-center gap-2 pr-4">
-        <router-link to="/habits" class="inline-flex items-center gap-2 rounded-xl bg-primary px-3 py-2 text-white hover:brightness-95">
-          <span class="material-symbols-rounded">add</span>
-          <span class="text-sm font-medium">Novo Hábito</span>
+        <router-link 
+          to="/habits" 
+          class="inline-flex items-center gap-2 border-2 border-primary bg-primary/20 px-4 py-2 text-white font-bold hover:bg-primary/30 transition-all glow-cyan"
+        >
+          <span class="material-symbols-rounded text-sm">add</span>
+          <span class="text-sm">Novo Hábito</span>
         </router-link>
-        <button @click="handleLogout" class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 hover:bg-slate-50">
-          <span class="material-symbols-rounded">logout</span>
+        <button 
+          @click="handleLogout" 
+          class="inline-flex items-center gap-2 border-2 border-primary/50 bg-primary/10 px-3 py-2 hover:border-primary hover:bg-primary/20 transition-all text-white"
+        >
+          <span class="material-symbols-rounded text-sm">logout</span>
         </button>
       </div>
     </div>
