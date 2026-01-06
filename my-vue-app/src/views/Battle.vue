@@ -2,6 +2,16 @@
   <div>
     <h2 class="mb-6 text-2xl font-bold font-solo text-white uppercase tracking-wider">Batalha</h2>
 
+    <!-- Modal de Batalha -->
+    <BattleModal
+      :is-open="showBattleModal"
+      :player-stats="playerStats"
+      :enemy-stats="enemyStats"
+      :phase-name="battleStore.currentPhaseData.name"
+      @close="closeBattleModal"
+      @battle-finished="handleBattleFinished"
+    />
+
     <!-- Fase Atual -->
     <div class="mb-6 border-2 border-primary/50 bg-card-solo p-6">
       <div class="flex items-center justify-between mb-4">
@@ -55,10 +65,10 @@
       <!-- Botão de Batalha -->
       <button
         @click="startBattle"
-        :disabled="battleStore.isInBattle"
+        :disabled="showBattleModal"
         class="w-full border-2 border-primary bg-primary/20 px-6 py-4 text-white font-bold font-solo uppercase tracking-wider hover:bg-primary/30 glow-cyan transition-all disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        {{ battleStore.isInBattle ? 'A Batalhar...' : 'Iniciar Batalha' }}
+        {{ showBattleModal ? 'A Batalhar...' : 'Iniciar Batalha' }}
       </button>
 
       <!-- Resultado da Batalha -->
@@ -105,16 +115,19 @@
 </template>
 
 <script setup>
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useBattleStore } from '../stores/battle'
 import { useCharacterStore } from '../stores/character'
 import { useItemStore } from '../stores/items'
 import { useUserStore } from '../stores/user'
+import BattleModal from '../components/BattleModal.vue'
 
 const battleStore = useBattleStore()
 const characterStore = useCharacterStore()
 const itemStore = useItemStore()
 const userStore = useUserStore()
+
+const showBattleModal = ref(false)
 
 onMounted(() => {
   battleStore.init()
@@ -122,9 +135,16 @@ onMounted(() => {
 
 const playerStats = computed(() => {
   if (!characterStore.characterType) {
-    return { hp: 0, attack: 0, defense: 0, speed: 0 }
+    return { hp: 0, maxHP: 0, attack: 0, defense: 0, speed: 0 }
   }
   return battleStore.calculatePlayerStats(characterStore, itemStore)
+})
+
+const enemyStats = computed(() => {
+  return {
+    hp: battleStore.currentPhaseData.enemyHP,
+    attack: battleStore.currentPhaseData.enemyAttack
+  }
 })
 
 function startBattle() {
@@ -132,7 +152,20 @@ function startBattle() {
     alert('Precisas criar um personagem primeiro!')
     return
   }
-  battleStore.startBattle(characterStore, itemStore)
+  showBattleModal.value = true
+}
+
+function closeBattleModal() {
+  showBattleModal.value = false
+}
+
+function handleBattleFinished(result) {
+  // Processar resultado da batalha
+  battleStore.processBattleResult(result, characterStore, itemStore)
+  // Fechar modal após um pequeno delay para mostrar resultado
+  setTimeout(() => {
+    showBattleModal.value = false
+  }, 1000)
 }
 </script>
 

@@ -69,34 +69,14 @@ export const useBattleStore = defineStore('battle', () => {
     
     isInBattle.value = true
     battleResult.value = null
-    
-    const player = calculatePlayerStats(characterStore, itemStore)
-    const enemy = {
-      hp: currentPhaseData.value.enemyHP,
-      maxHP: currentPhaseData.value.enemyHP,
-      attack: currentPhaseData.value.enemyAttack
-    }
+    return true
+  }
 
-    // Simulação de batalha simples (turn-based)
-    let playerHP = player.maxHP
-    let enemyHP = enemy.hp
+  function processBattleResult(result, characterStore, itemStore) {
+    isInBattle.value = false
+    battleResult.value = result
     
-    while (playerHP > 0 && enemyHP > 0) {
-      // Player ataca
-      const playerDamage = Math.max(1, player.attack - (enemy.attack * 0.1))
-      enemyHP -= playerDamage
-      
-      if (enemyHP <= 0) break
-      
-      // Enemy ataca
-      const enemyDamage = Math.max(1, enemy.attack - (player.defense * 0.1))
-      playerHP -= enemyDamage
-    }
-
-    const won = playerHP > 0
-    
-    let boxesGained = 0
-    if (won) {
+    if (result.won) {
       // Avançar para próxima fase
       if (currentPhase.value < phases.value.length) {
         currentPhase.value++
@@ -105,22 +85,13 @@ export const useBattleStore = defineStore('battle', () => {
       // Dar recompensa de item, alinhado ao tipo de personagem
       itemStore.generateItem(currentPhaseData.value.reward, characterStore.characterType || 'generic')
 
-      // Caixas: ganha entre 1 e 6 por fase vencida
-      boxesGained = Math.floor(Math.random() * 6) + 1
-      itemStore.addBox('phase1', boxesGained)
+      // Caixas: usar o valor que veio do modal
+      if (result.boxesGained > 0) {
+        itemStore.addBox('phase1', result.boxesGained)
+      }
     }
 
-    battleResult.value = {
-      won,
-      playerHP: Math.max(0, playerHP),
-      enemyHP: Math.max(0, enemyHP),
-      boxesGained
-    }
-
-    isInBattle.value = false
     saveState()
-    
-    return won
   }
 
   function init() {
@@ -136,6 +107,7 @@ export const useBattleStore = defineStore('battle', () => {
     isInBattle,
     battleResult,
     startBattle,
+    processBattleResult,
     calculatePlayerStats,
     init,
     initPhases,
