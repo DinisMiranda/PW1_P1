@@ -1,7 +1,7 @@
 {
   "users": [
     {
-      "id": 1,
+      "id": "1",
       "username": "admin",
       "email": "admin@example.com",
       "password": "admin123",
@@ -9,17 +9,57 @@
       "createdAt": "2024-01-01T00:00:00.000Z"
     },
     {
-      "id": 2,
+      "id": "2",
       "username": "user",
       "email": "user@example.com",
       "password": "user123",
       "role": "user",
       "createdAt": "2024-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "c0c0",
+      "username": "henrique",
+      "email": "blabla@gmail.com",
+      "password": "1234",
+      "role": "user",
+      "createdAt": "2026-01-21T12:09:47.177Z"
+    },
+    {
+      "id": "3ee1",
+      "username": "adsad",
+      "email": "132132@ee",
+      "password": "1234",
+      "role": "user",
+      "createdAt": "2026-01-21T12:20:07.165Z"
+    },
+    {
+      "id": "aec2",
+      "username": "adasd",
+      "email": "mfspod+s@qdasd",
+      "password": "1234",
+      "role": "user",
+      "createdAt": "2026-01-21T12:20:52.860Z"
+    },
+    {
+      "id": "14ba",
+      "username": "xicles",
+      "email": "xicles@gmail.com",
+      "password": "1234",
+      "role": "user",
+      "createdAt": "2026-01-21T19:33:32.199Z"
+    },
+    {
+      "id": "f94b",
+      "username": "blahblah",
+      "email": "blaah@gmail",
+      "password": "1234",
+      "role": "user",
+      "createdAt": "2026-01-21T19:34:17.150Z"
     }
   ],
   "userData": [
     {
-      "id": 1,
+      "id": "1",
       "userId": 1,
       "xp": 0,
       "level": 1,
@@ -27,17 +67,59 @@
       "streak": 0
     },
     {
-      "id": 2,
+      "id": "2",
       "userId": 2,
       "xp": 150,
       "level": 2,
-      "badges": ["primeiro-passo"],
+      "badges": [
+        "primeiro-passo"
+      ],
       "streak": 5
+    },
+    {
+      "id": "252d",
+      "userId": "c0c0",
+      "xp": 0,
+      "level": 1,
+      "badges": [],
+      "streak": 0
+    },
+    {
+      "id": "7c12",
+      "userId": "3ee1",
+      "xp": 0,
+      "level": 1,
+      "badges": [],
+      "streak": 0
+    },
+    {
+      "id": "73fb",
+      "userId": "aec2",
+      "xp": 0,
+      "level": 1,
+      "badges": [],
+      "streak": 0
+    },
+    {
+      "id": "03d4",
+      "userId": "14ba",
+      "xp": 0,
+      "level": 1,
+      "badges": [],
+      "streak": 0
+    },
+    {
+      "id": "4a63",
+      "userId": "f94b",
+      "xp": 0,
+      "level": 1,
+      "badges": [],
+      "streak": 0
     }
   ],
   "habits": [
     {
-      "id": 1,
+      "id": "1",
       "userId": 1,
       "name": "Exercitar-se",
       "category": "Saúde",
@@ -50,7 +132,7 @@
       "createdAt": "2024-01-15T10:00:00.000Z"
     },
     {
-      "id": 2,
+      "id": "2",
       "userId": 2,
       "name": "Ler 30 minutos",
       "category": "Educação",
@@ -69,7 +151,7 @@
       "createdAt": "2024-01-10T08:00:00.000Z"
     },
     {
-      "id": 3,
+      "id": "3",
       "userId": 2,
       "name": "Meditar",
       "category": "Bem-estar",
@@ -88,7 +170,7 @@
   ],
   "items": [
     {
-      "id": 1,
+      "id": "1",
       "userId": 2,
       "name": "Espada Simples",
       "slot": "mainhand",
@@ -103,7 +185,7 @@
       "equipped": false
     },
     {
-      "id": 2,
+      "id": "2",
       "userId": 2,
       "name": "Capacete de Ferro",
       "slot": "helmet",
@@ -118,7 +200,7 @@
       "equipped": true
     },
     {
-      "id": 3,
+      "id": "3",
       "userId": 2,
       "name": "Peitoral de Couro",
       "slot": "chestplate",
@@ -133,7 +215,7 @@
       "equipped": false
     },
     {
-      "id": 4,
+      "id": "4",
       "userId": 2,
       "name": "Botas Ágeis",
       "slot": "boots",
@@ -150,14 +232,14 @@
   ],
   "lootBoxes": [
     {
-      "id": 1,
+      "id": "1",
       "userId": 1,
       "boxes": {
         "phase1": 0
       }
     },
     {
-      "id": 2,
+      "id": "2",
       "userId": 2,
       "boxes": {
         "phase1": 3,
@@ -168,7 +250,7 @@
   ],
   "characters": [
     {
-      "id": 1,
+      "id": "1",
       "userId": 1,
       "characterType": null,
       "stats": {
@@ -181,22 +263,48 @@
       "level": 1
     },
     {
-      "id": 2,
+      "id": "2",
       "userId": 2,
       "characterType": "warrior",
       "stats": {
-        "str": 12,
-        "vit": 11,
-        "agi": 10,
-        "int": 10
+        "str": 14,
+        "vit": 12,
+        "agi": 8,
+        "int": 6
       },
       "availablePoints": 3,
       "level": 2
+    },
+    {
+      "id": "ee9b",
+      "userId": "14ba",
+      "characterType": "mage",
+      "stats": {
+        "str": 6,
+        "vit": 8,
+        "agi": 10,
+        "int": 14
+      },
+      "availablePoints": 0,
+      "level": 1
+    },
+    {
+      "id": "15d6",
+      "userId": "f94b",
+      "characterType": "assassin",
+      "stats": {
+        "str": 11,
+        "vit": 8,
+        "agi": 14,
+        "int": 7
+      },
+      "availablePoints": 0,
+      "level": 1
     }
   ],
   "battles": [
     {
-      "id": 1,
+      "id": "1",
       "userId": 1,
       "currentPhase": 1,
       "phases": [
@@ -259,7 +367,7 @@
       ]
     },
     {
-      "id": 2,
+      "id": "2",
       "userId": 2,
       "currentPhase": 3,
       "phases": [
@@ -367,4 +475,3 @@
     }
   ]
 }
-

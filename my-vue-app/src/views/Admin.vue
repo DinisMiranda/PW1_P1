@@ -10,7 +10,7 @@
 
     <!-- Tabs -->
     <div class="mb-6 flex gap-2 border-b-2 border-primary/30">
-      <button
+          <button
         v-for="tab in tabs"
         :key="tab.id"
         @click="activeTab = tab.id"
@@ -29,7 +29,7 @@
     <div v-if="activeTab === 'dashboard'" class="space-y-6">
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div class="border-2 border-primary/50 bg-card-solo p-4">
-          <p class="text-xs font-solo uppercase tracking-widest text-primary/80 mb-2">Nível do Usuário</p>
+          <p class="text-xs font-solo uppercase tracking-widest text-primary/80 mb-2">Nível do Utilizador</p>
           <p class="text-3xl font-bold font-solo text-white text-glow">{{ userStore.level }}</p>
         </div>
         <div class="border-2 border-primary/50 bg-card-solo p-4">
@@ -85,7 +85,7 @@
       </div>
     </div>
 
-    <!-- Gerenciar Fases Tab -->
+    <!-- Gerir Fases Tab -->
     <div v-if="activeTab === 'phases'" class="space-y-6">
       <div class="flex items-center justify-between">
         <h3 class="text-xl font-bold font-solo text-white uppercase tracking-wider">Fases de Batalha</h3>
@@ -131,18 +131,18 @@
             >
               Editar
             </button>
-            <button
-              @click="deletePhase(phase.id)"
-              class="flex-1 border-2 border-red-500/50 bg-red-500/10 px-3 py-2 text-sm hover:border-red-500 hover:bg-red-500/20 transition-all text-white"
-            >
-              Deletar
-            </button>
+              <button
+                @click="deletePhase(phase.id)"
+                class="flex-1 border-2 border-red-500/50 bg-red-500/10 px-3 py-2 text-sm hover:border-red-500 hover:bg-red-500/20 transition-all text-white"
+              >
+                Eliminar
+              </button>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Gerenciar Itens Tab -->
+    <!-- Gerir Itens Tab -->
     <div v-if="activeTab === 'items'" class="space-y-6">
       <div class="flex items-center justify-between">
         <h3 class="text-xl font-bold font-solo text-white uppercase tracking-wider">Criar Item Personalizado</h3>
@@ -272,7 +272,7 @@
       </div>
     </div>
 
-    <!-- Ajustes de Usuário Tab -->
+    <!-- Ajustes de Utilizador Tab -->
     <div v-if="activeTab === 'user'" class="space-y-6">
       <div class="border-2 border-primary/50 bg-card-solo p-6">
         <h3 class="mb-4 font-bold font-solo text-primary uppercase tracking-wider">Ajustar XP e Nível</h3>
@@ -316,7 +316,7 @@
       </div>
 
       <div class="border-2 border-primary/50 bg-card-solo p-6">
-        <h3 class="mb-4 font-bold font-solo text-primary uppercase tracking-wider">Gerenciar Badges</h3>
+        <h3 class="mb-4 font-bold font-solo text-primary uppercase tracking-wider">Gerir Badges</h3>
         <div class="space-y-4">
           <div>
             <p class="mb-2 text-sm text-white/80">Badges desbloqueadas: {{ userStore.badges.length }}</p>
@@ -365,25 +365,25 @@
                 @click="resetAllData"
                 class="border-2 border-red-500 bg-red-500/20 px-6 py-3 text-white font-bold hover:bg-red-500/30 transition-all"
               >
-                Resetar Todos os Dados
+                Reiniciar Todos os Dados
               </button>
               <button
                 @click="resetHabits"
                 class="border-2 border-red-500 bg-red-500/20 px-6 py-3 text-white font-bold hover:bg-red-500/30 transition-all"
               >
-                Resetar Hábitos
+                Reiniciar Hábitos
               </button>
               <button
                 @click="resetInventory"
                 class="border-2 border-red-500 bg-red-500/20 px-6 py-3 text-white font-bold hover:bg-red-500/30 transition-all"
               >
-                Resetar Inventário
+                Reiniciar Inventário
               </button>
               <button
                 @click="resetBattle"
                 class="border-2 border-red-500 bg-red-500/20 px-6 py-3 text-white font-bold hover:bg-red-500/30 transition-all"
               >
-                Resetar Batalhas
+                Reiniciar Batalhas
               </button>
             </div>
           </div>
@@ -424,7 +424,7 @@ const tabs = [
   { id: 'dashboard', label: 'Dashboard' },
   { id: 'phases', label: 'Fases' },
   { id: 'items', label: 'Itens' },
-  { id: 'user', label: 'Usuário' },
+  { id: 'user', label: 'Utilizador' },
   { id: 'system', label: 'Sistema' }
 ]
 
@@ -479,7 +479,7 @@ function editPhase(phase) {
 }
 
 function deletePhase(phaseId) {
-  if (confirm('Tem certeza que deseja deletar esta fase?')) {
+  if (confirm('Tem a certeza que deseja eliminar esta fase?')) {
     battleStore.phases = battleStore.phases.filter(p => p.id !== phaseId)
     battleStore.saveState()
   }
@@ -549,36 +549,36 @@ function addBadge(badgeId) {
 }
 
 function resetAllData() {
-  if (confirm('Tem CERTEZA que deseja resetar TODOS os dados? Esta ação é irreversível!')) {
+  if (confirm('Tem a certeza que deseja reiniciar TODOS os dados? Esta ação é irreversível!')) {
     localStorage.clear()
     location.reload()
   }
 }
 
 function resetHabits() {
-  if (confirm('Resetar todos os hábitos?')) {
+  if (confirm('Reiniciar todos os hábitos?')) {
     habitStore.habits = []
     habitStore.saveHabits()
-    alert('Hábitos resetados!')
+    alert('Hábitos reiniciados!')
   }
 }
 
 function resetInventory() {
-  if (confirm('Resetar inventário e itens equipados?')) {
+  if (confirm('Reiniciar inventário e itens equipados?')) {
     itemStore.inventory = []
     itemStore.equippedItems = []
     itemStore.saveState()
-    alert('Inventário resetado!')
+    alert('Inventário reiniciado!')
   }
 }
 
 function resetBattle() {
-  if (confirm('Resetar progresso de batalhas?')) {
+  if (confirm('Reiniciar progresso de batalhas?')) {
     battleStore.currentPhase = 1
     battleStore.phases = []
     battleStore.initPhases()
     battleStore.saveState()
-    alert('Batalhas resetadas!')
+    alert('Batalhas reiniciadas!')
   }
 }
 

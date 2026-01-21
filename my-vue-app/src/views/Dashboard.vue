@@ -29,25 +29,25 @@
         </section>
 
         <!-- Habit list -->
-        <section class="space-y-4">
-        <div class="flex items-center justify-between">
+        <section class="space-y-4 flex flex-col items-center">
+        <div class="flex items-center justify-between w-full max-w-sm mx-auto">
           <h3 class="text-base font-bold font-solo text-white uppercase tracking-wider">Hábitos de hoje</h3>
-          <div v-if="habitStore.activeHabits.length > 0" class="text-xs text-white/70">
+          <div v-if="habitStore.activeHabits.length > 0" class="text-xs text-white/80 bg-black/30 border border-primary/40 px-2 py-1 rounded">
             {{ slideIndex + 1 }} / {{ habitStore.activeHabits.length }}
           </div>
         </div>
-        <div v-if="habitStore.activeHabits.length === 0" class="border-2 border-primary/30 bg-card-solo p-6 text-center text-white/60">
+        <div v-if="habitStore.activeHabits.length === 0" class="border-2 border-primary/30 bg-card-solo p-6 text-center text-white/60 w-full max-w-sm mx-auto">
           <p>Nenhum hábito criado ainda.</p>
           <router-link to="/habits" class="mt-2 inline-block text-primary hover:text-primary/80 transition-colors font-semibold">
             Criar primeiro hábito →
           </router-link>
         </div>
-        <div v-else class="relative">
+        <div v-else class="relative w-full max-w-sm mx-auto">
           <transition name="slide-fade" mode="out-in">
             <div
               v-if="currentHabit"
               :key="currentHabit.id"
-              class="max-w-sm mx-auto border-2 border-primary/50 bg-card-solo p-2 hover:border-primary hover:glow-cyan transition-all min-h-[72px]"
+              class="w-full border-2 border-primary/50 bg-card-solo p-2 hover:border-primary hover:glow-cyan transition-all min-h-[72px]"
             >
               <div class="flex items-start justify-between">
                 <div>
@@ -85,7 +85,7 @@
           <button
             v-if="habitStore.activeHabits.length > 1"
             @click="prevHabit"
-            class="absolute -left-3 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full border-2 border-primary/50 bg-primary/10 text-white hover:border-primary hover:bg-primary/20 transition-all flex items-center justify-center"
+            class="absolute -left-6 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full border-2 border-primary/50 bg-primary/10 text-white hover:border-primary hover:bg-primary/20 transition-all flex items-center justify-center"
             aria-label="Anterior"
           >
             ‹
@@ -93,7 +93,7 @@
           <button
             v-if="habitStore.activeHabits.length > 1"
             @click="nextHabit"
-            class="absolute -right-3 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full border-2 border-primary/50 bg-primary/10 text-white hover:border-primary hover:bg-primary/20 transition-all flex items-center justify-center"
+            class="absolute -right-6 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full border-2 border-primary/50 bg-primary/10 text-white hover:border-primary hover:bg-primary/20 transition-all flex items-center justify-center"
             aria-label="Seguinte"
           >
             ›

@@ -16,6 +16,11 @@ const router = createRouter({
       component: () => import('../views/Login.vue')
     },
     {
+      path: '/register',
+      name: 'Register',
+      component: () => import('../views/Register.vue')
+    },
+    {
       path: '/habits',
       name: 'Habits',
       component: () => import('../views/Habits.vue'),
@@ -65,6 +70,8 @@ router.beforeEach((to, from, next) => {
   const authStore = useAuthStore()
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
     next('/login')
+  } else if ((to.path === '/login' || to.path === '/register') && authStore.isAuthenticated) {
+    next('/')
   } else if (to.meta.requiresAdmin && !authStore.isAdmin) {
     next('/')
   } else {

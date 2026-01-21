@@ -123,14 +123,17 @@
 import { computed } from 'vue'
 import { useCharacterStore } from '../stores/character'
 import { useItemStore } from '../stores/items'
+import { useAuthStore } from '../stores/auth'
 
 const characterStore = useCharacterStore()
 const itemStore = useItemStore()
+const authStore = useAuthStore()
 
 const characterTypes = ['Guerreiro', 'Mago', 'Arqueiro', 'Assassino']
 
 function createCharacter(type) {
-  characterStore.createCharacter(type)
+  const userId = authStore.user?.id
+  characterStore.createCharacter(type, userId)
 }
 
 const totalStats = computed(() => {
