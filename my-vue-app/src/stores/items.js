@@ -20,42 +20,57 @@ const ROLE_KEYS = {
   assassin: 'assassin'
 }
 
-const ITEM_IMAGES = {
+const RARITY_TIERS = {
+  common: 1,
+  uncommon: 2,
+  rare: 3,
+  epic: 4,
+  legendary: 5
+}
+
+const ROLE_ASSET_DIRS = {
+  warrior: 'guerreiro',
+  mage: 'mago',
+  archer: 'arqueiro',
+  assassin: 'assassino'
+}
+
+const SLOT_ASSETS = {
   warrior: {
-    mainhand: new URL('../imagens/personagens/guerreiro/espada.png', import.meta.url).href,
-    offhand: new URL('../imagens/personagens/guerreiro/escudo.png', import.meta.url).href,
-    helmet: new URL('../imagens/personagens/guerreiro/capacete.png', import.meta.url).href,
-    chestplate: new URL('../imagens/personagens/guerreiro/peitoral.png', import.meta.url).href,
-    leggings: new URL('../imagens/personagens/guerreiro/calcas.png', import.meta.url).href,
-    boots: new URL('../imagens/personagens/guerreiro/botas.png', import.meta.url).href,
-    belt: new URL('../imagens/personagens/guerreiro/cinto.png', import.meta.url).href
+    mainhand: { folder: 'espada', prefix: 'espada' },
+    offhand: { folder: 'escudo', prefix: 'escudo' },
+    helmet: { folder: 'capacete', prefix: 'capacete' },
+    chestplate: { folder: 'peito', prefix: 'peito' },
+    boots: { folder: 'bota', prefix: 'bota' },
+    belt: { folder: 'acessorio', prefix: 'anel' },
+    amulet: { folder: 'amuletos', prefix: 'amuleto' }
   },
   mage: {
-    mainhand: new URL('../imagens/personagens/mago/cajado.png', import.meta.url).href,
-    offhand: new URL('../imagens/personagens/mago/orbe.png', import.meta.url).href,
-    helmet: new URL('../imagens/personagens/mago/capuz arcano.png', import.meta.url).href,
-    chestplate: new URL('../imagens/personagens/mago/manto arcano.png', import.meta.url).href,
-    leggings: new URL('../imagens/personagens/mago/calcas arcanas.png', import.meta.url).href,
-    boots: new URL('../imagens/personagens/mago/botas arcanas.png', import.meta.url).href,
-    belt: new URL('../imagens/personagens/mago/cinto arcano.png', import.meta.url).href
+    mainhand: { folder: 'cajado', prefix: 'cajado' },
+    offhand: { folder: 'orbe', prefix: 'orbe' },
+    helmet: { folder: 'capacete', prefix: 'capacete' },
+    chestplate: { folder: 'peito', prefix: 'peito' },
+    boots: { folder: 'bota', prefix: 'bota' },
+    belt: { folder: 'acessorio', prefix: 'anel' },
+    amulet: { folder: 'amuletos', prefix: 'amuleto' }
   },
   archer: {
-    mainhand: new URL('../imagens/personagens/arqueiro/arco.png', import.meta.url).href,
-    offhand: new URL('../imagens/personagens/arqueiro/besta.png', import.meta.url).href,
-    helmet: new URL('../imagens/personagens/arqueiro/capuz cacador.png', import.meta.url).href,
-    chestplate: new URL('../imagens/personagens/arqueiro/peitural cacador.png', import.meta.url).href,
-    leggings: new URL('../imagens/personagens/arqueiro/calcas cacador.png', import.meta.url).href,
-    boots: new URL('../imagens/personagens/arqueiro/botas cacador.png', import.meta.url).href,
-    belt: new URL('../imagens/personagens/arqueiro/cinto cacador.png', import.meta.url).href
+    mainhand: { folder: 'arco', prefix: 'arco' },
+    offhand: { folder: 'besta', prefix: 'besta' },
+    helmet: { folder: 'capacete', prefix: 'capacete' },
+    chestplate: { folder: 'peito', prefix: 'peito' },
+    boots: { folder: 'bota', prefix: 'bota' },
+    belt: { folder: 'acessorio', prefix: 'anel' },
+    amulet: { folder: 'amuletos', prefix: 'amuleto' }
   },
   assassin: {
-    mainhand: new URL('../imagens/personagens/assassino/adaga.png', import.meta.url).href,
-    offhand: new URL('../imagens/personagens/assassino/lamina curta.png', import.meta.url).href,
-    helmet: new URL('../imagens/personagens/assassino/capuz sombrio.png', import.meta.url).href,
-    chestplate: new URL('../imagens/personagens/assassino/peitural sombrio.png', import.meta.url).href,
-    leggings: new URL('../imagens/personagens/assassino/calcas sobrio.png', import.meta.url).href,
-    boots: new URL('../imagens/personagens/assassino/botas sobrio.png', import.meta.url).href,
-    belt: new URL('../imagens/personagens/assassino/cinto leve.png', import.meta.url).href
+    mainhand: { folder: 'adaga', prefix: 'adaga' },
+    offhand: { folder: 'faca', prefix: 'faca' },
+    helmet: { folder: 'capacete', prefix: 'capacete' },
+    chestplate: { folder: 'peito', prefix: 'peito' },
+    boots: { folder: 'bota', prefix: 'bota' },
+    belt: { folder: 'acessorio', prefix: 'anel' },
+    amulet: { folder: 'amuletos', prefix: 'amuleto' }
   }
 }
 
@@ -65,36 +80,36 @@ const ROLE_SLOT_NAMES = {
     offhand: 'Orbe',
     helmet: 'Capuz Arcano',
     chestplate: 'Manto Arcano',
-    leggings: 'Calças Arcanas',
     boots: 'Botas Etéreas',
-    belt: 'Faixa Rúnica'
+    belt: 'Anel Rúnico',
+    amulet: 'Amuleto Arcano'
   },
   assassin: {
     mainhand: 'Adaga',
-    offhand: 'Lâmina Curta',
+    offhand: 'Lâmina',
     helmet: 'Capuz Sombrio',
     chestplate: 'Couraça Leve',
-    leggings: 'Calças Ágeis',
     boots: 'Botas Silenciosas',
-    belt: 'Cinto Oculto'
+    belt: 'Anel Oculto',
+    amulet: 'Amuleto Sombrio'
   },
   archer: {
     mainhand: 'Arco',
     offhand: 'Besta',
     helmet: 'Capuz do Caçador',
     chestplate: 'Peitoral de Couro',
-    leggings: 'Calças do Ranger',
     boots: 'Botas do Ranger',
-    belt: 'Cinto de Flechas'
+    belt: 'Anel do Ranger',
+    amulet: 'Amuleto do Caçador'
   },
   warrior: {
     mainhand: 'Espada',
     offhand: 'Escudo',
     helmet: 'Capacete de Guerra',
     chestplate: 'Peitoral Reforçado',
-    leggings: 'Calças de Placas',
     boots: 'Botas Blindadas',
-    belt: 'Cinto de Batalha'
+    belt: 'Anel de Batalha',
+    amulet: 'Amuleto do Guerreiro'
   }
 }
 
@@ -104,9 +119,29 @@ function normalizeRole(role) {
   return ROLE_KEYS[key] || 'generic'
 }
 
-function getItemImage(role, slot) {
+function extractTierFromName(name) {
+  if (!name) return null
+  const match = name.toString().match(/([1-5])/)
+  if (!match) return null
+  const tier = parseInt(match[1], 10)
+  return Math.min(5, Math.max(1, tier))
+}
+
+function resolveTierFromNameOrRarity(name, rarity) {
+  const tierFromName = extractTierFromName(name)
+  if (tierFromName) return tierFromName
+  return Math.min(5, Math.max(1, RARITY_TIERS[rarity] || 1))
+}
+
+function getItemImage(role, slot, name = '', rarity = 'common') {
   const roleKey = normalizeRole(role)
-  return ITEM_IMAGES[roleKey]?.[slot] || ITEM_IMAGES.warrior?.[slot] || null
+  const resolvedRole = SLOT_ASSETS[roleKey] ? roleKey : 'warrior'
+  const slotConfig = SLOT_ASSETS[resolvedRole]?.[slot] || SLOT_ASSETS.warrior?.[slot]
+  if (!slotConfig) return null
+
+  const tier = resolveTierFromNameOrRarity(name, rarity)
+  const roleDir = ROLE_ASSET_DIRS[resolvedRole] || ROLE_ASSET_DIRS.warrior
+  return new URL(`../imagens/personagens/${roleDir}/${slotConfig.folder}/${slotConfig.prefix}${tier}.png`, import.meta.url).href
 }
 
 export const useItemStore = defineStore('items', () => {
@@ -120,15 +155,25 @@ export const useItemStore = defineStore('items', () => {
     localStorage.setItem('lootBoxes', JSON.stringify(lootBoxes.value))
   }
 
+  function cleanupLegacySlots() {
+    const beforeInv = inventory.value.length
+    const beforeEq = equippedItems.value.length
+    inventory.value = inventory.value.filter(i => i.slot !== 'leggings')
+    equippedItems.value = equippedItems.value.filter(i => i.slot !== 'leggings')
+    if (beforeInv !== inventory.value.length || beforeEq !== equippedItems.value.length) {
+      saveState()
+    }
+  }
+
   function resolveSlotName(slot, role = 'generic') {
     const genericMap = {
       mainhand: 'Mão Principal',
       offhand: 'Mão Secundária',
       helmet: 'Capacete',
       chestplate: 'Peitoral',
-      leggings: 'Calças',
       boots: 'Botas',
-      belt: 'Cinto'
+      belt: 'Acessório',
+      amulet: 'Amuleto'
     }
 
     const roleKey = normalizeRole(role)
@@ -164,15 +209,16 @@ export const useItemStore = defineStore('items', () => {
       stats[stat]++
     }
 
-    const slots = ['mainhand', 'offhand', 'helmet', 'chestplate', 'leggings', 'boots', 'belt']
+    const slots = ['mainhand', 'offhand', 'helmet', 'chestplate', 'boots', 'belt', 'amulet']
     const slot = slots[Math.floor(Math.random() * slots.length)]
 
     const roleKey = normalizeRole(role)
     const slotName = resolveSlotName(slot, roleKey)
+    const tier = RARITY_TIERS[rarity] || 1
 
     const item = enrichItem({
       id: Date.now() + Math.random(),
-      name: slotName,
+      name: `${slotName} ${tier}`,
       rarity,
       stats,
       slot,
@@ -219,9 +265,14 @@ export const useItemStore = defineStore('items', () => {
       int: (base.stats.int || 0) + (material.stats.int || 0) + 1
     }
 
+    const slotLabel = resolveSlotName(base.slot, roleKey)
+    const tier = RARITY_TIERS[nextRarity] || resolveTierFromNameOrRarity(base.name, nextRarity)
+    const shouldRefreshName = (base.name || '').toLowerCase().startsWith(slotLabel.toLowerCase())
+    const upgradedName = shouldRefreshName ? `${slotLabel} ${tier}` : base.name
+
     const upgraded = enrichItem({
       id: Date.now() + Math.random(),
-      name: base.name, // mantém o nome original
+      name: upgradedName,
       rarity: nextRarity,
       stats: mergedStats,
       slot: base.slot,
@@ -258,7 +309,7 @@ export const useItemStore = defineStore('items', () => {
     return {
       ...item,
       role: roleKey,
-      image: item.image || getItemImage(roleKey, item.slot)
+      image: item.image || getItemImage(roleKey, item.slot, item.name, item.rarity)
     }
   }
 
@@ -301,18 +352,21 @@ export const useItemStore = defineStore('items', () => {
       offhand: 'Mão Secundária',
       helmet: 'Capacete',
       chestplate: 'Peitoral',
-      leggings: 'Calças',
       boots: 'Botas',
-      belt: 'Cinto'
+      belt: 'Acessório',
+      amulet: 'Amuleto'
     }
     return slotNames[slot] || slot
   }
 
   function init() {
+    cleanupLegacySlots()
     inventory.value = inventory.value.map(enrichItem)
     equippedItems.value = equippedItems.value.map(enrichItem)
     saveState()
   }
+
+  cleanupLegacySlots()
 
   return {
     inventory,

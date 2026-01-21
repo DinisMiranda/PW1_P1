@@ -16,7 +16,12 @@
         <section class="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <div class="border-2 border-primary/50 bg-card-solo p-4 hover:border-primary hover:glow-cyan transition-all">
             <p class="text-xs font-solo uppercase tracking-widest text-primary/80 mb-2">Streak atual</p>
-            <p class="text-3xl font-bold font-solo text-white text-glow">{{ maxStreak }} 🔥</p>
+            <div class="flex items-center gap-3">
+              <div class="h-12 w-12 flex items-center justify-center">
+                <img v-if="maxStreakImage" :src="maxStreakImage" alt="Streak" class="h-12 w-12 object-contain" />
+              </div>
+              <p class="text-3xl font-bold font-solo text-white text-glow">{{ maxStreak }} dias</p>
+            </div>
           </div>
           <div class="border-2 border-primary/50 bg-card-solo p-4 hover:border-primary hover:glow-cyan transition-all">
             <p class="text-xs font-solo uppercase tracking-widest text-primary/80 mb-2">Hábitos ativos</p>
@@ -125,6 +130,12 @@ import LevelIndicator from '../components/LevelIndicator.vue'
 import StreakCounter from '../components/StreakCounter.vue'
 import XPBar from '../components/XPBar.vue'
 
+const streakImages = {
+  1: new URL('../imagens/streak/streak1.png', import.meta.url).href,
+  2: new URL('../imagens/streak/streak2.png', import.meta.url).href,
+  3: new URL('../imagens/streak/streak3.png', import.meta.url).href
+}
+
 const habitStore = useHabitStore()
 const userStore = useUserStore()
 const characterStore = useCharacterStore()
@@ -142,6 +153,18 @@ const today = new Date().toISOString().split('T')[0]
 const maxStreak = computed(() => {
   if (habitStore.activeHabits.length === 0) return 0
   return Math.max(...habitStore.activeHabits.map(h => h.streak))
+})
+
+function resolveStreakLevel(days) {
+  if (days >= 8) return 3
+  if (days >= 4) return 2
+  if (days >= 1) return 1
+  return 0
+}
+
+const maxStreakImage = computed(() => {
+  const level = resolveStreakLevel(maxStreak.value)
+  return level ? streakImages[level] : null
 })
 
 const completionRate = computed(() => {

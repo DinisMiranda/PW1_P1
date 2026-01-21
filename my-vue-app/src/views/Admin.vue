@@ -172,9 +172,9 @@
                 <option value="offhand">Mão Secundária</option>
                 <option value="helmet">Capacete</option>
                 <option value="chestplate">Peitoral</option>
-                <option value="leggings">Calças</option>
                 <option value="boots">Botas</option>
-                <option value="belt">Cinto</option>
+                <option value="belt">Acessório (Anel)</option>
+                <option value="amulet">Amuleto</option>
               </select>
             </div>
             <div>

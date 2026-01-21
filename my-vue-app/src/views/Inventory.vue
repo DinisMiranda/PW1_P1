@@ -26,14 +26,20 @@
           />
         </div>
 
-        <!-- Linha do Meio: Offhand - Personagem - Mainhand -->
-        <div class="flex items-center justify-center gap-6 mb-4">
-          <!-- Offhand (Esquerda) -->
-          <EquipmentSlot 
-            slot="offhand" 
-            :item="getEquippedItem('offhand')"
-            @unequip="unequipItem"
-          />
+        <!-- Linha do Meio: Colunas com acessório/arma -->
+        <div class="flex items-start justify-center gap-8 mb-4">
+          <div class="flex flex-col items-center gap-2">
+            <EquipmentSlot 
+              slot="offhand" 
+              :item="getEquippedItem('offhand')"
+              @unequip="unequipItem"
+            />
+            <EquipmentSlot 
+              slot="belt" 
+              :item="getEquippedItem('belt')"
+              @unequip="unequipItem"
+            />
+          </div>
 
           <!-- Personagem no Centro -->
           <div class="flex flex-col items-center justify-center">
@@ -51,33 +57,25 @@
             </div>
           </div>
 
-          <!-- Mainhand (Direita) -->
-          <EquipmentSlot 
-            slot="mainhand" 
-            :item="getEquippedItem('mainhand')"
-            @unequip="unequipItem"
-          />
+          <div class="flex flex-col items-center gap-2">
+            <EquipmentSlot 
+              slot="mainhand" 
+              :item="getEquippedItem('mainhand')"
+              @unequip="unequipItem"
+            />
+            <EquipmentSlot 
+              slot="amulet" 
+              :item="getEquippedItem('amulet')"
+              @unequip="unequipItem"
+            />
+          </div>
         </div>
 
-        <!-- Slot: Belt (Meio) -->
-        <div class="flex justify-center mb-4">
-          <EquipmentSlot 
-            slot="belt" 
-            :item="getEquippedItem('belt')"
-            @unequip="unequipItem"
-          />
-        </div>
-
-        <!-- Slots Inferiores: Chestplate, Leggings, Boots -->
-        <div class="flex justify-center gap-4">
+        <!-- Slots Inferiores: Chestplate, Boots -->
+        <div class="flex justify-center gap-6">
           <EquipmentSlot 
             slot="chestplate" 
             :item="getEquippedItem('chestplate')"
-            @unequip="unequipItem"
-          />
-          <EquipmentSlot 
-            slot="leggings" 
-            :item="getEquippedItem('leggings')"
             @unequip="unequipItem"
           />
           <EquipmentSlot 
@@ -104,7 +102,7 @@
           @click="equipItem(item.id)"
         >
           <div class="flex-1 flex flex-col gap-1 pr-2">
-            <p class="font-bold text-white text-sm">{{ item.name }}</p>
+            <p class="font-bold text-white text-sm">{{ formatItemName(item.name) }}</p>
             <p class="text-xs text-white/60">{{ itemStore.getRarityInfo(item.rarity).name }}</p>
             <p class="text-xs text-primary/80">{{ itemStore.getSlotName(item.slot) }}</p>
             <div class="text-xs text-white/80 space-y-0.5">
@@ -189,6 +187,11 @@ function upgradeItem(itemId) {
   if (!upgraded) {
     alert('Não foi possível fazer upgrade.')
   }
+}
+
+function formatItemName(name) {
+  if (!name) return ''
+  return name.toString().replace(/\s*\d+$/, '')
 }
 
 function getRarityClass(rarity) {
