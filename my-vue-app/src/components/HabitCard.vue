@@ -23,7 +23,8 @@
 
 <script setup>
 import { computed } from 'vue'
-defineProps({
+
+const props = defineProps({
   title: { type: String, default: 'Hábito' },
   subtitle: { type: String, default: 'Descrição' },
   frequency: { type: String, default: 'Diário' },
@@ -37,7 +38,7 @@ const badgeColor = computed(() => {
     sky: 'bg-primary/20 text-primary border-primary/50',
     amber: 'bg-amber-500/20 text-amber-400 border-amber-500/50'
   }
-  return map[color] || map.emerald
+  return map[props.color] || map.emerald
 })
 </script>
 
