@@ -2,15 +2,46 @@
 
 Este diretório contém os testes para os componentes reais do projeto, baseados nos conceitos do PowerPoint **M05 – Testing**.
 
-## 📋 Testes dos Componentes Reais
+## 📋 Estrutura dos Testes
 
-Todos os testes aqui testam componentes **reais** do projeto:
-- ✅ `BadgeCard.spec.js` - Testa o componente BadgeCard
-- ✅ `HabitCard.spec.js` - Testa o componente HabitCard  
-- ✅ `LevelIndicator.spec.js` - Testa o componente LevelIndicator
-- ✅ `Router.spec.js` - Testa navegação de rotas
+Todos os testes seguem os **4 tipos principais** do PowerPoint, com **exatamente 3 testes de cada tipo**:
 
-Estes testes garantem que os componentes funcionam corretamente na aplicação real.
+- ✅ **Basic Rendering** - 3 testes
+- ✅ **Interaction** - 3 testes
+- ✅ **Prop Change** - 3 testes
+- ✅ **Component Rendering Based on Route** - 3 testes
+
+**Total: 12 testes**
+
+---
+
+## 📁 Ficheiros de Teste
+
+### BadgeCard.spec.js (9 testes)
+Testa o componente `BadgeCard.vue` com os 3 primeiros tipos de testes:
+
+#### 1. Basic Rendering (3 testes)
+- Renderiza com props padrão
+- Renderiza com props customizadas
+- Renderiza o ícone corretamente
+
+#### 2. Interaction (3 testes)
+- Mostra estado locked quando `isLocked` é `true`
+- Mostra estado unlocked quando `isLocked` é `false`
+- Aplica estilos diferentes para locked vs unlocked
+
+#### 3. Prop Change (3 testes)
+- Atualiza quando `isLocked` muda
+- Atualiza quando `title` muda
+- Atualiza quando `description` muda
+
+### Router.spec.js (3 testes)
+Testa renderização baseada em rotas:
+
+#### 4. Component Rendering Based on Route (3 testes)
+- Renderiza componente Login quando rota é `/login`
+- Renderiza componente Register quando rota é `/register`
+- Navega corretamente entre rotas
 
 ---
 
@@ -25,8 +56,7 @@ Estes testes garantem que os componentes funcionam corretamente na aplicação r
 - ✅ Os elementos HTML estão presentes?
 
 **Testes:**
-- `BadgeCard.spec.js` - Verifica se renderiza título e descrição
-- `HabitCard.spec.js` - Verifica se renderiza informações do hábito
+- `BadgeCard.spec.js` - Verifica renderização com props padrão e customizadas
 
 ---
 
@@ -39,7 +69,7 @@ Estes testes garantem que os componentes funcionam corretamente na aplicação r
 - ✅ Os eventos são disparados corretamente?
 
 **Testes:**
-- `BadgeCard.spec.js` - Verifica se muda de estado (locked/unlocked)
+- `BadgeCard.spec.js` - Verifica mudança de estado (locked/unlocked) baseado em props
 
 ---
 
@@ -52,8 +82,7 @@ Estes testes garantem que os componentes funcionam corretamente na aplicação r
 - ✅ Os valores padrão funcionam?
 
 **Testes:**
-- `BadgeCard.spec.js` - Verifica mudança de `isLocked` e `title`
-- `HabitCard.spec.js` - Verifica mudança de props de cor e frequência
+- `BadgeCard.spec.js` - Verifica mudança de `isLocked`, `title` e `description`
 
 ---
 
@@ -70,54 +99,6 @@ Estes testes garantem que os componentes funcionam corretamente na aplicação r
 
 ---
 
-## 📁 Estrutura dos Testes
-
-#### BadgeCard (Componente Real)
-**Ficheiro:** `BadgeCard.spec.js`  
-**Componente:** `src/components/BadgeCard.vue` (componente real do projeto)
-
-**O que testa:**
-- ✅ Renderização básica com props padrão e customizadas
-- ✅ Estado locked/unlocked (interação visual)
-- ✅ Mudança dinâmica de props (isLocked, title)
-
-**Porque é importante:** Garante que o componente de badges funciona corretamente na aplicação real.
-
-#### HabitCard (Componente Real)
-**Ficheiro:** `HabitCard.spec.js`  
-**Componente:** `src/components/HabitCard.vue` (componente real do projeto)
-
-**O que testa:**
-- ✅ Renderização de informações do hábito
-- ✅ Aplicação de classes CSS baseadas em props
-- ✅ Botões presentes e funcionais
-
-**Porque é importante:** Garante que os cartões de hábitos exibem informação correta.
-
-#### LevelIndicator (Componente Real)
-**Ficheiro:** `LevelIndicator.spec.js`  
-**Componente:** `src/components/LevelIndicator.vue` (componente real do projeto)
-
-**O que testa:**
-- ✅ Integração com Pinia Store
-- ✅ Exibição do nível do utilizador
-- ✅ Atualização quando o nível muda
-
-**Porque é importante:** Garante que o indicador de nível sincroniza com o store.
-
----
-
-## 🎯 Resumo: O Que Cada Teste Avalia
-
-| Tipo de Teste | O Que Avalia | Exemplo |
-|--------------|--------------|---------|
-| **Basic Rendering** | Se renderiza corretamente | Texto aparece? Elementos existem? |
-| **Interaction** | Se reage a ações do utilizador | Botão funciona? Estado muda? |
-| **Prop Change** | Se atualiza com novas props | UI muda quando props mudam? |
-| **Route Rendering** | Se mostra componente correto | Rota `/login` mostra Login? |
-
----
-
 ## 🚀 Como Executar
 
 ```bash
@@ -129,7 +110,7 @@ npm run test:unit -- --watch
 
 # Executar um ficheiro específico
 npm run test:unit -- BadgeCard.spec.js
-npm run test:unit -- HabitCard.spec.js
+npm run test:unit -- Router.spec.js
 
 # Interface gráfica
 npm run test:unit -- --ui
@@ -140,15 +121,15 @@ npm run test:unit -- --ui
 ## 📊 Resultado Atual
 
 ```
-✓ Test Files  4 passed (4)
-✓ Tests  14 passed (14)
+✓ Test Files  2 passed (2)
+✓ Tests  12 passed (12)
 ```
 
-**Testes de Componentes Reais:**
-- ✅ BadgeCard.spec.js (6 testes) - Basic Rendering, Interaction, Prop Change
-- ✅ HabitCard.spec.js (4 testes) - Renderização e props
-- ✅ LevelIndicator.spec.js (2 testes) - Integração com Pinia Store
-- ✅ Router.spec.js (2 testes) - Component Rendering Based on Route
+**Distribuição dos Testes:**
+- ✅ Basic Rendering: 3 testes (BadgeCard)
+- ✅ Interaction: 3 testes (BadgeCard)
+- ✅ Prop Change: 3 testes (BadgeCard)
+- ✅ Component Rendering Based on Route: 3 testes (Router)
 
 ---
 
@@ -163,6 +144,99 @@ npm run test:unit -- --ui
 
 ---
 
+## 🎯 Conceitos Principais
+
+### 1. **mount() vs shallowMount()**
+- `mount()`: Monta componente completo (inclui filhos)
+- `shallowMount()`: Monta apenas o componente (stubs filhos)
+
+### 2. **Wrapper Methods**
+- `wrapper.text()`: Texto renderizado
+- `wrapper.html()`: HTML renderizado
+- `wrapper.find()`: Encontra elemento
+- `wrapper.findAll()`: Encontra todos os elementos
+- `wrapper.trigger()`: Dispara evento
+- `wrapper.setProps()`: Muda props
+- `wrapper.emitted()`: Verifica eventos emitidos
+
+### 3. **Matchers (Expect)**
+- `toBe()`: Igualdade estrita (===)
+- `toEqual()`: Igualdade profunda
+- `toContain()`: Contém valor
+- `toBeTruthy()`: É verdadeiro
+- `toBeFalsy()`: É falso
+- `toHaveClass()`: Tem classe CSS
+
+### 4. **Testando com Pinia**
+```javascript
+import { createPinia, setActivePinia } from 'pinia'
+
+beforeEach(() => {
+  setActivePinia(createPinia())
+})
+
+it('uses store', () => {
+  const store = useUserStore()
+  store.level = 5
+  
+  const wrapper = mount(Component)
+  expect(wrapper.text()).toContain('5')
+})
+```
+
+### 5. **Testando com Router**
+```javascript
+import { createRouter, createWebHistory } from 'vue-router'
+
+beforeEach(() => {
+  router = createRouter({
+    history: createWebHistory(),
+    routes: [
+      { path: '/login', component: Login }
+    ]
+  })
+})
+
+it('renders component for route', async () => {
+  router.push('/login')
+  await router.isReady()
+  
+  const wrapper = mount(Login, {
+    global: { plugins: [router] }
+  })
+  
+  expect(wrapper.exists()).toBe(true)
+})
+```
+
+---
+
+## ✅ Boas Práticas
+
+1. **Um teste, uma coisa**: Cada teste deve verificar uma funcionalidade
+2. **Nomes descritivos**: `it('should render title when prop is provided')`
+3. **Arrange-Act-Assert**: Organiza o teste em 3 partes
+4. **Isolamento**: Cada teste deve ser independente
+5. **Limpeza**: Use `beforeEach` e `afterEach` para setup/cleanup
+
+### Exemplo de estrutura AAA:
+```javascript
+it('should update level when XP increases', async () => {
+  // Arrange (Preparar)
+  const store = useUserStore()
+  store.xp = 0
+  store.level = 1
+  
+  // Act (Ação)
+  store.gainXP(100)
+  
+  // Assert (Verificar)
+  expect(store.level).toBe(2)
+})
+```
+
+---
+
 ## 🔄 Próximos Passos
 
 Para testar mais componentes existentes, podes criar testes para:
@@ -171,5 +245,19 @@ Para testar mais componentes existentes, podes criar testes para:
 - `EquipmentSlot.vue` - Slot de equipamento
 - `Navbar.vue` - Barra de navegação
 - `Footer.vue` - Rodapé
+- `HabitCard.vue` - Cartão de hábito
 
 **Padrão:** Seguir os mesmos tipos de teste (Rendering, Interaction, Prop Change) mas aplicados aos componentes reais.
+
+---
+
+## 📚 Recursos
+
+- [Vitest Documentation](https://vitest.dev/)
+- [Vue Test Utils](https://test-utils.vuejs.org/)
+- [Testing Vue.js Applications](https://vuejs.org/guide/scaling-up/testing.html)
+
+---
+
+**Última atualização**: 2025
+**Estrutura**: 12 testes (3 de cada tipo)
