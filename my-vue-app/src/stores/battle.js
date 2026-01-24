@@ -7,6 +7,14 @@ export const useBattleStore = defineStore('battle', () => {
   const isInBattle = ref(false)
   const battleResult = ref(null)
 
+  const fallbackPhase = {
+    id: 1,
+    name: 'Fase 1: Iniciante',
+    enemyHP: 100,
+    enemyAttack: 10,
+    reward: 'common'
+  }
+
   // Inicializar fases se não existirem
   function initPhases() {
     if (phases.value.length === 0) {
@@ -24,7 +32,7 @@ export const useBattleStore = defineStore('battle', () => {
   }
 
   const currentPhaseData = computed(() => {
-    return phases.value.find(p => p.id === currentPhase.value) || phases.value[0]
+    return phases.value.find(p => p.id === currentPhase.value) || phases.value[0] || fallbackPhase
   })
 
   const unlockedPhases = computed(() => {
@@ -97,6 +105,11 @@ export const useBattleStore = defineStore('battle', () => {
   function init() {
     initPhases()
     saveState()
+  }
+
+  // Garantir que ao criar o store temos fases carregadas
+  if (!phases.value.length) {
+    initPhases()
   }
 
   return {

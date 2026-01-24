@@ -18,7 +18,7 @@
     <div class="mb-8 border-2 border-primary/50 bg-card-solo p-6">
       <div class="max-w-4xl mx-auto">
         <!-- Slot: Helmet (Topo) -->
-        <div class="flex justify-center mb-4">
+        <div class="flex justify-center mb-5">
           <EquipmentSlot 
             slot="helmet" 
             :item="getEquippedItem('helmet')"

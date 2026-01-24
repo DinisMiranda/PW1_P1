@@ -32,6 +32,8 @@
       </form>
       <p v-if="error" class="mt-4 text-sm text-red-400 font-semibold">{{ error }}</p>
       <p class="mt-4 text-xs text-white/60 text-center">
+        Ainda não tem conta?
+        <router-link to="/register" class="text-primary font-semibold hover:underline">Criar conta</router-link>
       </p>
     </div>
   </div>

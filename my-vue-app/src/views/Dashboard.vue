@@ -34,55 +34,81 @@
         </section>
 
         <!-- Habit list -->
-        <section class="space-y-4">
-        <h3 class="text-base font-bold font-solo text-white uppercase tracking-wider">Hábitos de hoje</h3>
-        <div v-if="habitStore.activeHabits.length === 0" class="border-2 border-primary/30 bg-card-solo p-6 text-center text-white/60">
+        <section class="space-y-4 flex flex-col items-center">
+        <div class="flex items-center justify-between w-full max-w-sm mx-auto">
+          <h3 class="text-base font-bold font-solo text-white uppercase tracking-wider">Hábitos de hoje</h3>
+          <div v-if="habitStore.activeHabits.length > 0" class="text-xs text-white/80 bg-black/30 border border-primary/40 px-2 py-1 rounded">
+            {{ slideIndex + 1 }} / {{ habitStore.activeHabits.length }}
+          </div>
+        </div>
+        <div v-if="habitStore.activeHabits.length === 0" class="border-2 border-primary/30 bg-card-solo p-6 text-center text-white/60 w-full max-w-sm mx-auto">
           <p>Nenhum hábito criado ainda.</p>
           <router-link to="/habits" class="mt-2 inline-block text-primary hover:text-primary/80 transition-colors font-semibold">
             Criar primeiro hábito →
           </router-link>
         </div>
-        <div
-          v-for="habit in habitStore.activeHabits.slice(0, 5)"
-          :key="habit.id"
-          class="border-2 border-primary/50 bg-card-solo p-4 hover:border-primary hover:glow-cyan transition-all"
-        >
-          <div class="flex items-start justify-between">
-            <div>
-              <h3 class="text-base font-bold text-white mb-1">{{ habit.name }}</h3>
-              <p class="text-sm text-white/70">{{ habit.category }}</p>
+        <div v-else class="relative w-full max-w-sm mx-auto">
+          <transition name="slide-fade" mode="out-in">
+            <div
+              v-if="currentHabit"
+              :key="currentHabit.id"
+              class="w-full border-2 border-primary/50 bg-card-solo p-2 hover:border-primary hover:glow-cyan transition-all min-h-[72px]"
+            >
+              <div class="flex items-start justify-between">
+                <div>
+                  <h3 class="text-sm font-bold text-white mb-1">{{ currentHabit.name }}</h3>
+                  <p class="text-xs text-white/70">{{ currentHabit.category }}</p>
+                </div>
+                <span class="px-2 py-1 text-[10px] font-bold font-solo border-2 border-primary/50 bg-primary/10 text-primary">
+                  {{ currentHabit.frequency === 'daily' ? 'Diário' : currentHabit.frequency }}
+                </span>
+              </div>
+              <div class="mt-3 flex items-center gap-2">
+                <button
+                  @click="toggleHabit(currentHabit.id)"
+                  :class="[
+                    'inline-flex items-center gap-2 px-3 py-2 text-xs font-semibold transition-all',
+                    isCompletedToday(currentHabit.id)
+                      ? 'border-2 border-xp bg-xp text-[#0f131c] glow-cyan'
+                      : 'border-2 border-primary/50 bg-primary/10 hover:border-primary hover:bg-primary/20 text-white'
+                  ]"
+                >
+                  <span class="material-symbols-rounded text-sm">{{ isCompletedToday(currentHabit.id) ? 'check_circle' : 'radio_button_unchecked' }}</span>
+                  {{ isCompletedToday(currentHabit.id) ? 'Concluído' : 'Marcar' }}
+                </button>
+                <router-link
+                  :to="`/habits?edit=${currentHabit.id}`"
+                  class="inline-flex items-center gap-2 border-2 border-primary/50 bg-primary/10 px-3 py-2 text-xs hover:border-primary hover:bg-primary/20 transition-all text-white font-semibold"
+                >
+                  <span class="material-symbols-rounded text-sm">edit</span>
+                  Editar
+                </router-link>
+              </div>
             </div>
-            <span class="px-2 py-1 text-xs font-bold font-solo border-2 border-primary/50 bg-primary/10 text-primary">
-              {{ habit.frequency === 'daily' ? 'Diário' : habit.frequency }}
-            </span>
-          </div>
-          <div class="mt-4 flex items-center gap-2">
-            <button
-              @click="toggleHabit(habit.id)"
-              :class="[
-                'inline-flex items-center gap-2 px-3 py-2 text-sm font-semibold transition-all',
-                isCompletedToday(habit.id)
-                  ? 'border-2 border-xp bg-xp text-[#0f131c] glow-cyan'
-                  : 'border-2 border-primary/50 bg-primary/10 hover:border-primary hover:bg-primary/20 text-white'
-              ]"
-            >
-              <span class="material-symbols-rounded text-sm">{{ isCompletedToday(habit.id) ? 'check_circle' : 'radio_button_unchecked' }}</span>
-              {{ isCompletedToday(habit.id) ? 'Concluído' : 'Marcar' }}
-            </button>
-            <router-link
-              :to="`/habits?edit=${habit.id}`"
-              class="inline-flex items-center gap-2 border-2 border-primary/50 bg-primary/10 px-3 py-2 text-sm hover:border-primary hover:bg-primary/20 transition-all text-white font-semibold"
-            >
-              <span class="material-symbols-rounded text-sm">edit</span>
-              Editar
-            </router-link>
-          </div>
+          </transition>
+
+          <button
+            v-if="habitStore.activeHabits.length > 1"
+            @click="prevHabit"
+            class="absolute -left-6 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full border-2 border-primary/50 bg-primary/10 text-white hover:border-primary hover:bg-primary/20 transition-all flex items-center justify-center"
+            aria-label="Anterior"
+          >
+            ‹
+          </button>
+          <button
+            v-if="habitStore.activeHabits.length > 1"
+            @click="nextHabit"
+            class="absolute -right-6 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full border-2 border-primary/50 bg-primary/10 text-white hover:border-primary hover:bg-primary/20 transition-all flex items-center justify-center"
+            aria-label="Seguinte"
+          >
+            ›
+          </button>
         </div>
         </section>
       </div>
 
       <!-- Right column: calendar heatmap -->
-      <section class="border-2 border-primary/50 bg-card-solo p-3 sm:p-4 w-full lg:col-span-1 lg:ml-auto">
+      <section class="border-2 border-primary/50 bg-card-solo p-3 sm:p-4 w-full lg:col-span-1 lg:ml-auto self-start">
         <div class="flex items-center justify-between mb-4">
           <h2 class="text-lg font-bold font-solo text-white uppercase tracking-wider">{{ currentMonth }}</h2>
         </div>
@@ -122,7 +148,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useHabitStore } from '../stores/habit'
 import { useUserStore } from '../stores/user'
 import { useCharacterStore } from '../stores/character'
@@ -149,6 +175,24 @@ onMounted(() => {
 })
 
 const today = new Date().toISOString().split('T')[0]
+
+const slideIndex = ref(0)
+
+watch(
+  () => habitStore.activeHabits.length,
+  (len) => {
+    if (len === 0) {
+      slideIndex.value = 0
+    } else {
+      slideIndex.value = Math.min(slideIndex.value, len - 1)
+    }
+  }
+)
+
+const currentHabit = computed(() => {
+  if (habitStore.activeHabits.length === 0) return null
+  return habitStore.activeHabits[slideIndex.value] || null
+})
 
 const maxStreak = computed(() => {
   if (habitStore.activeHabits.length === 0) return 0
@@ -185,6 +229,16 @@ function toggleHabit(habitId) {
   userStore.updateStreak(max)
 }
 
+function nextHabit() {
+  if (habitStore.activeHabits.length === 0) return
+  slideIndex.value = (slideIndex.value + 1) % habitStore.activeHabits.length
+}
+
+function prevHabit() {
+  if (habitStore.activeHabits.length === 0) return
+  slideIndex.value = (slideIndex.value - 1 + habitStore.activeHabits.length) % habitStore.activeHabits.length
+}
+
 const currentMonth = computed(() => {
   return new Date().toLocaleDateString('pt-PT', { month: 'long', year: 'numeric' })
 })
@@ -213,4 +267,19 @@ const calendarDays = computed(() => {
 })
 </script>
 
-<style scoped></style>
+<style scoped>
+.slide-fade-enter-active,
+.slide-fade-leave-active {
+  transition: all 200ms ease;
+}
+
+.slide-fade-enter-from {
+  opacity: 0;
+  transform: translateY(6px) scale(0.98);
+}
+
+.slide-fade-leave-to {
+  opacity: 0;
+  transform: translateY(-6px) scale(0.98);
+}
+</style>

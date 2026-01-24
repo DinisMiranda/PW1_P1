@@ -145,14 +145,33 @@ function getItemImage(role, slot, name = '', rarity = 'common') {
 }
 
 export const useItemStore = defineStore('items', () => {
-  const inventory = ref(JSON.parse(localStorage.getItem('inventory') || '[]'))
-  const equippedItems = ref(JSON.parse(localStorage.getItem('equippedItems') || '[]'))
-  const lootBoxes = ref(JSON.parse(localStorage.getItem('lootBoxes') || '{"phase1":2}'))
+  const activeUserId = ref(localStorage.getItem('inventory_owner') || null)
+  const inventory = ref([])
+  const equippedItems = ref([])
+  const lootBoxes = ref({ phase1: 2 })
+
+  const storageKey = (base) => `${base}_${activeUserId.value || 'anon'}`
+
+  function loadState() {
+    inventory.value = JSON.parse(localStorage.getItem(storageKey('inventory')) || '[]')
+    equippedItems.value = JSON.parse(localStorage.getItem(storageKey('equippedItems')) || '[]')
+    lootBoxes.value = JSON.parse(localStorage.getItem(storageKey('lootBoxes')) || '{"phase1":2}')
+  }
 
   function saveState() {
-    localStorage.setItem('inventory', JSON.stringify(inventory.value))
-    localStorage.setItem('equippedItems', JSON.stringify(equippedItems.value))
-    localStorage.setItem('lootBoxes', JSON.stringify(lootBoxes.value))
+    localStorage.setItem('inventory_owner', activeUserId.value || '')
+    localStorage.setItem(storageKey('inventory'), JSON.stringify(inventory.value))
+    localStorage.setItem(storageKey('equippedItems'), JSON.stringify(equippedItems.value))
+    localStorage.setItem(storageKey('lootBoxes'), JSON.stringify(lootBoxes.value))
+  }
+
+  function setActiveUser(userId) {
+    activeUserId.value = userId || null
+    loadState()
+    // enrich images after load
+    inventory.value = inventory.value.map(enrichItem)
+    equippedItems.value = equippedItems.value.map(enrichItem)
+    saveState()
   }
 
   function cleanupLegacySlots() {
@@ -360,6 +379,7 @@ export const useItemStore = defineStore('items', () => {
   }
 
   function init() {
+    loadState()
     cleanupLegacySlots()
     inventory.value = inventory.value.map(enrichItem)
     equippedItems.value = equippedItems.value.map(enrichItem)
@@ -372,6 +392,7 @@ export const useItemStore = defineStore('items', () => {
     inventory,
     equippedItems,
     lootBoxes,
+    activeUserId,
     generateItem,
     removeItem,
     upgradeItems,
@@ -381,6 +402,7 @@ export const useItemStore = defineStore('items', () => {
     unequipItem,
     getRarityInfo,
     getSlotName,
+    setActiveUser,
     init
   }
 })
