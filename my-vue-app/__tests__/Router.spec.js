@@ -3,12 +3,11 @@ import { mount } from '@vue/test-utils'
 import { createRouter, createWebHistory } from 'vue-router'
 import { createPinia, setActivePinia } from 'pinia'
 import Login from '../src/views/Login.vue'
+import Register from '../src/views/Register.vue'
 
 /**
- * Exemplo 4: Component Rendering Based on Route
+ * 4. Component Rendering Based on Route - 3 testes
  * Testa renderização de componentes baseada na rota
- * 
- * Nota: Teste simplificado para evitar dependências complexas do App completo
  */
 describe('Router - Component Rendering Based on Route', () => {
   let router
@@ -38,6 +37,11 @@ describe('Router - Component Rendering Based on Route', () => {
           path: '/login',
           name: 'Login',
           component: Login
+        },
+        {
+          path: '/register',
+          name: 'Register',
+          component: Register
         }
       ]
     })
@@ -53,14 +57,38 @@ describe('Router - Component Rendering Based on Route', () => {
       }
     })
 
-    // Verifica se o componente Login está renderizado
     expect(wrapper.exists()).toBe(true)
+    expect(router.currentRoute.value.path).toBe('/login')
   })
 
-  it('router navigates to correct path', async () => {
-    await router.push('/login')
+  it('renders Register component when route is /register', async () => {
+    router.push('/register')
     await router.isReady()
 
+    const wrapper = mount(Register, {
+      global: {
+        plugins: [router, pinia]
+      }
+    })
+
+    expect(wrapper.exists()).toBe(true)
+    expect(router.currentRoute.value.path).toBe('/register')
+  })
+
+  it('navigates between routes correctly', async () => {
+    // Começa em /login
+    await router.push('/login')
+    await router.isReady()
+    expect(router.currentRoute.value.path).toBe('/login')
+
+    // Navega para /register
+    await router.push('/register')
+    await router.isReady()
+    expect(router.currentRoute.value.path).toBe('/register')
+
+    // Volta para /login
+    await router.push('/login')
+    await router.isReady()
     expect(router.currentRoute.value.path).toBe('/login')
   })
 })

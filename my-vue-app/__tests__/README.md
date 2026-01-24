@@ -1,23 +1,16 @@
-# Testes - Exemplos do PowerPoint
+# Testes - Componentes do Projeto
 
-Este diretório contém os testes baseados nos exemplos do PowerPoint **M05 – Testing**.
+Este diretório contém os testes para os componentes reais do projeto, baseados nos conceitos do PowerPoint **M05 – Testing**.
 
-## 🤔 Porque Componentes Novos vs Componentes Existentes?
+## 📋 Testes dos Componentes Reais
 
-### Componentes Novos (Exemplos do PowerPoint)
-Criei **3 componentes simples** (`Greeting.vue`, `ButtonCounter.vue`, `CounterWithProps.vue`) para seguir **exatamente** os exemplos do PowerPoint. Estes são:
-- **Mais simples** - Fáceis de entender para aprender conceitos
-- **Exemplos didáticos** - Seguem o formato exato do PowerPoint
-- **Isolados** - Sem dependências complexas (stores, routers, etc.)
-
-### Componentes Existentes (Testes Reais)
-**Já temos testes** para os componentes reais do projeto:
-- ✅ `BadgeCard.spec.js` - Testa o componente BadgeCard real
-- ✅ `HabitCard.spec.js` - Testa o componente HabitCard real  
-- ✅ `LevelIndicator.spec.js` - Testa o componente LevelIndicator real
+Todos os testes aqui testam componentes **reais** do projeto:
+- ✅ `BadgeCard.spec.js` - Testa o componente BadgeCard
+- ✅ `HabitCard.spec.js` - Testa o componente HabitCard  
+- ✅ `LevelIndicator.spec.js` - Testa o componente LevelIndicator
 - ✅ `Router.spec.js` - Testa navegação de rotas
 
-**Conclusão:** Ambos são importantes! Os novos são para aprender, os existentes são para garantir que o projeto funciona.
+Estes testes garantem que os componentes funcionam corretamente na aplicação real.
 
 ---
 
@@ -33,7 +26,7 @@ Criei **3 componentes simples** (`Greeting.vue`, `ButtonCounter.vue`, `CounterWi
 
 **Testes:**
 - `BadgeCard.spec.js` - Verifica se renderiza título e descrição
-- `Greeting.spec.js` - Verifica se mostra "Hello, World!"
+- `HabitCard.spec.js` - Verifica se renderiza informações do hábito
 
 ---
 
@@ -46,7 +39,6 @@ Criei **3 componentes simples** (`Greeting.vue`, `ButtonCounter.vue`, `CounterWi
 - ✅ Os eventos são disparados corretamente?
 
 **Testes:**
-- `ButtonCounter.spec.js` - Verifica se o contador incrementa ao clicar
 - `BadgeCard.spec.js` - Verifica se muda de estado (locked/unlocked)
 
 ---
@@ -61,7 +53,7 @@ Criei **3 componentes simples** (`Greeting.vue`, `ButtonCounter.vue`, `CounterWi
 
 **Testes:**
 - `BadgeCard.spec.js` - Verifica mudança de `isLocked` e `title`
-- `CounterWithProps.spec.js` - Verifica mudança de `step` e `initialCount`
+- `HabitCard.spec.js` - Verifica mudança de props de cor e frequência
 
 ---
 
@@ -79,50 +71,6 @@ Criei **3 componentes simples** (`Greeting.vue`, `ButtonCounter.vue`, `CounterWi
 ---
 
 ## 📁 Estrutura dos Testes
-
-### Exemplos do PowerPoint (Componentes Novos)
-
-#### Exemplo 1: Basic Rendering
-**Ficheiro:** `Greeting.spec.js`  
-**Componente:** `Greeting.vue` (criado para exemplo)
-
-```javascript
-it('renders greeting message correctly', () => {
-  const wrapper = mount(Greeting)
-  expect(wrapper.text()).toBe('Hello, World!')
-})
-```
-
-#### Exemplo 2: Interaction
-**Ficheiro:** `ButtonCounter.spec.js`  
-**Componente:** `ButtonCounter.vue` (criado para exemplo)
-
-```javascript
-it('increments count when button is clicked', async () => {
-  const wrapper = mount(ButtonCounter)
-  expect(wrapper.text()).toContain('0')
-  await wrapper.find('button').trigger('click')
-  expect(wrapper.text()).toContain('1')
-})
-```
-
-#### Exemplo 3: Prop Change
-**Ficheiro:** `CounterWithProps.spec.js`  
-**Componente:** `CounterWithProps.vue` (criado para exemplo)
-
-```javascript
-it('updates count when initialCount prop changes', async () => {
-  const wrapper = mount(CounterWithProps, {
-    props: { initialCount: 0 }
-  })
-  await wrapper.setProps({ initialCount: 10 })
-  expect(wrapper.props('initialCount')).toBe(10)
-})
-```
-
----
-
-### Testes dos Componentes Reais do Projeto
 
 #### BadgeCard (Componente Real)
 **Ficheiro:** `BadgeCard.spec.js`  
@@ -180,8 +128,8 @@ npm run test:unit
 npm run test:unit -- --watch
 
 # Executar um ficheiro específico
-npm run test:unit -- Greeting.spec.js
 npm run test:unit -- BadgeCard.spec.js
+npm run test:unit -- HabitCard.spec.js
 
 # Interface gráfica
 npm run test:unit -- --ui
@@ -192,34 +140,24 @@ npm run test:unit -- --ui
 ## 📊 Resultado Atual
 
 ```
-✓ Test Files  7 passed (7)
-✓ Tests  26 passed (26)
+✓ Test Files  4 passed (4)
+✓ Tests  14 passed (14)
 ```
 
-**Testes de Exemplos (PowerPoint):**
-- ✅ Greeting.spec.js (3 testes)
-- ✅ ButtonCounter.spec.js (4 testes)
-- ✅ CounterWithProps.spec.js (5 testes)
-
 **Testes de Componentes Reais:**
-- ✅ BadgeCard.spec.js (6 testes)
-- ✅ HabitCard.spec.js (4 testes)
-- ✅ LevelIndicator.spec.js (2 testes)
-- ✅ Router.spec.js (2 testes)
+- ✅ BadgeCard.spec.js (6 testes) - Basic Rendering, Interaction, Prop Change
+- ✅ HabitCard.spec.js (4 testes) - Renderização e props
+- ✅ LevelIndicator.spec.js (2 testes) - Integração com Pinia Store
+- ✅ Router.spec.js (2 testes) - Component Rendering Based on Route
 
 ---
 
-## 💡 Porque Ambos São Importantes?
+## 💡 Porque Testar Componentes Reais?
 
-### Componentes Novos (Exemplos)
-- ✅ **Aprendizagem** - Entender conceitos básicos
-- ✅ **Simplicidade** - Sem dependências complexas
-- ✅ **Referência** - Seguir exatamente o PowerPoint
-
-### Componentes Reais
 - ✅ **Qualidade** - Garantir que o projeto funciona
 - ✅ **Regressão** - Detetar bugs quando mudamos código
 - ✅ **Confiança** - Saber que as features funcionam
+- ✅ **Documentação** - Os testes servem como exemplos de uso
 
 **Idealmente:** Deves ter testes para TODOS os componentes importantes do projeto!
 
