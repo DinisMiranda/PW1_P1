@@ -1,7 +1,7 @@
 // API client para JSON Server
-// Para iniciar: json-server --watch db.json --port 3001
+// Para iniciar: json-server --watch db.json --port 3000
 
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
 
 async function request(endpoint, { method = 'GET', body = null, params = null } = {}) {
   const url = new URL(endpoint, BASE_URL)
