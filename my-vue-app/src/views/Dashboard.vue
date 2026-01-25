@@ -1,8 +1,8 @@
 <template>
   <div class="min-h-screen w-full px-4 sm:px-6 lg:px-10 py-6">
-    <div class="grid gap-6 lg:grid-cols-3">
-      <!-- Left column: widgets, stats, habits -->
-      <div class="space-y-6 lg:col-span-2">
+    <div class="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(320px,1fr)]">
+      <!-- Left column: widgets, stats, habits, recent activity -->
+      <div class="space-y-6">
         <!-- Gamification widgets -->
         <section class="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <LevelIndicator />
@@ -111,80 +111,75 @@
           </button>
         </div>
         </section>
+
+        <!-- Recent Activity Feed -->
+        <section class="border-2 border-primary/50 bg-card-solo p-4">
+          <h3 class="text-lg font-bold font-solo text-white uppercase tracking-wider mb-4">Atividades Recentes</h3>
+          <div v-if="recentActivities.length === 0" class="text-center py-8 text-white/60">
+            <span class="material-symbols-rounded text-4xl mb-2 block">history</span>
+            <p>Nenhuma atividade recente</p>
+            <p class="text-sm mt-1">Completa hábitos para ver o teu histórico aqui!</p>
+          </div>
+          <div v-else class="space-y-3 max-h-80 overflow-y-auto">
+            <div
+              v-for="activity in recentActivities"
+              :key="activity.id"
+              class="flex items-center gap-3 p-3 border-2 border-primary/30 bg-black/20 hover:border-primary/50 hover:bg-black/30 transition-all rounded"
+            >
+              <div class="flex-shrink-0 w-10 h-10 rounded-full border-2 border-xp bg-xp/20 flex items-center justify-center">
+                <span class="material-symbols-rounded text-xp text-xl">check_circle</span>
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-semibold text-white">{{ activity.habitName }}</p>
+                <p class="text-xs text-white/60">{{ activity.dateFormatted }}</p>
+              </div>
+              <div class="flex-shrink-0 text-right">
+                <p class="text-xs font-bold text-xp">+{{ activity.xp }} XP</p>
+                <p class="text-xs text-white/50">{{ activity.category }}</p>
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
 
-      <!-- Right column: calendar heatmap -->
-      <section class="border-2 border-primary/50 bg-card-solo p-3 sm:p-4 w-full lg:col-span-1 lg:ml-auto self-start">
-        <div class="flex items-center justify-between mb-4">
-          <h2 class="text-lg font-bold font-solo text-white uppercase tracking-wider">{{ currentMonth }}</h2>
-        </div>
-
-        <!-- Weekday labels -->
-        <div class="mt-4 grid grid-cols-7 text-center text-xs font-solo text-primary/80 uppercase tracking-wider justify-items-center">
-          <div>Dom</div>
-          <div>Seg</div>
-          <div>Ter</div>
-          <div>Qua</div>
-          <div>Qui</div>
-          <div>Sex</div>
-          <div>Sáb</div>
-        </div>
-
-        <!-- Grid -->
-        <div class="mt-2 grid grid-cols-7 gap-1 justify-items-center">
-          <div
-            v-for="day in calendarDays"
-            :key="day.date"
-            :class="[
-              'w-8 h-8 sm:w-9 sm:h-9 text-[11px] flex items-center justify-center font-bold transition-all border-2 rounded-full',
-              day.completed 
-                ? 'border-xp bg-xp text-[#0f131c] glow-cyan' 
-                : day.isToday 
-                  ? 'border-primary/70 bg-primary/20 text-primary' 
-                  : 'border-primary/20 bg-black/30 text-white/40'
-            ]"
-            :title="day.date"
-          >
-            <span v-if="day.date">{{ new Date(day.date).getDate() }}</span>
+      <!-- Right column: calendar + weekly stats + goals -->
+      <div class="space-y-6 self-start">
+        <section class="border-2 border-primary/50 bg-card-solo p-3 sm:p-4 w-full">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-bold font-solo text-white uppercase tracking-wider">{{ currentMonth }}</h2>
           </div>
-        </div>
-      </section>
-    </div>
 
-    <!-- Bottom section: Recent Activity, Weekly Stats, and Featured Badges -->
-    <div class="mt-8 grid gap-6 lg:grid-cols-3">
-      <!-- Recent Activity Feed -->
-      <section class="border-2 border-primary/50 bg-card-solo p-4 lg:col-span-2">
-        <h3 class="text-lg font-bold font-solo text-white uppercase tracking-wider mb-4">Atividades Recentes</h3>
-        <div v-if="recentActivities.length === 0" class="text-center py-8 text-white/60">
-          <span class="material-symbols-rounded text-4xl mb-2 block">history</span>
-          <p>Nenhuma atividade recente</p>
-          <p class="text-sm mt-1">Completa hábitos para ver o teu histórico aqui!</p>
-        </div>
-        <div v-else class="space-y-3 max-h-96 overflow-y-auto">
-          <div
-            v-for="activity in recentActivities"
-            :key="activity.id"
-            class="flex items-center gap-3 p-3 border-2 border-primary/30 bg-black/20 hover:border-primary/50 hover:bg-black/30 transition-all rounded"
-          >
-            <div class="flex-shrink-0 w-10 h-10 rounded-full border-2 border-xp bg-xp/20 flex items-center justify-center">
-              <span class="material-symbols-rounded text-xp text-xl">check_circle</span>
-            </div>
-            <div class="flex-1 min-w-0">
-              <p class="text-sm font-semibold text-white">{{ activity.habitName }}</p>
-              <p class="text-xs text-white/60">{{ activity.dateFormatted }}</p>
-            </div>
-            <div class="flex-shrink-0 text-right">
-              <p class="text-xs font-bold text-xp">+{{ activity.xp }} XP</p>
-              <p class="text-xs text-white/50">{{ activity.category }}</p>
+          <!-- Weekday labels -->
+          <div class="mt-4 grid grid-cols-7 text-center text-xs font-solo text-primary/80 uppercase tracking-wider justify-items-center">
+            <div>Dom</div>
+            <div>Seg</div>
+            <div>Ter</div>
+            <div>Qua</div>
+            <div>Qui</div>
+            <div>Sex</div>
+            <div>Sáb</div>
+          </div>
+
+          <!-- Grid -->
+          <div class="mt-2 grid grid-cols-7 gap-1 justify-items-center">
+            <div
+              v-for="day in calendarDays"
+              :key="day.date"
+              :class="[
+                'w-8 h-8 sm:w-9 sm:h-9 text-[11px] flex items-center justify-center font-bold transition-all border-2 rounded-full',
+                day.completed 
+                  ? 'border-xp bg-xp text-[#0f131c] glow-cyan' 
+                  : day.isToday 
+                    ? 'border-primary/70 bg-primary/20 text-primary' 
+                    : 'border-primary/20 bg-black/30 text-white/40'
+              ]"
+              :title="day.date"
+            >
+              <span v-if="day.date">{{ new Date(day.date).getDate() }}</span>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <!-- Weekly Stats & Featured Badges -->
-      <div class="space-y-6">
-        <!-- Weekly Stats -->
         <section class="border-2 border-primary/50 bg-card-solo p-4">
           <h3 class="text-lg font-bold font-solo text-white uppercase tracking-wider mb-4">Esta Semana</h3>
           <div class="space-y-4">
@@ -218,7 +213,6 @@
           </div>
         </section>
 
-        <!-- Next Objectives -->
         <section class="border-2 border-primary/50 bg-card-solo p-4">
           <h3 class="text-lg font-bold font-solo text-white uppercase tracking-wider mb-4">Próximos Objetivos</h3>
           <div v-if="nextObjectives.length === 0" class="text-center py-4 text-white/60 text-sm">

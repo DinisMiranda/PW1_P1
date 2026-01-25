@@ -604,12 +604,12 @@
     {
       "id": "ee9b",
       "userId": "14ba",
-      "characterType": "mage",
+      "characterType": "archer",
       "stats": {
-        "str": 6,
-        "vit": 8,
-        "agi": 10,
-        "int": 14
+        "str": 10,
+        "vit": 9,
+        "agi": 13,
+        "int": 8
       },
       "availablePoints": 0,
       "level": 1
@@ -643,38 +643,38 @@
     {
       "id": "c-u102",
       "userId": "u102",
-      "characterType": "warrior",
+      "characterType": null,
       "stats": {
-        "str": 16,
-        "vit": 13,
-        "agi": 9,
-        "int": 6
+        "str": 10,
+        "vit": 10,
+        "agi": 10,
+        "int": 10
       },
-      "availablePoints": 2,
-      "level": 4
+      "availablePoints": 0,
+      "level": 1
     },
     {
       "id": "c-u103",
       "userId": "u103",
-      "characterType": "mage",
+      "characterType": "barbaro",
       "stats": {
-        "str": 6,
+        "str": 11,
         "vit": 8,
-        "agi": 11,
-        "int": 15
+        "agi": 14,
+        "int": 7
       },
-      "availablePoints": 1,
-      "level": 2
+      "availablePoints": 0,
+      "level": 1
     },
     {
       "id": "c-u104",
       "userId": "u104",
-      "characterType": "assassin",
+      "characterType": "warrior",
       "stats": {
-        "str": 12,
-        "vit": 8,
-        "agi": 14,
-        "int": 7
+        "str": 14,
+        "vit": 12,
+        "agi": 8,
+        "int": 6
       },
       "availablePoints": 0,
       "level": 1

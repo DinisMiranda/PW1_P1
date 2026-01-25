@@ -7,6 +7,16 @@
           <h2 class="text-3xl font-bold font-solo text-primary text-glow uppercase tracking-wider">
             {{ phaseName }}
           </h2>
+          <p v-if="battleMusicNowPlaying" class="mt-2 text-xs text-white/70">
+            Música da batalha: <span class="text-primary font-semibold">{{ battleMusicNowPlaying.title }}</span>
+            <span class="text-white/60"> — {{ battleMusicNowPlaying.artist }}</span>
+          </p>
+          <p v-else-if="battleMusicLoading" class="mt-2 text-xs text-white/60">
+            A carregar a trilha da batalha...
+          </p>
+          <p v-else-if="battleMusicError" class="mt-2 text-xs text-red-300">
+            Música indisponível: {{ battleMusicError }}
+          </p>
         </div>
 
         <!-- Arena de Batalha -->
@@ -153,7 +163,8 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted, computed } from 'vue'
+import { ref, watch, onMounted, onBeforeUnmount, computed } from 'vue'
+import { getSoundDetails, findBestPreviewUrl } from '../api/freesound'
 
 const battleBackground = new URL('../imagens/batalha/cenario.png', import.meta.url).href
 const victoryIcon = new URL('../imagens/batalha/vitoria.png', import.meta.url).href
@@ -164,6 +175,41 @@ const mageFrames = import.meta.glob('../imagens/batalha/mago/**/*.png', { eager:
 const archerFrames = import.meta.glob('../imagens/batalha/arqueiro/**/*.png', { eager: true, import: 'default' })
 const barbaroFrames = import.meta.glob('../imagens/batalha/barbaro/**/*.png', { eager: true, import: 'default' })
 const bossFrames = import.meta.glob('../imagens/batalha/Boss/**/*.png', { eager: true, import: 'default' })
+
+const BOSS_MUSIC_TRACKS = {
+  Boss1: {
+    soundId: 787848,
+    title: 'Vast Space Ambience With Rock Guitar End',
+    artist: 'Mark_Murray'
+  },
+  Boss2: {
+    soundId: 198841,
+    title: 'Dark Suspense Drone',
+    artist: 'Timbre'
+  },
+  Boss3: {
+    soundId: 563988,
+    title: 'Epic Dark Battle Music',
+    artist: 'Hybrid_V'
+  },
+  Boss4: {
+    soundId: 270404,
+    title: 'Intense Action Orchestral',
+    artist: 'LittleRobotSoundFactory'
+  },
+  Boss5: {
+    soundId: 60013,
+    title: 'Epic War Drums',
+    artist: 'qubodup'
+  },
+  Boss6: {
+    soundId: 270405,
+    title: 'Epic Fantasy Choir',
+    artist: 'LittleRobotSoundFactory'
+  }
+}
+
+const trackPreviewCache = new Map()
 
 function sortedValuesFromMap(map, segment) {
   return Object.keys(map)
@@ -248,6 +294,9 @@ const won = ref(false)
 const boxesGained = ref(0)
 const playerImageState = ref('idle')
 const enemyImageState = ref('idle')
+const battleMusicLoading = ref(false)
+const battleMusicError = ref(null)
+const battleMusicNowPlaying = ref(null)
 
 const playerAnimations = computed(() => buildHeroAnimations(props.characterType))
 const enemyAnimations = computed(() => buildBossAnimations(props.bossKey))
@@ -284,6 +333,8 @@ const playerIsRanged = computed(() => playerIsMage.value || normalizedPlayerType
 const playerIsMelee = computed(() => !playerIsRanged.value)
 
 let battleInterval = null
+let battleMusicAudio = null
+let battleMusicRequestId = 0
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 
 watch(() => props.characterType, () => {
@@ -295,6 +346,11 @@ watch(() => props.characterType, () => {
 watch(() => props.bossKey, () => {
   enemyImageState.value = 'idle'
   enemyFrameIndex.value = 0
+})
+
+watch(() => props.bossKey, (newBoss, oldBoss) => {
+  if (!props.isOpen || newBoss === oldBoss) return
+  playBattleMusicForBoss(newBoss)
 })
 
 watch(playerImageState, () => {
@@ -441,6 +497,88 @@ async function playMageEffect() {
   mageEffectActive.value = false
   mageEffectFrameIndex.value = 0
   enemyImmobilized.value = false
+}
+
+function canUseBattleAudio() {
+  return typeof window !== 'undefined' && typeof Audio !== 'undefined'
+}
+
+function stopBattleMusic(resetState = false, invalidateRequest = false) {
+  if (invalidateRequest) {
+    battleMusicRequestId += 1
+  }
+
+  if (battleMusicAudio) {
+    battleMusicAudio.pause()
+    battleMusicAudio.currentTime = 0
+    battleMusicAudio = null
+  }
+
+  if (resetState) {
+    battleMusicNowPlaying.value = null
+    battleMusicLoading.value = false
+    battleMusicError.value = null
+  }
+}
+
+async function playBattleMusicForBoss(bossKey) {
+  if (!props.isOpen || !canUseBattleAudio()) return
+
+  const track = BOSS_MUSIC_TRACKS[bossKey]
+  battleMusicError.value = null
+
+  if (!track) {
+    stopBattleMusic(true)
+    return
+  }
+
+  const requestId = ++battleMusicRequestId
+  battleMusicLoading.value = true
+
+  try {
+    let previewUrl = trackPreviewCache.get(track.soundId)
+
+    if (!previewUrl) {
+      const details = await getSoundDetails(track.soundId)
+      previewUrl = findBestPreviewUrl(details?.previews)
+      if (!previewUrl) {
+        throw new Error('Preview indisponível para esta faixa.')
+      }
+      trackPreviewCache.set(track.soundId, previewUrl)
+    }
+
+    if (requestId !== battleMusicRequestId) {
+      return
+    }
+
+    stopBattleMusic(false)
+
+    if (!canUseBattleAudio()) {
+      return
+    }
+
+    battleMusicAudio = new Audio(previewUrl)
+    battleMusicAudio.loop = true
+    battleMusicAudio.volume = 0.55
+    battleMusicNowPlaying.value = { ...track, previewUrl }
+
+    try {
+      await battleMusicAudio.play()
+    } catch (err) {
+      battleMusicError.value = 'O navegador bloqueou o áudio automático; interaja com a página e tente novamente.'
+    }
+  } catch (error) {
+    if (requestId === battleMusicRequestId) {
+      console.error('Erro ao carregar música da batalha', error)
+      battleMusicError.value = error.message || 'Não foi possível carregar a música da batalha.'
+      battleMusicNowPlaying.value = null
+      stopBattleMusic(false)
+    }
+  } finally {
+    if (requestId === battleMusicRequestId) {
+      battleMusicLoading.value = false
+    }
+  }
 }
 
 async function startBattle() {
@@ -693,7 +831,9 @@ function closeModal() {
 watch(() => props.isOpen, (newVal) => {
   if (newVal) {
     startBattle()
+    playBattleMusicForBoss(props.bossKey)
   } else {
+    stopBattleMusic(true, true)
     // Limpar estado quando fechar
     if (battleInterval) {
       clearInterval(battleInterval)
@@ -719,7 +859,12 @@ watch(() => props.isOpen, (newVal) => {
 onMounted(() => {
   if (props.isOpen) {
     startBattle()
+    playBattleMusicForBoss(props.bossKey)
   }
+})
+
+onBeforeUnmount(() => {
+  stopBattleMusic(true, true)
 })
 </script>
 

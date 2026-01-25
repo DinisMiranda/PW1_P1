@@ -1,14 +1,14 @@
 <template>
   <div class="relative">
     <div
-      class="relative border-2 bg-card-solo p-3 min-h-[100px] min-w-[100px] flex flex-col items-center justify-center cursor-pointer hover:border-primary transition-all"
+      class="relative border-2 bg-card-solo p-3 w-32 h-32 flex flex-col items-center justify-center cursor-pointer hover:border-primary transition-all"
       :class="item ? getRarityClass(item.rarity) : 'border-primary/30'"
       @click="$emit('click')"
     >
-      <p class="text-[11px] font-solo text-primary/80 uppercase mb-2 text-center">{{ itemStore.getSlotName(slot) }}</p>
+      <p class="text-[11px] font-solo text-primary/80 uppercase mb-2 text-center truncate w-full">{{ itemStore.getSlotName(slot) }}</p>
 
       <div v-if="item" class="relative w-full flex items-center justify-center">
-        <img :src="item.image" :alt="item.name" class="h-14 object-contain" />
+        <img :src="item.image" :alt="item.name" class="h-16 object-contain" />
         <button
           @click.stop="$emit('unequip', item.id)"
           class="absolute -top-2 -right-2 h-6 w-6 rounded-full border border-primary/60 bg-black/70 text-white text-[10px] hover:bg-primary/30 flex items-center justify-center"

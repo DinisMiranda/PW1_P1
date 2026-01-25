@@ -2,14 +2,12 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { useUserStore } from './user'
 import { fetchHabits } from '../api/habits'
-import { fetchTodoistTasks } from '../api/todoist'
 import { DIFFICULTY_XP_MAP } from '../constants/progression'
 
 export const useHabitStore = defineStore('habit', () => {
   const storedHabits = JSON.parse(localStorage.getItem('habits') || '[]')
   const habits = ref((storedHabits || []).map((habit) => normalizeHabit(habit)))
 
-  // Salvar no localStorage sempre que hábitos mudarem
   function saveHabits() {
     localStorage.setItem('habits', JSON.stringify(habits.value))
   }
@@ -18,39 +16,6 @@ export const useHabitStore = defineStore('habit', () => {
     const data = await fetchHabits(userId)
     habits.value = (data || []).map((habit) => normalizeHabit(habit))
     saveHabits()
-  }
-
-  async function syncTodoistHabits(options = {}) {
-    const tasks = await fetchTodoistTasks(options)
-    let created = 0
-
-    tasks.forEach((task) => {
-      const existing = habits.value.find((habit) => habit.todoistTaskId === task.id)
-      if (existing) return
-
-      const newHabit = {
-        id: `todoist-${task.id}`,
-        name: task.content,
-        category: task.labels?.[0] || 'Todoist',
-        frequency: 'daily',
-        goalCount: 1,
-        streak: 0,
-        xpEarned: 0,
-        completedDays: [],
-        active: true,
-        createdAt: task.createdAt ?? new Date().toISOString(),
-        source: 'todoist',
-        todoistTaskId: task.id,
-        difficulty: inferDifficultyFromName(task.content) || 'medium',
-        progressLog: {}
-      }
-
-      habits.value.push(normalizeHabit(newHabit))
-      created += 1
-    })
-
-    if (created > 0) saveHabits()
-    return { created, total: tasks.length }
   }
 
   function createHabit(habitData) {
@@ -123,7 +88,6 @@ export const useHabitStore = defineStore('habit', () => {
       return { status: 'in-progress', progress: nextProgress, remaining: goal - nextProgress }
     }
 
-    // Completar objetivo do dia
     setProgressForDate(habit, dateStr, goal)
     habit.completedDays.push(dateStr)
     habit.streak = calculateStreak(habit.completedDays)
@@ -151,31 +115,29 @@ export const useHabitStore = defineStore('habit', () => {
 
   function calculateStreak(completedDays) {
     if (completedDays.length === 0) return 0
-    
+
     const sorted = [...completedDays].sort().reverse()
     let streak = 0
     const today = new Date()
     today.setHours(0, 0, 0, 0)
-    
-    // Verificar se hoje foi completado
+
     const todayStr = today.toISOString().split('T')[0]
     if (!sorted.includes(todayStr)) {
-      // Se hoje não foi completado, verificar desde ontem
       today.setDate(today.getDate() - 1)
     }
-    
+
     for (let i = 0; i < sorted.length; i++) {
       const checkDate = new Date(today)
       checkDate.setDate(today.getDate() - i)
       const checkDateStr = checkDate.toISOString().split('T')[0]
-      
+
       if (sorted.includes(checkDateStr)) {
         streak++
       } else {
         break
       }
     }
-    
+
     return streak
   }
 
@@ -190,8 +152,7 @@ export const useHabitStore = defineStore('habit', () => {
     updateHabit,
     deleteHabit,
     toggleHabitDone,
-    loadHabits,
-    syncTodoistHabits
+    loadHabits
   }
 })
 
@@ -241,8 +202,6 @@ function normalizeHabit(habit = {}) {
     completedDays: Array.isArray(habit.completedDays) ? habit.completedDays : [],
     active: habit.active !== false,
     createdAt: habit.createdAt || new Date().toISOString(),
-    source: habit.source,
-    todoistTaskId: habit.todoistTaskId,
     difficulty,
     xpValue,
     progressLog

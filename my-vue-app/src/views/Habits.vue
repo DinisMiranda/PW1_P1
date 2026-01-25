@@ -4,15 +4,6 @@
       <h2 class="text-2xl font-bold font-solo text-white uppercase tracking-wider">Hábitos</h2>
       <div class="flex flex-wrap gap-2">
         <button
-          @click="syncTodoist"
-          :disabled="syncingTodoist"
-          class="inline-flex items-center gap-2 border-2 border-primary/50 bg-primary/10 px-4 py-2 text-white font-bold hover:border-primary hover:bg-primary/20 glow-cyan transition-all disabled:opacity-60 disabled:cursor-not-allowed"
-        >
-          <span class="material-symbols-rounded" v-if="!syncingTodoist">cloud_sync</span>
-          <span class="material-symbols-rounded animate-spin" v-else>progress_activity</span>
-          {{ syncingTodoist ? 'A sincronizar...' : 'Importar do Todoist' }}
-        </button>
-        <button
           @click="resetFormState(); showForm = true"
           class="inline-flex items-center gap-2 border-2 border-primary bg-primary/20 px-4 py-2 text-white font-bold hover:bg-primary/30 glow-cyan transition-all"
         >
@@ -21,10 +12,6 @@
         </button>
       </div>
     </div>
-
-    <p v-if="syncFeedback" class="mb-4 text-sm font-semibold" :class="syncError ? 'text-red-400' : 'text-primary'">
-      {{ syncFeedback }}
-    </p>
 
     <!-- Form Modal -->
     <div
@@ -215,9 +202,6 @@ const difficultyLabelMap = Object.freeze({ easy: 'Fácil', medium: 'Médio', har
 const showForm = ref(false)
 const editingHabit = ref(null)
 const formData = ref(getDefaultForm())
-const syncingTodoist = ref(false)
-const syncFeedback = ref('')
-const syncError = ref(false)
 const selectedDifficultyLabel = computed(() => difficultyLabel(formData.value.difficulty))
 const selectedDifficultyXp = computed(() => getXpForDifficulty(formData.value.difficulty))
 
@@ -299,27 +283,6 @@ function deleteHabit(id) {
 function resetFormState() {
   editingHabit.value = null
   formData.value = getDefaultForm()
-}
-
-async function syncTodoist() {
-  syncFeedback.value = ''
-  syncError.value = false
-  syncingTodoist.value = true
-  try {
-    const { created, total } = await habitStore.syncTodoistHabits()
-    if (total === 0) {
-      syncFeedback.value = 'Nenhuma tarefa aberta encontrada no Todoist.'
-    } else if (created === 0) {
-      syncFeedback.value = 'Todas as tarefas do Todoist já estavam importadas.'
-    } else {
-      syncFeedback.value = `${created} tarefas importadas do Todoist.`
-    }
-  } catch (err) {
-    syncError.value = true
-    syncFeedback.value = err?.message || 'Falha ao sincronizar com o Todoist.'
-  } finally {
-    syncingTodoist.value = false
-  }
 }
 
 onMounted(() => {

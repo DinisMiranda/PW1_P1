@@ -37,23 +37,20 @@ npm run dev
 npm run build
 ```
 
-### Integração com o Todoist
+### Backend mock
 
-1. Crie um token de integração no Todoist (Configurações → Integrações → API Token).
-2. Adicione um ficheiro `.env` na raiz do projeto com a variável:
+Arranque o JSON Server (por omissão o frontend espera o servidor em `http://localhost:3000`):
 
-  ```sh
-  VITE_TODOIST_API_TOKEN="o_token_do_todoist"
-  ```
+```sh
+json-server --watch db.json --port 3000
+```
 
-3. Arranque o backend mock (por omissão o frontend espera o servidor em `http://localhost:3000`):
+> Se preferir outra porta/host, defina `VITE_API_URL` num `.env` (ex.: `VITE_API_URL="http://localhost:3001"`).
 
-  ```sh
-  json-server --watch db.json --port 3000
-  ```
+### Freesound API
 
-  > Se preferir outra porta/host, defina `VITE_API_URL` num `.env` (ex.: `VITE_API_URL="http://localhost:3001"`).
+Para ativar a música das batalhas configure `VITE_FREESOUND_API_KEY` num `.env`. O projeto já inclui uma chave de desenvolvimento fornecida, mas recomendamos definir a sua:
 
-4. Na página de Hábitos clique em "Importar do Todoist" para sincronizar as tarefas abertas.
-
-> ⚠️ Nunca submeta o token ao repositório; mantenha-o em variáveis de ambiente e, em produção, faça as chamadas ao Todoist através de um backend seguro.
+```
+VITE_FREESOUND_API_KEY=yRWGJSzwwYuSMymKS5VYfK0aVTLDviUSPpVgVT1G
+```

@@ -43,12 +43,12 @@
 
           <!-- Personagem no Centro -->
           <div class="flex flex-col items-center justify-center">
-            <div class="border-2 border-primary/50 bg-black/30 w-32 h-48 flex items-center justify-center relative overflow-visible">
+            <div class="relative border-2 border-primary/50 bg-black/30 w-32 h-48 flex items-center justify-center overflow-visible">
               <img
                 v-if="characterSprite"
                 :src="characterSprite"
                 :alt="`Retrato ${characterTypeLabel || 'do personagem'}`"
-                class="pointer-events-none absolute left-1/2 top-1/2 w-[26rem] h-[26rem] -translate-x-1/2 -translate-y-1/2 object-contain drop-shadow-[0_0_24px_rgba(0,255,255,0.5)]"
+                class="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[23rem] max-w-none object-contain drop-shadow-[0_0_28px_rgba(0,255,255,0.5)]"
               />
               <div v-else class="text-center">
                 <span class="material-symbols-rounded text-6xl text-primary/50">person</span>
