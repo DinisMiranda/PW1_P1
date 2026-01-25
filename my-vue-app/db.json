@@ -265,12 +265,12 @@
     {
       "id": "2",
       "userId": "2",
-      "characterType": "archer",
+      "characterType": "warrior",
       "stats": {
-        "str": 10,
-        "vit": 9,
-        "agi": 13,
-        "int": 8
+        "str": 14,
+        "vit": 12,
+        "agi": 8,
+        "int": 6
       },
       "availablePoints": 0,
       "level": 1
