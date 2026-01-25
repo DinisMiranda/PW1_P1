@@ -8,11 +8,11 @@
         <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
           <button
             v-for="type in characterTypes"
-            :key="type"
-            @click="createCharacter(type)"
+            :key="type.value"
+            @click="createCharacter(type.value)"
             class="border-2 border-primary/50 bg-primary/10 p-4 hover:border-primary hover:bg-primary/20 transition-all text-white font-semibold"
           >
-            {{ type }}
+            {{ type.label }}
           </button>
         </div>
       </div>
@@ -23,7 +23,7 @@
       <div class="mb-6 flex items-center justify-between">
         <h2 class="text-2xl font-bold font-solo text-white uppercase tracking-wider">Personagem</h2>
         <div class="text-white/80">
-          <span class="font-bold text-primary">Tipo:</span> {{ characterStore.characterType }}
+          <span class="font-bold text-primary">Tipo:</span> {{ characterTypeLabel }}
         </div>
       </div>
 
@@ -123,17 +123,31 @@
 import { computed } from 'vue'
 import { useCharacterStore } from '../stores/character'
 import { useItemStore } from '../stores/items'
-import { useAuthStore } from '../stores/auth'
 
 const characterStore = useCharacterStore()
 const itemStore = useItemStore()
-const authStore = useAuthStore()
 
-const characterTypes = ['Guerreiro', 'Mago', 'Arqueiro', 'Assassino']
+const characterTypes = [
+  { label: 'Guerreiro', value: 'warrior' },
+  { label: 'Mago', value: 'mage' },
+  { label: 'Arqueiro', value: 'archer' },
+  { label: 'Barbaro', value: 'barbaro' }
+]
 
-function createCharacter(type) {
-  const userId = authStore.user?.id
-  characterStore.createCharacter(type, userId)
+const typeLabelMap = characterTypes.reduce((acc, type) => {
+  acc[type.value] = type.label
+  return acc
+}, {})
+
+const characterTypeLabel = computed(() => {
+  const key = characterStore.characterType
+  if (!key) return ''
+  if (typeLabelMap[key]) return typeLabelMap[key]
+  return key.includes('assin') ? 'Barbaro' : key
+})
+
+async function createCharacter(type) {
+  await characterStore.createCharacter(type)
 }
 
 const totalStats = computed(() => {

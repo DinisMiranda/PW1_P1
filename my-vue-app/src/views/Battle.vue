@@ -8,6 +8,8 @@
       :player-stats="playerStats"
       :enemy-stats="enemyStats"
       :phase-name="battleStore.currentPhaseData.name"
+      :character-type="playerCharacterType"
+      :boss-key="currentBossKey"
       @close="closeBattleModal"
       @battle-finished="handleBattleFinished"
     />
@@ -73,9 +75,16 @@
 
       <!-- Resultado da Batalha -->
       <div v-if="battleStore.battleResult" class="mt-4 p-4 border-2" :class="battleStore.battleResult.won ? 'border-primary bg-primary/10' : 'border-red-500 bg-red-500/10'">
-        <p class="font-bold text-center mb-2" :class="battleStore.battleResult.won ? 'text-primary' : 'text-red-400'">
-          {{ battleStore.battleResult.won ? '🎉 Vitória!' : '💀 Derrota' }}
-        </p>
+        <div class="flex items-center justify-center gap-3 mb-2">
+          <img
+            :src="battleStore.battleResult.won ? victoryIcon : defeatIcon"
+            :alt="battleStore.battleResult.won ? 'Vitória' : 'Derrota'"
+            class="h-12 w-12 object-contain"
+          />
+          <p class="text-lg font-bold" :class="battleStore.battleResult.won ? 'text-primary' : 'text-red-400'">
+            {{ battleStore.battleResult.won ? 'Vitória!' : 'Derrota' }}
+          </p>
+        </div>
         <div class="text-sm text-white/80 text-center">
           <p v-if="battleStore.battleResult.won">
             Recebeste um item! Vê o teu inventário.
@@ -122,6 +131,9 @@ import { useItemStore } from '../stores/items'
 import { useUserStore } from '../stores/user'
 import BattleModal from '../components/BattleModal.vue'
 
+const victoryIcon = new URL('../imagens/batalha/vitoria.png', import.meta.url).href
+const defeatIcon = new URL('../imagens/batalha/derrota.png', import.meta.url).href
+
 const battleStore = useBattleStore()
 const characterStore = useCharacterStore()
 const itemStore = useItemStore()
@@ -138,6 +150,18 @@ const playerStats = computed(() => {
     return { hp: 0, maxHP: 0, attack: 0, defense: 0, speed: 0 }
   }
   return battleStore.calculatePlayerStats(characterStore, itemStore)
+})
+
+const playerCharacterType = computed(() => characterStore.characterType || 'generic')
+
+const currentBossKey = computed(() => {
+  const phaseId = battleStore.currentPhase
+  if (!phaseId) {
+    return 'Boss1'
+  }
+  const maxBossIndex = 6
+  const bossIndex = Math.min(phaseId, maxBossIndex)
+  return `Boss${bossIndex}`
 })
 
 const enemyStats = computed(() => {

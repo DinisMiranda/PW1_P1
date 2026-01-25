@@ -30,8 +30,8 @@
         <div class="flex items-start justify-center gap-8 mb-4">
           <div class="flex flex-col items-center gap-2">
             <EquipmentSlot 
-              slot="offhand" 
-              :item="getEquippedItem('offhand')"
+              slot="mainhand" 
+              :item="getEquippedItem('mainhand')"
               @unequip="unequipItem"
             />
             <EquipmentSlot 
@@ -43,24 +43,33 @@
 
           <!-- Personagem no Centro -->
           <div class="flex flex-col items-center justify-center">
-            <div class="border-2 border-primary/50 bg-black/30 w-32 h-48 flex items-center justify-center">
-              <div class="text-center">
+            <div class="border-2 border-primary/50 bg-black/30 w-32 h-48 flex items-center justify-center relative overflow-visible">
+              <img
+                v-if="characterSprite"
+                :src="characterSprite"
+                :alt="`Retrato ${characterTypeLabel || 'do personagem'}`"
+                class="pointer-events-none absolute left-1/2 top-1/2 w-[26rem] h-[26rem] -translate-x-1/2 -translate-y-1/2 object-contain drop-shadow-[0_0_24px_rgba(0,255,255,0.5)]"
+              />
+              <div v-else class="text-center">
                 <span class="material-symbols-rounded text-6xl text-primary/50">person</span>
-                <p class="mt-2 text-sm font-bold text-white" v-if="characterStore.characterType">
-                  {{ characterStore.characterType }}
-                </p>
-                <p v-else class="mt-2 text-xs text-white/60">Cria um personagem</p>
               </div>
             </div>
-            <div class="text-center text-xs text-white/80 mt-2">
-              <p>Nível: {{ characterStore.level }}</p>
+            <div class="text-center text-xs text-white/80 mt-4 flex flex-col items-center">
+              <p v-if="characterSprite" class="text-base font-bold text-white tracking-wide">
+                {{ characterTypeLabel }}
+              </p>
+              <p v-else-if="characterTypeLabel" class="text-sm font-bold text-white">
+                {{ characterTypeLabel }}
+              </p>
+              <p v-else class="text-xs text-white/60">Cria um personagem</p>
+              <p class="mt-2">Nível: {{ characterStore.level }}</p>
             </div>
           </div>
 
           <div class="flex flex-col items-center gap-2">
             <EquipmentSlot 
-              slot="mainhand" 
-              :item="getEquippedItem('mainhand')"
+              slot="offhand" 
+              :item="getEquippedItem('offhand')"
               @unequip="unequipItem"
             />
             <EquipmentSlot 
@@ -150,6 +159,34 @@ import EquipmentSlot from '../components/EquipmentSlot.vue'
 const itemStore = useItemStore()
 const characterStore = useCharacterStore()
 const boxCount = computed(() => itemStore.lootBoxes.phase1 || 0)
+
+const typeLabelMap = {
+  warrior: 'Guerreiro',
+  mage: 'Mago',
+  archer: 'Arqueiro',
+  barbaro: 'Barbaro'
+}
+
+const standardSpriteMap = {
+  warrior: new URL('../imagens/batalha/guerreiro/Standard/Standard-P01.png', import.meta.url).href,
+  mage: new URL('../imagens/batalha/mago/Standard/Standard-P01.png', import.meta.url).href,
+  archer: new URL('../imagens/batalha/arqueiro/Standard/Standard-P01.png', import.meta.url).href,
+  barbaro: new URL('../imagens/batalha/barbaro/Standard/Standard-P01.png', import.meta.url).href
+}
+
+const characterTypeLabel = computed(() => {
+  const key = characterStore.characterType
+  if (!key) return ''
+  if (typeLabelMap[key]) return typeLabelMap[key]
+  return key.includes('assin') ? 'Barbaro' : key
+})
+
+const characterSprite = computed(() => {
+  const key = characterStore.characterType
+  if (!key) return null
+  if (standardSpriteMap[key]) return standardSpriteMap[key]
+  return key.includes('assin') ? standardSpriteMap.barbaro : null
+})
 
 function getEquippedItem(slot) {
   return itemStore.equippedItems.find(item => item.slot === slot)

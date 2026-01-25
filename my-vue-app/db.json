@@ -172,7 +172,7 @@
     {
       "id": "1",
       "userId": 2,
-      "name": "Espada Simples",
+      "name": "Lâmina do Cavaleiro",
       "slot": "mainhand",
       "rarity": "common",
       "stats": {
@@ -187,7 +187,7 @@
     {
       "id": "2",
       "userId": 2,
-      "name": "Capacete de Ferro",
+      "name": "Elmo Reforçado",
       "slot": "helmet",
       "rarity": "uncommon",
       "stats": {
@@ -202,7 +202,7 @@
     {
       "id": "3",
       "userId": 2,
-      "name": "Peitoral de Couro",
+      "name": "Peitoral Reforçado",
       "slot": "chestplate",
       "rarity": "rare",
       "stats": {
@@ -217,7 +217,7 @@
     {
       "id": "4",
       "userId": 2,
-      "name": "Botas Ágeis",
+      "name": "Botas do Campeão",
       "slot": "boots",
       "rarity": "uncommon",
       "stats": {
@@ -264,16 +264,16 @@
     },
     {
       "id": "2",
-      "userId": 2,
-      "characterType": "warrior",
+      "userId": "2",
+      "characterType": "archer",
       "stats": {
-        "str": 14,
-        "vit": 12,
-        "agi": 8,
-        "int": 6
+        "str": 10,
+        "vit": 9,
+        "agi": 13,
+        "int": 8
       },
-      "availablePoints": 3,
-      "level": 2
+      "availablePoints": 0,
+      "level": 1
     },
     {
       "id": "ee9b",
@@ -291,7 +291,7 @@
     {
       "id": "15d6",
       "userId": "f94b",
-      "characterType": "assassin",
+      "characterType": "barbaro",
       "stats": {
         "str": 11,
         "vit": 8,

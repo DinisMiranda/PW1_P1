@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { get, post } from '../api/client'
+import { get, post, patch } from '../api/client'
 import { createUser } from '../api/users'
 
 export const useAuthStore = defineStore('auth', () => {
@@ -28,7 +28,9 @@ export const useAuthStore = defineStore('auth', () => {
       'equippedItems',
       'lootBoxes',
       'currentPhase',
-      'phases'
+      'phases',
+      'characterUserId',
+      'characterRecordId'
     ]
     keys.forEach((k) => localStorage.removeItem(k))
   }
@@ -82,6 +84,7 @@ export const useAuthStore = defineStore('auth', () => {
       token.value = `mock-token-${safeUser.id}`
       localStorage.setItem('token', token.value)
       localStorage.setItem('user', JSON.stringify(user.value))
+      localStorage.setItem(`characterUser:${safeUser.id}`, '1')
 
       try {
         const [{ useHabitStore }, { useUserStore }, { useCharacterStore }, { useItemStore }] = await Promise.all([
@@ -96,13 +99,16 @@ export const useAuthStore = defineStore('auth', () => {
         const itemStore = useItemStore()
         itemStore.setActiveUser(safeUser.id)
 
+        characterStore.reset()
+
         const [_, __, characterRes] = await Promise.all([
           habitStore.loadHabits(safeUser.id),
           userStore.loadUserData(safeUser.id),
           get('/characters', { userId: safeUser.id })
         ])
         const characterRecord = characterRes?.[0]
-        if (characterRecord) characterStore.setFromServer(characterRecord)
+        if (characterRecord) characterStore.setFromServer(characterRecord, safeUser.id)
+        else characterStore.setFromServer(null, safeUser.id)
       } catch (loadErr) {
         console.warn('Dados adicionais não carregados', loadErr)
       }
@@ -136,6 +142,8 @@ export const useAuthStore = defineStore('auth', () => {
       token.value = `mock-token-${safeUser.id}`
       localStorage.setItem('token', token.value)
       localStorage.setItem('user', JSON.stringify(user.value))
+      const deviceMarkerKey = `characterUser:${safeUser.id}`
+      const hasDeviceMarker = localStorage.getItem(deviceMarkerKey) === '1'
 
       // Carregar dados do utilizador logado (hábitos, xp, badges, personagem)
       try {
@@ -151,16 +159,38 @@ export const useAuthStore = defineStore('auth', () => {
         const itemStore = useItemStore()
         itemStore.setActiveUser(safeUser.id)
 
+        characterStore.reset()
+
         const [_, __, characterRes] = await Promise.all([
           habitStore.loadHabits(safeUser.id),
           userStore.loadUserData(safeUser.id),
           get('/characters', { userId: safeUser.id })
         ])
-        const characterRecord = characterRes?.[0]
-        if (characterRecord) characterStore.setFromServer(characterRecord)
+        let characterRecord = characterRes?.[0]
+
+        if (characterRecord && !hasDeviceMarker && characterRecord.characterType) {
+          const resetPayload = {
+            userId: safeUser.id,
+            characterType: null,
+            stats: { str: 10, vit: 10, agi: 10, int: 10 },
+            availablePoints: 0,
+            level: 1
+          }
+          try {
+            await patch(`/characters/${characterRecord.id}`, resetPayload)
+            characterRecord = { ...characterRecord, ...resetPayload }
+          } catch (remoteErr) {
+            console.warn('Falha ao limpar personagem remoto', remoteErr)
+          }
+        }
+
+        if (characterRecord) characterStore.setFromServer(characterRecord, safeUser.id)
+        else characterStore.setFromServer(null, safeUser.id)
       } catch (loadErr) {
         console.warn('Dados adicionais não carregados', loadErr)
       }
+
+      localStorage.setItem(deviceMarkerKey, '1')
       return true
     } catch (err) {
       console.error('Login failed', err)
@@ -200,12 +230,7 @@ export const useAuthStore = defineStore('auth', () => {
           userStore.badges = []
           userStore.streak = 0
         }
-        if (characterStore) {
-          characterStore.characterType = null
-          characterStore.stats = { str: 10, vit: 10, agi: 10, int: 10 }
-          characterStore.availablePoints = 0
-          characterStore.level = 1
-        }
+          if (characterStore) characterStore.reset()
         if (itemStore) {
           itemStore.setActiveUser(null)
           itemStore.inventory = []
