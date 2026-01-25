@@ -7,7 +7,8 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 export default defineConfig({
   plugins: [
     vue(),
-    vueDevTools(),
+    // Desativa vue-devtools apenas em modo de teste
+    ...(process.env.NODE_ENV === 'test' ? [] : [vueDevTools()]),
   ],
   resolve: {
     alias: {
@@ -17,5 +18,10 @@ export default defineConfig({
       path: fileURLToPath(new URL('./src/shims/path.js', import.meta.url)),
       'form-data': fileURLToPath(new URL('./src/shims/form-data.js', import.meta.url))
     },
+  },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: [],
   },
 })
