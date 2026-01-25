@@ -34,15 +34,13 @@ Uma aplicação web gamificada para gestão de hábitos, onde os utilizadores po
 
 ### Ferramentas de Desenvolvimento
 - **Vue DevTools** - Extensão para debugging
-- **ESLint** (se configurado)
 
 ## Membros do Grupo
 
-> **Nota:** Adiciona aqui os nomes e informações dos membros do grupo
 
-- [Nome do Membro 1] - [Função/Contribuição]
-- [Nome do Membro 2] - [Função/Contribuição]
-- [Nome do Membro 3] - [Função/Contribuição]
+- [Dinis Miranda] 
+- [Henrique Silva] 
+- [Francisco Carvalho] 
 
 ## Como Iniciar o Projeto
 
