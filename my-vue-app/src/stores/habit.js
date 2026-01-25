@@ -2,9 +2,12 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { useUserStore } from './user'
 import { fetchHabits } from '../api/habits'
+import { fetchTodoistTasks } from '../api/todoist'
+import { DIFFICULTY_XP_MAP } from '../constants/progression'
 
 export const useHabitStore = defineStore('habit', () => {
-  const habits = ref(JSON.parse(localStorage.getItem('habits') || '[]'))
+  const storedHabits = JSON.parse(localStorage.getItem('habits') || '[]')
+  const habits = ref((storedHabits || []).map((habit) => normalizeHabit(habit)))
 
   // Salvar no localStorage sempre que hábitos mudarem
   function saveHabits() {
@@ -13,12 +16,45 @@ export const useHabitStore = defineStore('habit', () => {
 
   async function loadHabits(userId) {
     const data = await fetchHabits(userId)
-    habits.value = data || []
+    habits.value = (data || []).map((habit) => normalizeHabit(habit))
     saveHabits()
   }
 
+  async function syncTodoistHabits(options = {}) {
+    const tasks = await fetchTodoistTasks(options)
+    let created = 0
+
+    tasks.forEach((task) => {
+      const existing = habits.value.find((habit) => habit.todoistTaskId === task.id)
+      if (existing) return
+
+      const newHabit = {
+        id: `todoist-${task.id}`,
+        name: task.content,
+        category: task.labels?.[0] || 'Todoist',
+        frequency: 'daily',
+        goalCount: 1,
+        streak: 0,
+        xpEarned: 0,
+        completedDays: [],
+        active: true,
+        createdAt: task.createdAt ?? new Date().toISOString(),
+        source: 'todoist',
+        todoistTaskId: task.id,
+        difficulty: inferDifficultyFromName(task.content) || 'medium',
+        progressLog: {}
+      }
+
+      habits.value.push(normalizeHabit(newHabit))
+      created += 1
+    })
+
+    if (created > 0) saveHabits()
+    return { created, total: tasks.length }
+  }
+
   function createHabit(habitData) {
-    const newHabit = {
+    const newHabit = normalizeHabit({
       id: Date.now(),
       name: habitData.name,
       category: habitData.category || 'Geral',
@@ -28,8 +64,11 @@ export const useHabitStore = defineStore('habit', () => {
       xpEarned: 0,
       completedDays: [],
       active: true,
-      createdAt: new Date().toISOString()
-    }
+      createdAt: new Date().toISOString(),
+      difficulty: habitData.difficulty || 'medium',
+      xpValue: habitData.xpValue,
+      progressLog: {}
+    })
     habits.value.push(newHabit)
     saveHabits()
     return newHabit
@@ -38,7 +77,7 @@ export const useHabitStore = defineStore('habit', () => {
   function updateHabit(id, updates) {
     const index = habits.value.findIndex(h => h.id === id)
     if (index !== -1) {
-      habits.value[index] = { ...habits.value[index], ...updates }
+      habits.value[index] = normalizeHabit({ ...habits.value[index], ...updates })
       saveHabits()
       return habits.value[index]
     }
@@ -57,49 +96,57 @@ export const useHabitStore = defineStore('habit', () => {
 
   function toggleHabitDone(habitId, date = new Date().toISOString().split('T')[0]) {
     const habit = habits.value.find(h => h.id === habitId)
-    if (!habit) return false
+    if (!habit) return { status: 'error' }
 
     const dateStr = date
-    const index = habit.completedDays.indexOf(dateStr)
-
     const userStore = useUserStore()
-    const xpGained = 10
+    const xpGained = getHabitXpValue(habit)
+    const goal = getGoalCount(habit)
+    const currentProgress = getProgressForDate(habit, dateStr)
+    const alreadyCompleted = habit.completedDays.includes(dateStr)
 
-    if (index === -1) {
-      // Marcar como feito
-      habit.completedDays.push(dateStr)
+    if (alreadyCompleted) {
+      habit.completedDays = habit.completedDays.filter(day => day !== dateStr)
+      setProgressForDate(habit, dateStr, 0)
       habit.streak = calculateStreak(habit.completedDays)
-      
-      // Ganhar XP
-      const oldLevel = userStore.level
-      userStore.gainXP(xpGained)
-      habit.xpEarned += xpGained
-      
-      // Se subiu de nível e tem personagem, dar pontos
-      if (userStore.level > oldLevel) {
-        import('./character.js').then(({ useCharacterStore }) => {
-          const characterStore = useCharacterStore()
-          if (characterStore.characterType) {
-            for (let i = oldLevel; i < userStore.level; i++) {
-              characterStore.levelUp()
-            }
-          }
-        }).catch(() => {
-          // Character store pode não estar inicializado
-        })
-      }
-    } else {
-      // Desmarcar
-      habit.completedDays.splice(index, 1)
-      habit.streak = calculateStreak(habit.completedDays)
-
-      // Remover XP ganho anteriormente
       userStore.loseXP(xpGained)
       habit.xpEarned = Math.max(0, habit.xpEarned - xpGained)
+      saveHabits()
+      return { status: 'undone', progress: 0, remaining: goal }
+    }
+
+    const nextProgress = Math.min(goal, currentProgress + 1)
+
+    if (nextProgress < goal) {
+      setProgressForDate(habit, dateStr, nextProgress)
+      saveHabits()
+      return { status: 'in-progress', progress: nextProgress, remaining: goal - nextProgress }
+    }
+
+    // Completar objetivo do dia
+    setProgressForDate(habit, dateStr, goal)
+    habit.completedDays.push(dateStr)
+    habit.streak = calculateStreak(habit.completedDays)
+
+    const oldLevel = userStore.level
+    userStore.gainXP(xpGained)
+    habit.xpEarned += xpGained
+
+    if (userStore.level > oldLevel) {
+      import('./character.js').then(({ useCharacterStore }) => {
+        const characterStore = useCharacterStore()
+        if (characterStore.characterType) {
+          for (let i = oldLevel; i < userStore.level; i++) {
+            characterStore.levelUp()
+          }
+        }
+      }).catch(() => {
+        // Character store pode não estar inicializado
+      })
     }
 
     saveHabits()
-    return true
+    return { status: 'completed', progress: goal, remaining: 0 }
   }
 
   function calculateStreak(completedDays) {
@@ -143,7 +190,85 @@ export const useHabitStore = defineStore('habit', () => {
     updateHabit,
     deleteHabit,
     toggleHabitDone,
-    loadHabits
+    loadHabits,
+    syncTodoistHabits
   }
 })
+
+const HABIT_DIFFICULTY_PRESETS = {
+  'beber água': 'easy',
+  meditar: 'medium',
+  'ler 30 minutos': 'hard',
+  exercitar: 'hard',
+  alongar: 'easy',
+  'escrever um diário': 'medium',
+  'planejar o dia': 'medium',
+  'rever objetivos': 'hard',
+  'caminhar 10k passos': 'medium',
+  'dormir 8 horas': 'medium',
+  'limpeza expressa': 'easy',
+  'café da manhã saudável': 'easy',
+  'revisar finanças': 'medium',
+  'estudar um idioma': 'hard',
+  'desconectar da tela': 'medium',
+  'organizar tarefas': 'medium',
+  'praticar gratidão': 'easy'
+}
+
+function inferDifficultyFromName(name = '') {
+  const key = name.trim().toLowerCase()
+  return HABIT_DIFFICULTY_PRESETS[key] || null
+}
+
+function getHabitXpValue(habit) {
+  if (!habit) return 0
+  return habit.xpValue ?? DIFFICULTY_XP_MAP[habit.difficulty] ?? DIFFICULTY_XP_MAP.medium
+}
+
+function normalizeHabit(habit = {}) {
+  const difficulty = habit.difficulty || inferDifficultyFromName(habit.name) || 'medium'
+  const xpValue = habit.xpValue ?? DIFFICULTY_XP_MAP[difficulty] ?? DIFFICULTY_XP_MAP.medium
+  const progressLog = typeof habit.progressLog === 'object' && habit.progressLog !== null ? { ...habit.progressLog } : {}
+
+  return {
+    id: habit.id ?? Date.now(),
+    name: habit.name || 'Novo hábito',
+    category: habit.category || 'Geral',
+    frequency: habit.frequency || 'daily',
+    goalCount: habit.goalCount ?? 1,
+    streak: habit.streak ?? 0,
+    xpEarned: habit.xpEarned ?? 0,
+    completedDays: Array.isArray(habit.completedDays) ? habit.completedDays : [],
+    active: habit.active !== false,
+    createdAt: habit.createdAt || new Date().toISOString(),
+    source: habit.source,
+    todoistTaskId: habit.todoistTaskId,
+    difficulty,
+    xpValue,
+    progressLog
+  }
+}
+
+function getProgressForDate(habit, date) {
+  if (!habit.progressLog || typeof habit.progressLog !== 'object') {
+    habit.progressLog = {}
+  }
+  return habit.progressLog[date] || 0
+}
+
+function setProgressForDate(habit, date, count) {
+  if (!habit.progressLog || typeof habit.progressLog !== 'object') {
+    habit.progressLog = {}
+  }
+  if (count <= 0) {
+    delete habit.progressLog[date]
+  } else {
+    habit.progressLog[date] = count
+  }
+}
+
+function getGoalCount(habit) {
+  const goal = parseInt(habit.goalCount, 10)
+  return Number.isNaN(goal) || goal < 1 ? 1 : goal
+}
 

@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { get } from '../api/client'
+import { getLevelState } from '../constants/progression'
 
 export const useUserStore = defineStore('user', () => {
   const xp = ref(parseInt(localStorage.getItem('xp') || '0'))
@@ -8,8 +9,15 @@ export const useUserStore = defineStore('user', () => {
   const badges = ref(JSON.parse(localStorage.getItem('badges') || '[]'))
   const streak = ref(parseInt(localStorage.getItem('streak') || '0'))
 
-  const xpForNextLevel = computed(() => level.value * 100)
-  const xpProgress = computed(() => (xp.value % 100) / 100)
+  const levelState = computed(() => getLevelState(xp.value))
+  const xpForNextLevel = computed(() => levelState.value.xpNeeded)
+  const xpIntoCurrentLevel = computed(() => levelState.value.xpIntoLevel)
+  const xpProgress = computed(() =>
+    levelState.value.xpNeeded ? levelState.value.xpIntoLevel / levelState.value.xpNeeded : 0
+  )
+  const xpRemainingToNextLevel = computed(() =>
+    Math.max(0, levelState.value.xpNeeded - levelState.value.xpIntoLevel)
+  )
 
   function saveState() {
     localStorage.setItem('xp', xp.value.toString())
@@ -19,12 +27,12 @@ export const useUserStore = defineStore('user', () => {
   }
 
   function recalcLevel() {
-    const newLevel = Math.max(1, Math.floor(xp.value / 100) + 1)
-    if (newLevel > level.value) {
-      level.value = newLevel
+    const computedLevel = levelState.value.level
+    if (computedLevel > level.value) {
+      level.value = computedLevel
       checkBadges()
-    } else if (newLevel < level.value) {
-      level.value = newLevel
+    } else if (computedLevel < level.value) {
+      level.value = computedLevel
     }
   }
 
@@ -76,11 +84,13 @@ export const useUserStore = defineStore('user', () => {
     badges.value = record.badges ?? []
     streak.value = record.streak ?? 0
     saveState()
+    recalcLevel()
     return true
   }
 
   function init() {
     // Restaurar do localStorage já está feito nos refs
+    recalcLevel()
     saveState()
   }
 
@@ -90,6 +100,8 @@ export const useUserStore = defineStore('user', () => {
     badges,
     streak,
     xpForNextLevel,
+    xpIntoCurrentLevel,
+    xpRemainingToNextLevel,
     xpProgress,
     gainXP,
     loseXP,

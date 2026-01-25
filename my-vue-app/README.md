@@ -36,3 +36,22 @@ npm run dev
 ```sh
 npm run build
 ```
+
+### Integração com o Todoist
+
+1. Crie um token de integração no Todoist (Configurações → Integrações → API Token).
+2. Adicione um ficheiro `.env` na raiz do projeto com a variável:
+
+  ```sh
+  VITE_TODOIST_API_TOKEN="o_token_do_todoist"
+  ```
+
+3. Arranque o backend mock, caso ainda não esteja em execução:
+
+  ```sh
+  json-server --watch db.json --port 3001
+  ```
+
+4. Na página de Hábitos clique em "Importar do Todoist" para sincronizar as tarefas abertas.
+
+> ⚠️ Nunca submeta o token ao repositório; mantenha-o em variáveis de ambiente e, em produção, faça as chamadas ao Todoist através de um backend seguro.

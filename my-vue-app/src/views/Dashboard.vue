@@ -84,6 +84,12 @@
                   Editar
                 </router-link>
               </div>
+              <p
+                v-if="currentHabitProgress.goal > 1 && currentHabitProgress.progress > 0 && !isCompletedToday(currentHabit.id)"
+                class="mt-2 text-[11px] text-amber-300"
+              >
+                Faltam {{ currentHabitProgress.remaining }} registos para cumprir a meta de {{ currentHabitProgress.goal }} hoje.
+              </p>
             </div>
           </transition>
 
@@ -221,6 +227,30 @@ function isCompletedToday(habitId) {
   const habit = habitStore.habits.find(h => h.id === habitId)
   return habit?.completedDays.includes(today) || false
 }
+
+function progressForToday(habit) {
+  if (!habit) return 0
+  if (!habit.progressLog || typeof habit.progressLog !== 'object') return 0
+  return habit.progressLog[today] || 0
+}
+
+function goalForHabit(habit) {
+  if (!habit) return 1
+  const value = parseInt(habit.goalCount, 10)
+  return Number.isNaN(value) || value < 1 ? 1 : value
+}
+
+const currentHabitProgress = computed(() => {
+  const habit = currentHabit.value
+  if (!habit) {
+    return { goal: 1, progress: 0, remaining: 0 }
+  }
+  const goal = goalForHabit(habit)
+  const completed = habit.completedDays.includes(today)
+  const progress = completed ? goal : progressForToday(habit)
+  const remaining = completed ? 0 : Math.max(goal - progress, 0)
+  return { goal, progress, remaining }
+})
 
 function toggleHabit(habitId) {
   habitStore.toggleHabitDone(habitId, today)

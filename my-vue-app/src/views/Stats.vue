@@ -17,7 +17,7 @@
           </div>
           <div class="flex justify-between text-sm">
             <span class="text-white/70 font-semibold">XP para próximo nível</span>
-            <span class="font-bold font-solo text-white text-glow">{{ userStore.xpForNextLevel - (userStore.xp % 100) }}</span>
+            <span class="font-bold font-solo text-white text-glow">{{ userStore.xpRemainingToNextLevel }}</span>
           </div>
         </div>
       </div>

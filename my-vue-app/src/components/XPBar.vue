@@ -2,7 +2,7 @@
   <div class="w-full">
     <div class="flex items-center justify-between mb-2">
       <span class="text-sm font-bold font-solo text-primary text-glow">XP</span>
-      <span class="text-sm font-bold text-white">{{ userStore.xp }} / {{ userStore.xpForNextLevel }}</span>
+      <span class="text-sm font-bold text-white">{{ userStore.xpIntoCurrentLevel }} / {{ userStore.xpForNextLevel }}</span>
     </div>
     <div class="bar-hp-mp h-6 w-full overflow-hidden relative">
       <div 

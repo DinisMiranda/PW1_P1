@@ -55,6 +55,54 @@
       "password": "1234",
       "role": "user",
       "createdAt": "2026-01-21T19:34:17.150Z"
+    },
+    {
+      "id": "u101",
+      "username": "lara",
+      "email": "lara@demo.com",
+      "password": "lara123",
+      "role": "user",
+      "createdAt": "2026-01-24T08:30:00.000Z"
+    },
+    {
+      "id": "u102",
+      "username": "miguel",
+      "email": "miguel@demo.com",
+      "password": "miguel123",
+      "role": "user",
+      "createdAt": "2026-01-24T08:45:00.000Z"
+    },
+    {
+      "id": "u103",
+      "username": "sofia",
+      "email": "sofia@demo.com",
+      "password": "sofia123",
+      "role": "user",
+      "createdAt": "2026-01-24T09:00:00.000Z"
+    },
+    {
+      "id": "u104",
+      "username": "tomas",
+      "email": "tomas@demo.com",
+      "password": "tomas123",
+      "role": "user",
+      "createdAt": "2026-01-24T09:15:00.000Z"
+    },
+    {
+      "id": "u105",
+      "username": "ines",
+      "email": "ines@demo.com",
+      "password": "ines123",
+      "role": "user",
+      "createdAt": "2026-01-24T09:30:00.000Z"
+    },
+    {
+      "id": "u106",
+      "username": "ricardo",
+      "email": "ricardo@demo.com",
+      "password": "ricardo123",
+      "role": "user",
+      "createdAt": "2026-01-24T09:45:00.000Z"
     }
   ],
   "userData": [
@@ -115,6 +163,64 @@
       "level": 1,
       "badges": [],
       "streak": 0
+    },
+    {
+      "id": "d4b1",
+      "userId": "u101",
+      "xp": 260,
+      "level": 3,
+      "badges": [
+        "primeiro-passo"
+      ],
+      "streak": 4
+    },
+    {
+      "id": "0f2c",
+      "userId": "u102",
+      "xp": 520,
+      "level": 4,
+      "badges": [
+        "primeiro-passo"
+      ],
+      "streak": 9
+    },
+    {
+      "id": "9c77",
+      "userId": "u103",
+      "xp": 120,
+      "level": 2,
+      "badges": [
+        "primeiro-passo"
+      ],
+      "streak": 3
+    },
+    {
+      "id": "c1ef",
+      "userId": "u104",
+      "xp": 70,
+      "level": 1,
+      "badges": [],
+      "streak": 1
+    },
+    {
+      "id": "b0a4",
+      "userId": "u105",
+      "xp": 330,
+      "level": 3,
+      "badges": [
+        "primeiro-passo"
+      ],
+      "streak": 6
+    },
+    {
+      "id": "af65",
+      "userId": "u106",
+      "xp": 480,
+      "level": 4,
+      "badges": [
+        "primeiro-passo"
+      ],
+      "streak": 8
     }
   ],
   "habits": [
@@ -129,7 +235,9 @@
       "xpEarned": 0,
       "completedDays": [],
       "active": true,
-      "createdAt": "2024-01-15T10:00:00.000Z"
+      "createdAt": "2024-01-15T10:00:00.000Z",
+      "difficulty": "hard",
+      "xpValue": 20
     },
     {
       "id": "2",
@@ -148,7 +256,9 @@
         "2024-01-14"
       ],
       "active": true,
-      "createdAt": "2024-01-10T08:00:00.000Z"
+      "createdAt": "2024-01-10T08:00:00.000Z",
+      "difficulty": "medium",
+      "xpValue": 10
     },
     {
       "id": "3",
@@ -165,7 +275,223 @@
         "2024-01-14"
       ],
       "active": true,
-      "createdAt": "2024-01-12T09:00:00.000Z"
+      "createdAt": "2024-01-12T09:00:00.000Z",
+      "difficulty": "medium",
+      "xpValue": 10
+    },
+    {
+      "id": "h-lara-1",
+      "userId": "u101",
+      "name": "Sessão de arco",
+      "category": "Treino",
+      "frequency": "daily",
+      "goalCount": 1,
+      "streak": 4,
+      "xpEarned": 40,
+      "completedDays": [
+        "2026-01-21",
+        "2026-01-22",
+        "2026-01-23",
+        "2026-01-24"
+      ],
+      "active": true,
+      "createdAt": "2026-01-10T07:30:00.000Z",
+      "difficulty": "medium",
+      "xpValue": 10
+    },
+    {
+      "id": "h-lara-2",
+      "userId": "u101",
+      "name": "Alongamentos de mobilidade",
+      "category": "Saúde",
+      "frequency": "daily",
+      "goalCount": 1,
+      "streak": 2,
+      "xpEarned": 10,
+      "completedDays": [
+        "2026-01-23",
+        "2026-01-24"
+      ],
+      "active": true,
+      "createdAt": "2026-01-18T07:00:00.000Z",
+      "difficulty": "easy",
+      "xpValue": 5
+    },
+    {
+      "id": "h-miguel-1",
+      "userId": "u102",
+      "name": "Treino de força",
+      "category": "Saúde",
+      "frequency": "daily",
+      "goalCount": 1,
+      "streak": 5,
+      "xpEarned": 100,
+      "completedDays": [
+        "2026-01-20",
+        "2026-01-21",
+        "2026-01-22",
+        "2026-01-23",
+        "2026-01-24"
+      ],
+      "active": true,
+      "createdAt": "2026-01-05T06:30:00.000Z",
+      "difficulty": "hard",
+      "xpValue": 20
+    },
+    {
+      "id": "h-miguel-2",
+      "userId": "u102",
+      "name": "Revisão semanal de objetivos",
+      "category": "Produtividade",
+      "frequency": "weekly",
+      "goalCount": 1,
+      "streak": 2,
+      "xpEarned": 20,
+      "completedDays": [
+        "2026-01-14",
+        "2026-01-21"
+      ],
+      "active": true,
+      "createdAt": "2026-01-03T12:00:00.000Z",
+      "difficulty": "medium",
+      "xpValue": 10
+    },
+    {
+      "id": "h-sofia-1",
+      "userId": "u103",
+      "name": "Estudar novas tecnologias",
+      "category": "Educação",
+      "frequency": "daily",
+      "goalCount": 1,
+      "streak": 3,
+      "xpEarned": 60,
+      "completedDays": [
+        "2026-01-22",
+        "2026-01-23",
+        "2026-01-24"
+      ],
+      "active": true,
+      "createdAt": "2026-01-12T19:00:00.000Z",
+      "difficulty": "hard",
+      "xpValue": 20
+    },
+    {
+      "id": "h-sofia-2",
+      "userId": "u103",
+      "name": "Jornal de gratidão",
+      "category": "Bem-estar",
+      "frequency": "daily",
+      "goalCount": 1,
+      "streak": 3,
+      "xpEarned": 15,
+      "completedDays": [
+        "2026-01-21",
+        "2026-01-23",
+        "2026-01-24"
+      ],
+      "active": true,
+      "createdAt": "2026-01-15T21:00:00.000Z",
+      "difficulty": "easy",
+      "xpValue": 5
+    },
+    {
+      "id": "h-tomas-1",
+      "userId": "u104",
+      "name": "Sprints matinais",
+      "category": "Saúde",
+      "frequency": "daily",
+      "goalCount": 1,
+      "streak": 1,
+      "xpEarned": 20,
+      "completedDays": [
+        "2026-01-24"
+      ],
+      "active": true,
+      "createdAt": "2026-01-20T06:00:00.000Z",
+      "difficulty": "hard",
+      "xpValue": 20
+    },
+    {
+      "id": "h-ines-1",
+      "userId": "u105",
+      "name": "Yoga ao amanhecer",
+      "category": "Bem-estar",
+      "frequency": "daily",
+      "goalCount": 1,
+      "streak": 6,
+      "xpEarned": 60,
+      "completedDays": [
+        "2026-01-19",
+        "2026-01-20",
+        "2026-01-21",
+        "2026-01-22",
+        "2026-01-23",
+        "2026-01-24"
+      ],
+      "active": true,
+      "createdAt": "2026-01-02T07:15:00.000Z",
+      "difficulty": "medium",
+      "xpValue": 10
+    },
+    {
+      "id": "h-ines-2",
+      "userId": "u105",
+      "name": "Planeamento financeiro",
+      "category": "Finanças",
+      "frequency": "weekly",
+      "goalCount": 1,
+      "streak": 4,
+      "xpEarned": 40,
+      "completedDays": [
+        "2026-01-05",
+        "2026-01-12",
+        "2026-01-19",
+        "2026-01-24"
+      ],
+      "active": true,
+      "createdAt": "2026-01-01T09:00:00.000Z",
+      "difficulty": "medium",
+      "xpValue": 10
+    },
+    {
+      "id": "h-ricardo-1",
+      "userId": "u106",
+      "name": "Correr 5km",
+      "category": "Saúde",
+      "frequency": "daily",
+      "goalCount": 1,
+      "streak": 5,
+      "xpEarned": 100,
+      "completedDays": [
+        "2026-01-20",
+        "2026-01-21",
+        "2026-01-22",
+        "2026-01-23",
+        "2026-01-24"
+      ],
+      "active": true,
+      "createdAt": "2026-01-06T06:15:00.000Z",
+      "difficulty": "hard",
+      "xpValue": 20
+    },
+    {
+      "id": "h-ricardo-2",
+      "userId": "u106",
+      "name": "Mentoria da equipa",
+      "category": "Trabalho",
+      "frequency": "weekly",
+      "goalCount": 1,
+      "streak": 3,
+      "xpEarned": 30,
+      "completedDays": [
+        "2026-01-08",
+        "2026-01-15",
+        "2026-01-22"
+      ],
+      "active": true,
+      "createdAt": "2026-01-04T15:00:00.000Z",
+      "difficulty": "medium",
+      "xpValue": 10
     }
   ],
   "items": [
@@ -300,6 +626,84 @@
       },
       "availablePoints": 0,
       "level": 1
+    },
+    {
+      "id": "c-u101",
+      "userId": "u101",
+      "characterType": "archer",
+      "stats": {
+        "str": 11,
+        "vit": 9,
+        "agi": 14,
+        "int": 8
+      },
+      "availablePoints": 1,
+      "level": 3
+    },
+    {
+      "id": "c-u102",
+      "userId": "u102",
+      "characterType": "warrior",
+      "stats": {
+        "str": 16,
+        "vit": 13,
+        "agi": 9,
+        "int": 6
+      },
+      "availablePoints": 2,
+      "level": 4
+    },
+    {
+      "id": "c-u103",
+      "userId": "u103",
+      "characterType": "mage",
+      "stats": {
+        "str": 6,
+        "vit": 8,
+        "agi": 11,
+        "int": 15
+      },
+      "availablePoints": 1,
+      "level": 2
+    },
+    {
+      "id": "c-u104",
+      "userId": "u104",
+      "characterType": "assassin",
+      "stats": {
+        "str": 12,
+        "vit": 8,
+        "agi": 14,
+        "int": 7
+      },
+      "availablePoints": 0,
+      "level": 1
+    },
+    {
+      "id": "c-u105",
+      "userId": "u105",
+      "characterType": "mage",
+      "stats": {
+        "str": 6,
+        "vit": 9,
+        "agi": 11,
+        "int": 15
+      },
+      "availablePoints": 1,
+      "level": 3
+    },
+    {
+      "id": "c-u106",
+      "userId": "u106",
+      "characterType": "warrior",
+      "stats": {
+        "str": 15,
+        "vit": 12,
+        "agi": 9,
+        "int": 7
+      },
+      "availablePoints": 1,
+      "level": 4
     }
   ],
   "battles": [
