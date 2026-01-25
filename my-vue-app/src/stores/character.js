@@ -1,12 +1,12 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { get, post, patch } from '../api/client'
+import { post, patch } from '../api/client'
 
 const ROLE_BASE_STATS = {
   warrior: { str: 14, vit: 12, agi: 8, int: 6 },
   mage: { str: 6, vit: 8, agi: 10, int: 14 },
   archer: { str: 10, vit: 9, agi: 13, int: 8 },
-  assassin: { str: 11, vit: 8, agi: 14, int: 7 },
+  barbaro: { str: 11, vit: 8, agi: 14, int: 7 },
   generic: { str: 10, vit: 10, agi: 10, int: 10 }
 }
 
@@ -17,13 +17,15 @@ const ROLE_ALIASES = {
   mage: 'mage',
   arqueiro: 'archer',
   archer: 'archer',
-  assassino: 'assassin',
-  assassin: 'assassin'
+  barbaro: 'barbaro',
+  'bárbaro': 'barbaro',
+  barbarian: 'barbaro'
 }
 
 function normalizeRole(type) {
   if (!type) return 'generic'
   const key = type.toString().trim().toLowerCase()
+  if (key.includes('assin')) return 'barbaro'
   return ROLE_ALIASES[key] || 'generic'
 }
 
@@ -34,8 +36,12 @@ function baseStatsFor(type) {
 
 export const useCharacterStore = defineStore('character', () => {
   // Personagem
-  const characterType = ref(localStorage.getItem('characterType') || null)
-  const recordId = ref(null)
+  const storedType = localStorage.getItem('characterType')
+  const normalizedStoredType = storedType && storedType.toString().toLowerCase().includes('assin') ? 'barbaro' : storedType
+  if (normalizedStoredType && normalizedStoredType !== storedType) {
+    localStorage.setItem('characterType', normalizedStoredType)
+  }
+  const characterType = ref(normalizedStoredType || null)
   const stats = ref({
     str: parseInt(localStorage.getItem('stat_str') || ROLE_BASE_STATS.generic.str.toString()),
     vit: parseInt(localStorage.getItem('stat_vit') || ROLE_BASE_STATS.generic.vit.toString()),
@@ -44,6 +50,8 @@ export const useCharacterStore = defineStore('character', () => {
   })
   const availablePoints = ref(parseInt(localStorage.getItem('availablePoints') || '0'))
   const level = ref(parseInt(localStorage.getItem('characterLevel') || '1'))
+  const currentUserId = ref(localStorage.getItem('characterUserId') || null)
+  const characterRecordId = ref(localStorage.getItem('characterRecordId') || null)
 
   // Stats totais (base + itens) - será calculado externamente para evitar dependência circular
   const totalStats = computed(() => {
@@ -63,67 +71,89 @@ export const useCharacterStore = defineStore('character', () => {
     localStorage.setItem('stat_int', stats.value.int.toString())
     localStorage.setItem('availablePoints', availablePoints.value.toString())
     localStorage.setItem('characterLevel', level.value.toString())
+    if (currentUserId.value) localStorage.setItem('characterUserId', currentUserId.value)
+    else localStorage.removeItem('characterUserId')
+    if (characterRecordId.value) localStorage.setItem('characterRecordId', characterRecordId.value)
+    else localStorage.removeItem('characterRecordId')
   }
 
-  async function persistCharacter(userId) {
-    if (!userId) return
+  function setFromServer(record, userId) {
+    if (userId) currentUserId.value = userId.toString()
+    else if (record?.userId) currentUserId.value = record.userId.toString()
 
-    // tentar descobrir id existente
-    if (!recordId.value) {
-      try {
-        const existing = await get('/characters', { userId })
-        const found = existing?.[0]
-        if (found?.id) recordId.value = found.id
-      } catch (err) {
-        console.warn('Não foi possível obter personagem existente', err)
-      }
+    if (record?.id !== undefined && record?.id !== null) {
+      characterRecordId.value = record.id.toString()
     }
 
+    if (record) {
+      const normalized = record.characterType ? normalizeRole(record.characterType) : null
+      characterType.value = record.characterType ? normalized : null
+      stats.value = {
+        str: parseInt(record.stats?.str ?? ROLE_BASE_STATS.generic.str, 10),
+        vit: parseInt(record.stats?.vit ?? ROLE_BASE_STATS.generic.vit, 10),
+        agi: parseInt(record.stats?.agi ?? ROLE_BASE_STATS.generic.agi, 10),
+        int: parseInt(record.stats?.int ?? ROLE_BASE_STATS.generic.int, 10)
+      }
+      availablePoints.value = parseInt(record.availablePoints ?? 0, 10)
+      level.value = parseInt(record.level ?? 1, 10)
+    } else {
+      characterType.value = null
+      stats.value = { ...ROLE_BASE_STATS.generic }
+      availablePoints.value = 0
+      level.value = 1
+    }
+
+    saveState()
+  }
+
+  async function persistToServer() {
+    if (!currentUserId.value) return
+
     const payload = {
-      userId,
+      userId: currentUserId.value,
       characterType: characterType.value,
-      stats: stats.value,
+      stats: {
+        str: stats.value.str,
+        vit: stats.value.vit,
+        agi: stats.value.agi,
+        int: stats.value.int
+      },
       availablePoints: availablePoints.value,
       level: level.value
     }
 
     try {
-      if (recordId.value) {
-        await patch(`/characters/${recordId.value}`, payload)
+      if (characterRecordId.value) {
+        await patch(`/characters/${characterRecordId.value}`, payload)
       } else {
         const created = await post('/characters', payload)
-        if (created?.id) recordId.value = created.id
+        if (created?.id !== undefined && created?.id !== null) {
+          characterRecordId.value = created.id.toString()
+        }
       }
+      saveState()
     } catch (err) {
-      console.warn('Não foi possível guardar o personagem no servidor', err)
+      console.warn('Falha ao sincronizar personagem', err)
     }
   }
 
-  async function createCharacter(type, userId = null) {
+  async function createCharacter(type) {
     const normalized = normalizeRole(type)
     characterType.value = normalized
     stats.value = { ...baseStatsFor(normalized) }
     availablePoints.value = 0
     level.value = 1
     saveState()
-
-    if (userId) {
-      await persistCharacter(userId)
-    }
+    await persistToServer()
   }
 
-  function setFromServer(record) {
-    if (!record) return
-    recordId.value = record.id || null
-    characterType.value = normalizeRole(record.characterType) || null
-    stats.value = {
-      str: record.stats?.str ?? baseStatsFor(record.characterType).str,
-      vit: record.stats?.vit ?? baseStatsFor(record.characterType).vit,
-      agi: record.stats?.agi ?? baseStatsFor(record.characterType).agi,
-      int: record.stats?.int ?? baseStatsFor(record.characterType).int
-    }
-    availablePoints.value = record.availablePoints ?? 0
-    level.value = record.level ?? 1
+  function reset() {
+    characterType.value = null
+    stats.value = { ...ROLE_BASE_STATS.generic }
+    availablePoints.value = 0
+    level.value = 1
+    currentUserId.value = null
+    characterRecordId.value = null
     saveState()
   }
 
@@ -132,6 +162,7 @@ export const useCharacterStore = defineStore('character', () => {
       stats.value[stat]++
       availablePoints.value--
       saveState()
+      persistToServer()
     }
   }
 
@@ -139,6 +170,7 @@ export const useCharacterStore = defineStore('character', () => {
     level.value++
     availablePoints.value += 3
     saveState()
+    persistToServer()
   }
 
   function init() {
@@ -147,17 +179,19 @@ export const useCharacterStore = defineStore('character', () => {
 
   return {
     characterType,
-    recordId,
     stats,
     availablePoints,
     level,
     totalStats,
+    currentUserId,
+    characterRecordId,
     createCharacter,
     addStatPoint,
     levelUp,
-    persistCharacter,
+    reset,
+    init,
     setFromServer,
-    init
+    persistToServer
   }
 })
 

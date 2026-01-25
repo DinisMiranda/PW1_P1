@@ -16,8 +16,9 @@ const ROLE_KEYS = {
   mage: 'mage',
   arqueiro: 'archer',
   archer: 'archer',
-  assassino: 'assassin',
-  assassin: 'assassin'
+  barbaro: 'barbaro',
+  'bárbaro': 'barbaro',
+  barbarian: 'barbaro'
 }
 
 const RARITY_TIERS = {
@@ -32,7 +33,7 @@ const ROLE_ASSET_DIRS = {
   warrior: 'guerreiro',
   mage: 'mago',
   archer: 'arqueiro',
-  assassin: 'assassino'
+  barbaro: 'barbaro'
 }
 
 const SLOT_ASSETS = {
@@ -63,9 +64,9 @@ const SLOT_ASSETS = {
     belt: { folder: 'acessorio', prefix: 'anel' },
     amulet: { folder: 'amuletos', prefix: 'amuleto' }
   },
-  assassin: {
-    mainhand: { folder: 'adaga', prefix: 'adaga' },
-    offhand: { folder: 'faca', prefix: 'faca' },
+  barbaro: {
+    mainhand: { folder: 'machado', prefix: 'machado' },
+    offhand: { folder: 'adaga', prefix: 'adaga' },
     helmet: { folder: 'capacete', prefix: 'capacete' },
     chestplate: { folder: 'peito', prefix: 'peito' },
     boots: { folder: 'bota', prefix: 'bota' },
@@ -84,9 +85,9 @@ const ROLE_SLOT_NAMES = {
     belt: 'Anel Rúnico',
     amulet: 'Amuleto Arcano'
   },
-  assassin: {
-    mainhand: 'Adaga',
-    offhand: 'Lâmina',
+  barbaro: {
+    mainhand: 'Machado',
+    offhand: 'Adaga',
     helmet: 'Capuz Sombrio',
     chestplate: 'Couraça Leve',
     boots: 'Botas Silenciosas',
@@ -116,6 +117,7 @@ const ROLE_SLOT_NAMES = {
 function normalizeRole(role) {
   if (!role) return 'generic'
   const key = role.toString().trim().toLowerCase()
+  if (key.includes('assin')) return 'barbaro'
   return ROLE_KEYS[key] || 'generic'
 }
 
