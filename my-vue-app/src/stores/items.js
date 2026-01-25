@@ -405,6 +405,7 @@ export const useItemStore = defineStore('items', () => {
     getRarityInfo,
     getSlotName,
     setActiveUser,
+    enrichItem,
     init
   }
 })

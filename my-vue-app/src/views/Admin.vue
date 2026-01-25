@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen w-full px-4 sm:px-6 lg:px-10 py-6">
+  <div class="min-h-screen w-full px-4 sm:px-6 lg:px-10 py-6 relative">
     <div class="mb-6 flex items-center justify-between">
       <h2 class="text-2xl font-bold font-solo text-white uppercase tracking-wider">Painel de Administração</h2>
       <div class="flex items-center gap-2 text-sm text-white/60">
@@ -404,6 +404,58 @@
         </div>
       </div>
     </div>
+
+    <!-- Modal de Notificação -->
+    <Teleport to="body">
+      <Transition name="modal">
+        <div
+          v-if="showModal"
+          class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm"
+          @click.self="closeModal"
+        >
+          <div
+            class="border-2 bg-card-solo p-6 max-w-md w-full mx-4 rounded-lg"
+            :class="modalType === 'success' ? 'border-xp' : 'border-red-500'"
+          >
+            <div class="flex items-center gap-4 mb-4">
+              <div
+                class="flex h-12 w-12 items-center justify-center rounded-full border-2 flex-shrink-0"
+                :class="modalType === 'success' ? 'border-xp bg-xp/20' : 'border-red-500 bg-red-500/20'"
+              >
+                <span
+                  class="material-symbols-rounded text-2xl"
+                  :class="modalType === 'success' ? 'text-xp' : 'text-red-500'"
+                >
+                  {{ modalType === 'success' ? 'check_circle' : 'error' }}
+                </span>
+              </div>
+              <div class="flex-1">
+                <h3
+                  class="text-lg font-bold"
+                  :class="modalType === 'success' ? 'text-white' : 'text-red-500'"
+                >
+                  {{ modalType === 'success' ? 'Sucesso!' : 'Erro' }}
+                </h3>
+              </div>
+              <button
+                @click="closeModal"
+                class="text-white/60 hover:text-white transition-colors flex-shrink-0"
+              >
+                <span class="material-symbols-rounded">close</span>
+              </button>
+            </div>
+            <p class="text-white/80 mb-4">{{ modalMessage }}</p>
+            <button
+              @click="closeModal"
+              class="w-full border-2 px-4 py-2 font-semibold transition-all rounded"
+              :class="modalType === 'success' ? 'border-xp bg-xp/20 text-white hover:bg-xp/30' : 'border-red-500 bg-red-500/20 text-white hover:bg-red-500/30'"
+            >
+              Fechar
+            </button>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
   </div>
 </template>
 
@@ -413,11 +465,13 @@ import { useUserStore } from '../stores/user'
 import { useHabitStore } from '../stores/habit'
 import { useItemStore } from '../stores/items'
 import { useBattleStore } from '../stores/battle'
+import { useCharacterStore } from '../stores/character'
 
 const userStore = useUserStore()
 const habitStore = useHabitStore()
 const itemStore = useItemStore()
 const battleStore = useBattleStore()
+const characterStore = useCharacterStore()
 
 const activeTab = ref('dashboard')
 const tabs = [
@@ -438,6 +492,10 @@ const newItem = ref({
   rarity: 'common',
   stats: { str: 0, vit: 0, agi: 0, int: 0 }
 })
+
+const showModal = ref(false)
+const modalType = ref('success') // 'success' ou 'error'
+const modalMessage = ref('')
 
 const storageSize = computed(() => {
   let total = 0
@@ -485,15 +543,60 @@ function deletePhase(phaseId) {
   }
 }
 
+function showSuccessModal(message) {
+  modalType.value = 'success'
+  modalMessage.value = message
+  showModal.value = true
+}
+
+function showErrorModal(message) {
+  modalType.value = 'error'
+  modalMessage.value = message
+  showModal.value = true
+}
+
+function closeModal() {
+  showModal.value = false
+  modalMessage.value = ''
+}
+
 function createCustomItem() {
+  // Validação dos campos
+  if (!newItem.value.name || !newItem.value.name.trim()) {
+    showErrorModal('Por favor, preencha o nome do item.')
+    return
+  }
+
+  if (!newItem.value.slot) {
+    showErrorModal('Por favor, selecione um slot para o item.')
+    return
+  }
+
+  if (!newItem.value.rarity) {
+    showErrorModal('Por favor, selecione uma raridade para o item.')
+    return
+  }
+
+  // Verificar se pelo menos um stat tem valor maior que 0
+  const hasStats = Object.values(newItem.value.stats).some(val => val > 0)
+  if (!hasStats) {
+    showErrorModal('Por favor, defina pelo menos um atributo com valor maior que 0.')
+    return
+  }
+
+  // Criar o item
   const item = {
     id: Date.now() + Math.random(),
-    name: newItem.value.name,
+    name: newItem.value.name.trim(),
     slot: newItem.value.slot,
     rarity: newItem.value.rarity,
-    stats: { ...newItem.value.stats }
+    stats: { ...newItem.value.stats },
+    role: characterStore.characterType || 'generic'
   }
-  itemStore.inventory.push(item)
+  
+  // Enriquecer o item com imagem e outras propriedades
+  const enrichedItem = itemStore.enrichItem(item)
+  itemStore.inventory.push(enrichedItem)
   itemStore.saveState()
   
   // Reset form
@@ -504,7 +607,7 @@ function createCustomItem() {
     stats: { str: 0, vit: 0, agi: 0, int: 0 }
   }
   
-  alert('Item criado com sucesso!')
+  showSuccessModal('Item criado com sucesso! Verifica o inventário.')
 }
 
 function generateRandomItem(rarity) {
@@ -587,5 +690,26 @@ onMounted(() => {
 })
 </script>
 
-<style scoped></style>
+<style scoped>
+.modal-enter-active,
+.modal-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.modal-enter-from,
+.modal-leave-to {
+  opacity: 0;
+}
+
+.modal-enter-active > div,
+.modal-leave-active > div {
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.modal-enter-from > div,
+.modal-leave-to > div {
+  transform: scale(0.9);
+  opacity: 0;
+}
+</style>
 
