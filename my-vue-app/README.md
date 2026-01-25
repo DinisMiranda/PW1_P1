@@ -46,11 +46,13 @@ npm run build
   VITE_TODOIST_API_TOKEN="o_token_do_todoist"
   ```
 
-3. Arranque o backend mock, caso ainda não esteja em execução:
+3. Arranque o backend mock (por omissão o frontend espera o servidor em `http://localhost:3000`):
 
   ```sh
-  json-server --watch db.json --port 3001
+  json-server --watch db.json --port 3000
   ```
+
+  > Se preferir outra porta/host, defina `VITE_API_URL` num `.env` (ex.: `VITE_API_URL="http://localhost:3001"`).
 
 4. Na página de Hábitos clique em "Importar do Todoist" para sincronizar as tarefas abertas.
 
