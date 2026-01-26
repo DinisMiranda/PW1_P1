@@ -373,3 +373,97 @@ Perguntas sobre assets/efeitos visuais:
 - Onde ficam os ícones de vitória/derrota? → Mesma pasta, usados no topo do modal.
 
 Com esta secção, cada funcionalidade do site tem uma resposta rápida com o ficheiro e a função responsável. Se precisares de explicar numa apresentação, basta seguir estas perguntas e mencionar os nomes das funções.
+
+Perguntas de backend típicas para a apresentação (8 min demo + 2 min Q&A):
+- Como persistem os dados sem um backend real? → Explicar que usamos JSON Server (db.json) como mock; as funções `get/post/patch/del` em `src/api/client.js` fazem pedidos REST e cada store (`habitStore`, `userStore`, etc.) chama os endpoints dedicados (`/habits`, `/userData`, `/characters`).
+- Onde está a lógica para sincronizar o front com o “backend”? → Cada store tem um `init()` que lê localStorage e, quando necessário, chama `loadHabits`, `loadUserData`, `persistToServer` (personagem) para alinhar com o JSON Server antes de renderizar.
+- Se o avaliador perguntar “onde atualizam XP/stats no servidor?”, responder que `habitStore.toggleHabitDone()` soma XP e depois `userStore.saveState()` guarda localmente, enquanto `userStore.loadUserData()`/`saveState()` empurram para `/userData` no JSON Server; estatísticas da personagem são persistidas através de `characterStore.persistToServer()`.
+- Perguntas sobre autenticação (mesmo sem backend real): explicar que `authStore.login()`/`register()` simulam verificação consultando `/users`, emitem um token simples e guardam-no em localStorage; o router usa esse token para proteger rotas (`router.beforeEach`).
+- Pergunta “como integram APIs externas?” → Referir `src/api/freesound.js`, que autentica via query token e alimenta o `BattleModal` com `playBattleMusicForBoss`. Explicar que qualquer nova API segue o mesmo padrão (`request helper + store/componente que consome`).
+- Pergunta sobre escalabilidade “e quando houver backend real?” → Dizer que basta substituir `BASE_URL` em `src/api/client.js` e apontar os métodos das stores para o novo endpoint, porque toda a app já fala através do client central.
+
+----------------------------------------------------
+10. Variáveis principais por store/componente (onde vive cada coisa)
+----------------------------------------------------
+
+### useAuthStore (src/stores/auth.js)
+- **Refs guardadas**: `user` (objeto logado), `token` (string `mock-token-*`). Ambos moram em memória e em `localStorage` (`user`, `token`).
+- **Computeds**: `isAuthenticated` (true quando há token), `isAdmin` (verifica role/username).
+- **Funções**:
+  - `register({ username, email, password })`: cria utilizador via `/users`, registos iniciais em `/userData` e `/characters`, guarda token/localStorage, instancia stores auxiliares.
+  - `login(identifier, password)`: consulta `/users` por username/email, confirma password, injeta token/localStorage, carrega hábitos, userData, personagem e inventário.
+  - `logout()`: limpa token/user, remove chaves listadas em `clearLocalSessionData`, reinicia os stores (habits, user, character, items, battle).
+  - `clearLocalSessionData()`: remove chaves `xp`, `level`, `badges`, `streak`, `habits`, `characterType`, `stat_*`, `availablePoints`, `characterLevel`, `inventory`, `equippedItems`, `lootBoxes`, `currentPhase`, `phases`, `characterUserId`, `characterRecordId`.
+  - `init()`: repõe `user` a partir do localStorage se existir token.
+
+### useHabitStore (src/stores/habit.js)
+- **Refs guardadas**: `habits` (array normalizado, persistido em `localStorage.habits`).
+- **Computeds**: `activeHabits` (filtra `active: true`), `totalHabits` (length).
+- **Funções**:
+  - `loadHabits(userId)`: chama `/habits` via `fetchHabits`, normaliza e guarda.
+  - `createHabit(habitData)`: gera ID com `Date.now()`, cria `progressLog`, `completedDays`, `xpEarned`, `streak` (todos guardados no array), grava.
+  - `updateHabit(id, updates)`, `deleteHabit(id)`: editam/removem e persistem.
+  - `toggleHabitDone(habitId, date)`: controla progresso diário, atualiza `completedDays`, `progressLog`, recalcula `streak`, dá/retira XP com `userStore.gainXP/loseXP`, e aciona `characterStore.levelUp()` quando necessário.
+  - `calculateStreak(completedDays)`, `getHabitXpValue(habit)`, `getGoalCount(habit)`, `getProgressForDate`, `setProgressForDate`, `normalizeHabit`: helpers para responder “onde é calculado X”.
+- **Dados**: streaks e logs vivem no próprio objeto do hábito; XP total por hábito fica em `habit.xpEarned`.
+
+### useUserStore (src/stores/user.js)
+- **Refs guardadas**: `xp`, `level`, `badges`, `streak` (todos lidos/gravados em localStorage com nomes iguais).
+- **Computeds**: `levelState` (usa `getLevelState`), `xpForNextLevel`, `xpIntoCurrentLevel`, `xpProgress`, `xpRemainingToNextLevel`.
+- **Funções**:
+  - `saveState()`: escreve xp/level/badges/streak.
+  - `recalcLevel()`: ajusta nível com base em `levelState` e chama `checkBadges()`.
+  - `gainXP(amount)`, `loseXP(amount)`: soma/subtrai XP e chama `recalcLevel` + `saveState`.
+  - `checkBadges()`: adiciona badges `primeiro-passo`, `mestre` quando limiares atingidos e devolve os novos.
+  - `updateStreak(days)`: usado pelo dashboard/habits.
+  - `loadUserData(userId)`: lê `/userData` (JSON Server) e substitui XP/nível/badges/streak locais.
+  - `init()`: garante que level está coerente com XP ao carregar.
+- **Pergunta “onde está guardado o nível?”** → localStorage `level` + `/userData.level` quando sincronizado.
+
+### useCharacterStore (src/stores/character.js)
+- **Refs guardadas**: `characterType`, `stats` (`str`, `vit`, `agi`, `int`), `availablePoints`, `level`, `currentUserId`, `characterRecordId` (todos refletidos em localStorage via `saveState`).
+- **Computeds**: `totalStats` (simples soma dos próprios stats; bónus de itens acontece no battle store).
+- **Funções**:
+  - `createCharacter(type)`: normaliza o papel (via `normalizeRole`), aplica `ROLE_BASE_STATS`, reinicia nível/pontos e chama `persistToServer()`.
+  - `addStatPoint(stat)`: verifica `availablePoints`>0, incrementa e sincroniza.
+  - `levelUp()`: +1 nível, +3 pontos, salva e sincroniza.
+  - `setFromServer(record, userId)`: popula refs a partir de `/characters`.
+  - `persistToServer()`: faz PATCH `/characters/:id` ou POST `/characters` com `userId`, stats, pontos, nível.
+  - `reset()`: volta ao estado genérico e remove IDs.
+  - `init()`: apenas chama `saveState` para garantir localStorage alinhado.
+- **Onde vive o sprite escolhido?** → `characterType` + `standardSpriteMap` em Inventory.vue, mas a classe é guardada aqui.
+
+### useItemStore (src/stores/items.js)
+- **Refs guardadas**: `activeUserId` (chave para armazenar dados por utilizador), `inventory` (array de itens), `equippedItems`, `lootBoxes` (objeto ex.: `{ phase1: 2 }`). Persistem em localStorage com prefixo `inventory_owner`, `inventory_<user>`, `equippedItems_<user>`, `lootBoxes_<user>`.
+- **Funções essenciais**:
+  - `loadState()`/`saveState()`: controlam leitura/escrita segregada por utilizador.
+  - `setActiveUser(userId)`: troca o dono, recarrega e reprocessa imagens via `enrichItem`.
+  - `generateItem(rarity, role)`: cria loot (atribui stats aleatórios, slot aleatório, nome `Slot + tier`, define `role`, imagem e mete no inventário). Responde à pergunta “onde é gerado o item quando ganho a batalha”.
+  - `removeItem`, `upgradeItems`, `equipItem`, `unequipItem`: gerem inventário/equipados.
+  - `addBox(type, count, max)` e `openBox(type, rarity, role)`: tratam das caixas.
+  - Helpers: `getRarityInfo`, `getSlotName`, `resolveSlotName`, `getItemImage`, `enrichItem`, `cleanupLegacySlots`.
+- **Dados**: imagens vêm de `src/imagens/personagens/<role>/<slot>/...`; raridade e nomes em `RARITIES`, `ROLE_SLOT_NAMES` no topo do ficheiro.
+
+### useBattleStore (src/stores/battle.js)
+- **Refs guardadas**: `currentPhase`, `phases`, `isInBattle`, `battleResult`. Persistem em localStorage (`currentPhase`, `phases`).
+- **Constantes**: `fallbackPhase` (usada quando não há fases guardadas).
+- **Computeds**: `currentPhaseData` (fase atual), `unlockedPhases` (até `currentPhase`).
+- **Funções**:
+  - `initPhases()`: cria o array de fases padrão (IDs 1‑7 com HP/Attack/Reward).
+  - `saveState()`: grava fase atual/lista.
+  - `calculatePlayerStats(characterStore, itemStore)`: soma stats base + itens para gerar `hp`, `attack`, `defense`, `speed` antes do combate.
+  - `startBattle()`: marca `isInBattle` true e limpa resultado.
+  - `processBattleResult(result, characterStore, itemStore)`: recebe `{ won, boxesGained }`, avança fase, chama `itemStore.generateItem()` e `itemStore.addBox()` quando vitória.
+  - `init()`: garante que `phases` existe e grava.
+- **Perguntas usuais**: “Onde guardo o progresso das fases?” → `localStorage.currentPhase` + `localStorage.phases`.
+
+### BattleModal (src/components/BattleModal.vue) – principais variáveis para perguntas sobre animação/música
+- **Refs**: `playerHP`, `playerMaxHP`, `enemyHP`, `enemyMaxHP`, `playerImageState`, `enemyImageState`, `playerFrameIndex`, `enemyFrameIndex`, `mageEffectFrameIndex`, `playerPosition`, `enemyPosition`, `battleLog`, `battleFinished`, `won`, `boxesGained`.
+- **Áudio**: `battleMusicLoading`, `battleMusicError`, `battleMusicNowPlaying`, `battleMusicAudio` (variável local), `trackPreviewCache`. Função `playBattleMusicForBoss(bossKey)` consome `src/api/freesound.js` e usa `BOSS_MUSIC_TRACKS` (IDs 787848, 198841, 563988, 270404, 60013, 270405) para responder “onde está guardada a música do Boss 4”, por exemplo.
+- **Helpers de animação**: `buildHeroAnimations`, `buildBossAnimations`, `playAnimationOnce`, `playWalkCycle`, `playMageEffect`, `moveCloserBoth`, `calculateDamage`, `getTurnOrder`, `calculateTurnDelay`, `animateOffset`. Todos vivem neste componente.
+- **Estado do turno**: `playerNextActionTime`, `enemyNextActionTime`, `enemyImmobilized`, `distanceUnits`, `playerStepsClosed`, `enemyStepsClosed`.
+
+### Inventory.vue (contexto visual do boneco/slots)
+- **Variáveis relevantes**: `characterSprite` (computed sobre `characterStore.characterType`), `typeLabelMap`, `standardSpriteMap` (define imagem por classe), `boxCount` (computed de `itemStore.lootBoxes.phase1`). Slot component `EquipmentSlot` recebe `slot`+`item` e desenha as boxes uniformes.
+
+Com este mapa, podes responder rapidamente a perguntas do tipo “onde é guardado X?”, “qual função gera Y?” ou “qual variável controla Z” apontando o nome exato da ref/função/localStorage/endpoint correspondente.
