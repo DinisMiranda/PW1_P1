@@ -165,152 +165,91 @@ Funções do store:
 - levelUp(): aumenta o nível da personagem e dá 3 pontos livres.
 - init(): chama saveState para garantir que o localStorage está alinhado.
 
-----------------------------------------
-4.5 Store dos itens (src/stores/items.js)
-----------------------------------------
-
-Estados:
-- activeUserId: mostra a quem pertencem os itens guardados naquele dispositivo.
-- inventory: lista de itens guardados.
-- equippedItems: itens equipados.
-- lootBoxes: caixas disponíveis para abrir.
-
-Funções auxiliares no topo:
-- normalizeRole(role): igual ao do character (garante nomes consistentes).
-- getItemImage(role, slot, name, rarity): monta o caminho para a imagem correta.
-- resolveSlotName(slot, role): devolve o nome bonitinho para cada slot.
-
-Funções do store:
-- storageKey(base): devolve a chave correta para guardar cada dono.
-- loadState(): lê inventário/equipados/caixas do localStorage.
-- saveState(): escreve esses dados no localStorage.
-- setActiveUser(userId): troca o dono atual e recarrega os dados.
-- cleanupLegacySlots(): remove itens antigos de slots que já não existem.
-- generateItem(rarity, role): cria um item aleatório com raridade indicada (ou aleatória se não passar nada).
-- removeItem(itemId): apaga o item tanto do inventário quanto dos equipados.
-- upgradeItems(baseId, materialId): junta dois itens iguais para subir a raridade.
-- addBox(type, count, max): adiciona caixas recebidas na batalha.
-- openBox(type, rarity, role): abre uma caixa, gasta 1 e chama generateItem.
-- enrichItem(item): garante que cada item tem role correto e imagem.
-- equipItem(itemId): tira o item do inventário e coloca na lista de equipados, trocando o antigo do mesmo slot.
-- unequipItem(itemId): faz o contrário de equipar.
-- getRarityInfo(rarity): devolve cores/glow do item.
-- getSlotName(slot): versão genérica do nome do slot.
-- init(): carrega estado, limpa slots antigos e volta a guardar.
-
-----------------------------------------
-4.6 Store das batalhas (src/stores/battle.js)
-----------------------------------------
-
-Estados:
-- currentPhase: fase onde o jogador está (ex: 1 = iniciante).
-- phases: lista completa de fases.
-- isInBattle: booleano que diz se estamos numa luta agora.
-- battleResult: guarda o resultado da última batalha.
-
-Funções:
-- initPhases(): preenche a lista de fases padrão se ainda não existir.
-- saveState(): guarda currentPhase e phases no localStorage.
-- currentPhaseData (computed): devolve os dados da fase onde estamos.
-- unlockedPhases (computed): lista fases liberadas até agora.
-- calculatePlayerStats(characterStore, itemStore): soma stats da personagem + bónus dos itens e transforma em HP/ataque/defesa/velocidade.
-- startBattle(characterStore, itemStore): marca que entrámos na batalha e limpa o resultado antigo.
-- processBattleResult(result, characterStore, itemStore): atualiza currentPhase se ganhar, gera item novo via itemStore.generateItem e adiciona caixas com itemStore.addBox.
-- init(): chama initPhases e saveState para garantir que tudo está guardado.
-
 ----------------------------------------------------
-5. Componentes e vistas (ficheiros em src/components e src/views)
+9. Perguntas prováveis (com respostas completas)
 ----------------------------------------------------
 
-- Navbar.vue / Footer.vue: nomes dizem tudo; são partes fixas do ecrã.
-- Cada ficheiro em src/views (Dashboard, Habits, Stats, Badges, Character, Inventory, Battle, Admin, Login, Register) representa uma página completa. O nome é igual ao caminho no router.
+**Onde é guardada cada informação importante?**  
+Habits, XP, personagem, itens e fases residem em duas camadas: (1) `localStorage` para manter o estado offline imediato e (2) JSON Server (db.json exposto via `src/api/client.js`) para simular um backend. Por exemplo, hábitos vivem em `localStorage.habits` e também podem ser recarregados de `/habits`; XP/nivel/badges/streak ficam em `localStorage` e no endpoint `/userData`; personagem em `localStorage.characterType` + `/characters`; inventário e caixas com prefixos `inventory_<user>` etc.; progresso de fases em `localStorage.currentPhase` e `/phases` não existe, por isso usamos apenas localStorage para essa parte.
 
-Exemplo detalhado: Habits.vue
-- Tem o botão "Novo Hábito" para abrir o formulário.
-- O modal de formulário usa:
-  - selectedHabitName: o valor selecionado no dropdown de nomes.
-  - habitNameOptions: lista usada para preencher o dropdown.
-  - customHabitOptionValue: texto especial que diz "vou escrever o meu próprio nome".
-  - formData: objeto com name, category, frequency, goalCount, difficulty.
-  - categoryOptions: lista de categorias.
-  - selectedDifficultyLabel / selectedDifficultyXp: mostram a dificuldade e XP.
-- Funções principais dentro do componente:
-  - ensureCategoryOption(valor): adiciona nova categoria se ainda não existir.
-  - getDefaultForm(): devolve o formulário padrão.
-  - ensureHabitNameOption(valor): adiciona novos nomes.
-  - getTemplateByName / getTemplateDifficulty: procuram info no array baseHabitTemplates.
-  - getXpForDifficulty(difficulty): usa DIFFICULTY_XP_MAP.
-  - difficultyLabel(valor): traduz easy/medium/hard para Português.
-  - editHabit(habit): preenche o formulário com os dados do hábito escolhido.
-  - saveHabit(): se está a editar, chama habitStore.updateHabit; se não, chama habitStore.createHabit.
-  - deleteHabit(id): pede confirmação e chama habitStore.deleteHabit.
-  - resetFormState(): volta ao estado inicial.
-  - watchers (watch(...) e onMounted): atualizam as opções assim que novos hábitos surgem ou quando abrimos a página.
+**Onde é gerada a animação da batalha?**  
+Todo o comportamento visual está dentro de [src/components/BattleModal.vue](../src/components/BattleModal.vue). As funções `buildHeroAnimations()` e `buildBossAnimations()` carregam os frames; `playerImageState`/`enemyImageState` e os índices de frame determinam qual sprite aparece; `playAnimationOnce`, `playWalkCycle`, `moveCloserBoth`, `calculateDamage` e `handlePlayerTurn/handleEnemyTurn` executam a lógica. O modal também calcula deslocamentos (`playerPosition`, `enemyPosition`) e controla o log (`battleLog`). Se perguntarem “qual função faz X movimento?”, a resposta é sempre “dentro do BattleModal, na função Y listada acima”.
 
-Exemplo detalhado: BattleModal.vue
-- Props: recebe `playerStats`, `enemyStats`, `phaseName`, `characterType`, `bossKey` e `isOpen`. Estes valores são o combustível para todas as animações e lógicas.
-- Funções auxiliares no topo:
-  - `sortedValuesFromMap`, `buildHeroAnimations` e `buildBossAnimations`: leem todas as imagens importadas e constroem arrays ordenados para cada animação (idle, walk, attack, hurt, death). Aqui é literalmente onde "nascem" os frames usados.
-  - `BOSS_MUSIC_TRACKS`: lista que liga cada boss a um som da Freesound (IDs 787848, 198841, 563988, 270404, 60013, 270405).
-  - Cache `trackPreviewCache`: evita pedir o mesmo preview duas vezes.
-- Estados reativos chave:
-  - `playerImageState` / `enemyImageState` + `playerFrameIndex` / `enemyFrameIndex`: indicam que animação está a correr e qual frame mostrar. Os `<img>` do template apontam para `currentPlayerImage` e `currentEnemyImage`, calculados a partir destes estados. Portanto a animação acontece aqui.
-  - `playerPosition` / `enemyPosition`: controlam a posição horizontal usada para o efeito de aproximação, combinados com a função `animateOffset`.
-  - `battleMusicLoading`, `battleMusicError`, `battleMusicNowPlaying`: controlam o estado da trilha sonora.
-- Funções principais da batalha:
-  - `startBattle()`: reinicia todas as barras de vida, log, frames e chama o loop automático que alterna `handlePlayerTurn` e `handleEnemyTurn` conforme a velocidade calculada.
-  - `calculateDamage`, `playerAttack`, `enemyAttack`: cuidam do cálculo de dano e definem as animações corretas (`attack`, `hurt`, `death`).
-  - `moveCloserBoth`, `playWalkCycle`, `animateOffset`: simulam o movimento até aproximar os lutadores quando são corpo-a-corpo.
-  - `playMageEffect`: ativa o efeito especial dos magos e define `enemyImmobilized` temporariamente.
-  - `battleLog`: recebe mensagens via `addLog` cada vez que há ação; mantém só 20 entradas.
-- Controlos do modal:
-  - `watch(() => props.isOpen)`: quando abre, chama `startBattle()` e `playBattleMusicForBoss`. Quando fecha, limpa intervalos/animações e pára a música.
-  - `watch(() => props.bossKey)`: se o boss muda a meio, recarrega a música correta.
-- Áudio dos bosses:
-  - `playBattleMusicForBoss(bossKey)`: usa `getSoundDetails` e `findBestPreviewUrl` da API Freesound para descobrir o preview. Reproduz via objeto `Audio`, faz loop e mostra o título no template. Se o browser bloquear autoplay, coloca uma mensagem de erro.
-  - `stopBattleMusic(resetState, invalidateRequest)`: pára o áudio quando a modal fecha ou o componente desmonta (`onBeforeUnmount`).
+**Como a música de cada boss é carregada?**  
+A tabela `BOSS_MUSIC_TRACKS` em BattleModal liga cada Boss (1–6) a um ID do Freesound. A função `playBattleMusicForBoss(bossKey)` chama `getSoundDetails()` (definido em `src/api/freesound.js`), escolhe o melhor preview (`findBestPreviewUrl`) e cria um objeto `Audio`. Estados `battleMusicLoading`, `battleMusicError` e `battleMusicNowPlaying` mostram feedback. Quando o modal fecha ou muda de boss, `stopBattleMusic()` interrompe e limpa o áudio.
 
-Resumo rápido para perguntas frequentes deste componente:
-- "Onde é criada a animação da batalha?" → Nos arrays montados em `buildHeroAnimations`/`buildBossAnimations` e nos watchers/funções (`playerAttack`, `enemyAttack`, `playAnimationOnce`, `playWalkCycle`) que atualizam `playerFrameIndex` e `enemyFrameIndex`.
-- "Onde o jogo decide quem ataca primeiro?" → Função `getTurnOrder` baseada na velocidade dentro de BattleModal.
-- "Quem toca a música dos bosses?" → `playBattleMusicForBoss` dentro de BattleModal, que usa a lista `BOSS_MUSIC_TRACKS`.
+**Onde é calculada a streak diária/XP dos hábitos?**  
+O `habitStore` guarda cada hábito com `completedDays` e `progressLog`. A função `toggleHabitDone()` atualiza essas estruturas e chama `calculateStreak()` (mesmo ficheiro) para contar dias consecutivos. Para XP, `getHabitXpValue()` usa `habit.xpValue` ou `DIFFICULTY_XP_MAP`; a mesma `toggleHabitDone()` chama `userStore.gainXP()` ou `loseXP()` e ainda dispara `characterStore.levelUp()` quando o novo nível ultrapassa o antigo.
 
-----------------------------------------------------
-6. APIs e constantes (pasta src/api e src/constants)
+**Quem atualiza XP, nível e badges do usuário?**  
+`useUserStore` contém refs `xp`, `level`, `badges`, `streak`. A função `gainXP(amount)` soma XP e chama `recalcLevel()`, que por sua vez consulta `getLevelState()` e dispara `checkBadges()`. A persistência acontece em `saveState()` (localStorage) e em `/userData` através de `loadUserData(userId)` quando fazemos login ou register.
+
+**Onde os itens são criados, equipados e renderizados?**  
+`itemStore.generateItem()` cria loot aleatório (escolhe slot, distribui stats, monta nome e imagem). `equipItem(itemId)` troca o item do inventário para `equippedItems`; `unequipItem(itemId)` faz o oposto. As imagens são definidas por `getItemImage(role, slot, name, rarity)` utilizando os diretórios em `src/imagens/personagens/...`. Em `Inventory.vue`, os componentes `EquipmentSlot` mostram essas peças; o boneco central usa `characterSprite` (computed em Inventory.vue) com base no tipo de personagem guardado no `characterStore`.
+
+**Como o progresso das fases é protegido?**  
+`battleStore.currentPhase` e `battleStore.phases` são refs espelhadas em localStorage. `initPhases()` define as fases padrão caso esteja vazio. `processBattleResult()` avança a fase, gera o item da recompensa e adiciona caixas com `itemStore.addBox()`. Assim, mesmo sem backend real, a app mantém o estado do utilizador localmente.
+
+**Perguntas de backend comuns durante Q&A**  
+- *“Se não têm backend, onde vão as requisições?”* → JSON Server (db.json). Todas as chamadas HTTP passam por `src/api/client.js`. 
+- *“Onde está a autenticação?”* → `useAuthStore`. `login()`/`register()` consultam `/users`, guardam `token` em localStorage e o router (`router.beforeEach`) usa `authStore.isAuthenticated` para proteger rotas.
+- *“Como fariam a migração para um backend real?”* → basta trocar `BASE_URL` em `src/api/client.js` e manter as mesmas funções (`habitStore.loadHabits`, `userStore.loadUserData`, etc.), porque todo o código front já depende apenas dessas abstrações.
+
+10. Guia simples de variáveis por store (explicações longas)
 ----------------------------------------------------
 
-- src/api/client.js
-  - Função get(url, params): faz pedido HTTP GET.
-  - Função post(url, body): faz pedido HTTP POST.
-  - Função patch(url, body): faz pedido HTTP PATCH.
-  - Os nomes get/post/patch são iguais aos métodos HTTP para ser fácil lembrar.
+### useAuthStore (ficheiro src/stores/auth.js)
+- `user`: objeto completo do utilizador atual. Guardado em memória e em `localStorage.user`. Serve para mostrar username, role e ID para outras stores.
+- `token`: string (`mock-token-<id>`) que simula sessão. Guarda-se em `localStorage.token`. `isAuthenticated` e `router.beforeEach` só dependem deste valor.
+- `register()`: cria user em `/users`, grava registos base (`/userData`, `/characters`), liga os stores (`habitStore.loadHabits`, `userStore.loadUserData`, etc.) e liga o inventário ao novo utilizador (`itemStore.setActiveUser`).
+- `login()`: procura por username/email, valida password, grava token/user e recarrega hábitos, XP, personagem, inventário e caixas.
+- `logout()`: zera `user/token`, chama `clearLocalSessionData()` para limpar localStorage e tenta reiniciar todos os stores para evitar dados antigos.
+- `clearLocalSessionData()`: lista explícita de chaves que são removidas (xp, level, badges, streak, habits, characterType, stats, inventory, etc.).
 
-- src/api/habits.js
-  - Função fetchHabits(userId): chama get('/habits', { userId }) e devolve a lista.
+### useHabitStore (ficheiro src/stores/habit.js)
+- `habits`: array com todos os hábitos. Cada objeto inclui `id`, `name`, `category`, `frequency`, `goalCount`, `completedDays`, `progressLog`, `streak`, `xpEarned`, `active`, `difficulty`, `xpValue`. Persistido em `localStorage.habits`.
+- `createHabit()`/`updateHabit()`/`deleteHabit()`: manipulam esse array e chamam `saveHabits()` (que escreve no localStorage).
+- `toggleHabitDone(habitId, date)`: ponto central para perguntas sobre progresso. Atualiza `progressLog[date]`, marca `completedDays`, recalcula `streak`, atribui XP ao user e dispara `characterStore.levelUp()` se necessário.
+- Helpers como `calculateStreak()`, `getHabitXpValue()`, `getGoalCount()`, `getProgressForDate()` explicam “onde” cada cálculo acontece.
 
-- src/api/freesound.js
-  - `getSoundDetails(soundId)`: chama https://freesound.org/apiv2/sounds/{id}/ com o token e devolve metadados + URLs de preview.
-  - `searchSounds(query, { page, pageSize })`: pesquisa na Freesound.
-  - `findBestPreviewUrl(previews)`: escolhe a melhor URL (hq mp3 → hq ogg → lq mp3 → lq ogg).
-  - A função interna `freesoundRequest` garante que o token vai como query param, evita problemas de CORS.
+### useUserStore (ficheiro src/stores/user.js)
+- `xp`, `level`, `badges`, `streak`: cada um está num `ref` e é espelhado nos pares `localStorage` (`xp`, `level`, `badges`, `streak`).
+- `gainXP()` e `loseXP()` alteram `xp`, chamam `recalcLevel()` (que usa `getLevelState`) e `saveState()` para persistir.
+- `checkBadges()` adiciona `primeiro-passo` e `mestre` quando níveis 1 e 10 são atingidos, respectivamente.
+- `loadUserData(userId)`: busca `/userData?userId=...` e substitui `xp/level/badges/streak` para manter o mock server sincronizado.
 
-- src/constants/progression.js
-  - DIFFICULTY_XP_MAP: mapa que diz quantos XP cada dificuldade dá. O nome é "mapa de XP por dificuldade".
-  - getLevelState(xp): calcula de que nível é uma pessoa e quanta XP falta para o próximo.
+### useCharacterStore (ficheiro src/stores/character.js)
+- `characterType`: string (“warrior”, “mage”, etc.) guardada em `localStorage.characterType`.
+- `stats`: objeto `{ str, vit, agi, int }` com os valores atuais. Cada stat também fica salvo em chaves separadas (`stat_str`, `stat_vit`, ...).
+- `availablePoints`: quantos pontos de atributo ainda posso gastar (localStorage `availablePoints`).
+- `level`: nível da personagem (não o mesmo do user, mas relacionado; guardado em `localStorage.characterLevel`).
+- `currentUserId`/`characterRecordId`: permitem relacionar os dados com `/characters`. Quando existem, `persistToServer()` faz PATCH; caso contrário, faz POST.
+- Funções importantes: `createCharacter()` (define tipo base), `addStatPoint()`, `levelUp()`, `setFromServer()`, `persistToServer()`, `reset()`.
 
-----------------------------------------------------
-7. Como cada nome/opção aparece no site
-----------------------------------------------------
+### useItemStore (ficheiro src/stores/items.js)
+- `activeUserId`: quais dados carregar. Guardado em `localStorage.inventory_owner`.
+- `inventory`, `equippedItems`, `lootBoxes`: arrays/objetos carregados via `loadState()` usando chaves com prefixo `inventory_<user>`, `equippedItems_<user>`, `lootBoxes_<user>`.
+- `generateItem(rarity, role)`: cria um item novo (slot aleatório, stats aleatórios, nome e imagem escolhidos de acordo com `ROLE_SLOT_NAMES` e `getItemImage`).
+- `equipItem()`/`unequipItem()`: movem itens entre `inventory` e `equippedItems`.
+- `addBox()` e `openBox()`: controlam a quantidade de caixas e chamam `generateItem()` quando abrimos.
+- Helpers: `getRarityInfo()`, `resolveSlotName()`, `getSlotName()`, `enrichItem()` (garante que cada item tem imagem e role coerentes).
 
-- Nomes de hábitos: começam em baseHabitTemplates. O nome "template" significa molde. Se criares um hábito novo, ensureHabitNameOption mete-o na lista para poderes reutilizar.
-- Categorias de hábitos: começam em baseCategories. Sempre que aparece uma nova categoria num hábito guardado, ensureCategoryOption mete-a na lista.
-- Dificuldades: DIFFICULTY_XP_MAP guarda valores para easy, medium, hard. Esses nomes vêm do inglês e significam fácil, médio e difícil.
-- Frequências: apenas dois valores, "daily" (diário) e "weekly" (semanal). São guardados como texto simples e depois traduzidos no ecrã.
-- Itens: nomes como "Espada 2" significam slot + nível, porque generateItem usa resolveSlotName para o prefixo e o número para a raridade.
-- Fases da batalha: currentPhase começa em 1 (iniciante). Os nomes "Fase 1: Iniciante", "Fase 2: Aprendiz" explicam o que esperar.
+### useBattleStore (ficheiro src/stores/battle.js)
+- `currentPhase`: número inteiro guardado em `localStorage.currentPhase`.
+- `phases`: array com os objetos das fases (guardado em `localStorage.phases`).
+- `isInBattle`, `battleResult`: apenas em memória para controlar o modal.
+- `initPhases()` cria a lista padrão de fases; `saveState()` escreve em localStorage; `calculatePlayerStats()` soma stats da personagem com o bónus dos itens; `processBattleResult()` atualiza fase e chama recompensas.
 
-----------------------------------------------------
-8. Resumo final (como tudo conversa)
+### BattleModal (ficheiro src/components/BattleModal.vue)
+- Variáveis-chave: `playerHP`, `enemyHP`, `playerImageState`, `enemyImageState`, `battleLog`, `battleFinished`, `won`, `boxesGained`, `battleMusicLoading`, `battleMusicNowPlaying`.
+- Funções relevantes para perguntas: `startBattle()` (loop principal), `handlePlayerTurn()`/`handleEnemyTurn()`, `calculateDamage()`, `playBattleMusicForBoss()`, `stopBattleMusic()`.
+
+### Inventory.vue e EquipmentSlot.vue
+- `characterSprite` (computed) seleciona a imagem baseada na classe do personagem; o sprite fica visualmente dentro da caixa central definida pelo HTML/CSS deste componente.
+- `boxCount` mostra o nº de caixas, derivado de `itemStore.lootBoxes.phase1`.
+- `EquipmentSlot` padroniza todas as boxes (`w-32 h-32`) e mostra item/imagem se existir.
+
+Essas descrições longas respondem às perguntas típicas (“onde está guardado?”, “qual função gera isto?”, “como sincronizam com o mock backend?”) sem precisar revirar o código durante a apresentação.
 ----------------------------------------------------
 
 - Quando a app abre, main.js monta tudo e chama init de cada store.
