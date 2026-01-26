@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
+// Definições visuais para cada raridade exibida no UI
 const RARITIES = {
   common: { name: 'Comum', color: '#94A3B8', glow: 'rgba(148, 163, 184, 0.3)' },
   uncommon: { name: 'Incomum', color: '#00D9FF', glow: 'rgba(0, 217, 255, 0.3)' },
@@ -9,6 +10,7 @@ const RARITIES = {
   legendary: { name: 'Lendário', color: '#FFD700', glow: 'rgba(255, 215, 0, 0.3)' }
 }
 
+// Aliases aceites para mapear itens com classes distintas
 const ROLE_KEYS = {
   guerreiro: 'warrior',
   warrior: 'warrior',
@@ -21,6 +23,7 @@ const ROLE_KEYS = {
   barbarian: 'barbaro'
 }
 
+// Tabela auxiliar para relacionar raridade com tier numérico
 const RARITY_TIERS = {
   common: 1,
   uncommon: 2,
@@ -29,6 +32,7 @@ const RARITY_TIERS = {
   legendary: 5
 }
 
+// Caminhos base para encontrar assets conforme classe
 const ROLE_ASSET_DIRS = {
   warrior: 'guerreiro',
   mage: 'mago',
@@ -36,6 +40,7 @@ const ROLE_ASSET_DIRS = {
   barbaro: 'barbaro'
 }
 
+// Configuração de pastas/prefixos por slot, usada para resolver imagens
 const SLOT_ASSETS = {
   warrior: {
     mainhand: { folder: 'espada', prefix: 'espada' },
@@ -75,6 +80,7 @@ const SLOT_ASSETS = {
   }
 }
 
+// Labels humanizados por slot (dependem da classe)
 const ROLE_SLOT_NAMES = {
   mage: {
     mainhand: 'Cajado',
@@ -135,6 +141,7 @@ function resolveTierFromNameOrRarity(name, rarity) {
   return Math.min(5, Math.max(1, RARITY_TIERS[rarity] || 1))
 }
 
+// Monta o caminho da imagem do equipamento com base em classe, slot e tier
 function getItemImage(role, slot, name = '', rarity = 'common') {
   const roleKey = normalizeRole(role)
   const resolvedRole = SLOT_ASSETS[roleKey] ? roleKey : 'warrior'
@@ -146,20 +153,24 @@ function getItemImage(role, slot, name = '', rarity = 'common') {
   return new URL(`../imagens/personagens/${roleDir}/${slotConfig.folder}/${slotConfig.prefix}${tier}.png`, import.meta.url).href
 }
 
+// Store que controla inventário, equipamentos e caixas de loot
 export const useItemStore = defineStore('items', () => {
   const activeUserId = ref(localStorage.getItem('inventory_owner') || null)
   const inventory = ref([])
   const equippedItems = ref([])
   const lootBoxes = ref({ phase1: 2 })
 
+  // Diferencia chaves no localStorage por utilizador ativo
   const storageKey = (base) => `${base}_${activeUserId.value || 'anon'}`
 
+  // Carrega inventário/equipamentos do localStorage
   function loadState() {
     inventory.value = JSON.parse(localStorage.getItem(storageKey('inventory')) || '[]')
     equippedItems.value = JSON.parse(localStorage.getItem(storageKey('equippedItems')) || '[]')
     lootBoxes.value = JSON.parse(localStorage.getItem(storageKey('lootBoxes')) || '{"phase1":2}')
   }
 
+  // Persiste estado atual associado ao utilizador ativo
   function saveState() {
     localStorage.setItem('inventory_owner', activeUserId.value || '')
     localStorage.setItem(storageKey('inventory'), JSON.stringify(inventory.value))
@@ -167,6 +178,7 @@ export const useItemStore = defineStore('items', () => {
     localStorage.setItem(storageKey('lootBoxes'), JSON.stringify(lootBoxes.value))
   }
 
+  // Define o utilizador corrente e reidrata itens com imagens
   function setActiveUser(userId) {
     activeUserId.value = userId || null
     loadState()
@@ -176,6 +188,7 @@ export const useItemStore = defineStore('items', () => {
     saveState()
   }
 
+  // Remove slots antigos que deixaram de existir (ex.: leggings)
   function cleanupLegacySlots() {
     const beforeInv = inventory.value.length
     const beforeEq = equippedItems.value.length
@@ -186,6 +199,7 @@ export const useItemStore = defineStore('items', () => {
     }
   }
 
+  // Devolve nome legível de slot, respeitando a classe
   function resolveSlotName(slot, role = 'generic') {
     const genericMap = {
       mainhand: 'Mão Principal',
@@ -202,6 +216,7 @@ export const useItemStore = defineStore('items', () => {
     return map[slot] || genericMap[slot] || slot
   }
 
+  // Gera um item pseudo-aleatório para drop/loot box
   function generateItem(rarity = null, role = 'generic') {
     // Se não especificar raridade, escolhe aleatoriamente (mais comum = mais provável)
     if (!rarity) {
@@ -251,6 +266,7 @@ export const useItemStore = defineStore('items', () => {
     return item
   }
 
+  // Remove item do inventário/equipado e devolve se houve alteração
   function removeItem(itemId) {
     const beforeInv = inventory.value.length
     const beforeEq = equippedItems.value.length
@@ -263,6 +279,7 @@ export const useItemStore = defineStore('items', () => {
 
   const NEXT_RARITY = { common: 'uncommon', uncommon: 'rare', rare: 'epic', epic: 'legendary' }
 
+  // Junta dois itens iguais para subir raridade e reforçar stats
   function upgradeItems(baseId, materialId) {
     if (baseId === materialId) return null
     const baseIdx = inventory.value.findIndex(i => i.id === baseId)
@@ -308,6 +325,7 @@ export const useItemStore = defineStore('items', () => {
     return upgraded
   }
 
+  // Incrementa o número de caixas disponíveis, respeitando teto se existir
   function addBox(type = 'phase1', count = 1, max = null) {
     const current = lootBoxes.value[type] || 0
     const next = max !== null ? Math.min(max, current + count) : current + count
@@ -316,6 +334,7 @@ export const useItemStore = defineStore('items', () => {
     return { added: next - current, total: next }
   }
 
+  // Consome uma caixa e gera um item correspondente
   function openBox(type = 'phase1', rarity = 'common', role = 'generic') {
     const current = lootBoxes.value[type] || 0
     if (current <= 0) return null
@@ -325,6 +344,7 @@ export const useItemStore = defineStore('items', () => {
     return item
   }
 
+  // Garante que cada item possui role normalizada e imagem resolvida
   function enrichItem(item) {
     const roleKey = normalizeRole(item.role || 'generic')
     return {
@@ -334,6 +354,7 @@ export const useItemStore = defineStore('items', () => {
     }
   }
 
+  // Equipa um item (substituindo o slot anterior) e move para lista apropriada
   function equipItem(itemId) {
     const item = inventory.value.find(i => i.id === itemId)
     if (!item) return false
@@ -353,6 +374,7 @@ export const useItemStore = defineStore('items', () => {
     return true
   }
 
+  // Desfaz o equip e devolve o item ao inventário
   function unequipItem(itemId) {
     const item = equippedItems.value.find(i => i.id === itemId)
     if (!item) return false
@@ -380,6 +402,7 @@ export const useItemStore = defineStore('items', () => {
     return slotNames[slot] || slot
   }
 
+  // Inicializa estado local em memória antes do uso do inventário
   function init() {
     loadState()
     cleanupLegacySlots()

@@ -77,6 +77,7 @@ const confirmPassword = ref('')
 const error = ref('')
 const loading = ref(false)
 
+// Faz validação básica e delega criação de conta ao auth store
 async function handleRegister() {
   error.value = ''
   if (password.value !== confirmPassword.value) {

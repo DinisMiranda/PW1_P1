@@ -51,6 +51,7 @@ const username = ref('')
 const password = ref('')
 const error = ref('')
 
+// Simples submissão que delega autenticação ao auth store
 async function handleLogin() {
   error.value = ''
   const success = await authStore.login(username.value, password.value)

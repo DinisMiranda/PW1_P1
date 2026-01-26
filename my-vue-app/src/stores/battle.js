@@ -1,12 +1,14 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 
+// Store que gere progressão das fases de batalha e resultados dos combates
 export const useBattleStore = defineStore('battle', () => {
   const currentPhase = ref(parseInt(localStorage.getItem('currentPhase') || '1'))
   const phases = ref(JSON.parse(localStorage.getItem('phases') || '[]'))
   const isInBattle = ref(false)
   const battleResult = ref(null)
 
+  // Configuração default caso não existam fases persistidas
   const fallbackPhase = {
     id: 1,
     name: 'Fase 1: Iniciante',
@@ -15,7 +17,7 @@ export const useBattleStore = defineStore('battle', () => {
     reward: 'common'
   }
 
-  // Inicializar fases se não existirem
+  // Inicializa um conjunto básico de fases no primeiro arranque
   function initPhases() {
     if (phases.value.length === 0) {
       phases.value = [
@@ -31,19 +33,23 @@ export const useBattleStore = defineStore('battle', () => {
     }
   }
 
+  // Dados da fase atual, com fallback se algo falhar
   const currentPhaseData = computed(() => {
     return phases.value.find(p => p.id === currentPhase.value) || phases.value[0] || fallbackPhase
   })
 
+  // Lista apenas as fases já desbloqueadas pelo jogador
   const unlockedPhases = computed(() => {
     return phases.value.filter(p => p.id <= currentPhase.value)
   })
 
+  // Persiste progresso da batalha no localStorage
   function saveState() {
     localStorage.setItem('currentPhase', currentPhase.value.toString())
     localStorage.setItem('phases', JSON.stringify(phases.value))
   }
 
+  // Constrói um panorama simples dos stats do jogador combinando personagem e equipamento
   function calculatePlayerStats(characterStore, itemStore) {
     // Calcular stats totais (base + itens)
     const base = characterStore.totalStats
@@ -72,6 +78,7 @@ export const useBattleStore = defineStore('battle', () => {
     return { hp, maxHP: hp, attack, defense, speed }
   }
 
+  // Marca o início de uma batalha e evita múltiplos combates simultâneos
   function startBattle(characterStore, itemStore) {
     if (isInBattle.value) return false
     
@@ -80,6 +87,7 @@ export const useBattleStore = defineStore('battle', () => {
     return true
   }
 
+  // Atualiza progresso, loot e caixas com base no resultado final enviado pelo modal
   function processBattleResult(result, characterStore, itemStore) {
     isInBattle.value = false
     battleResult.value = result

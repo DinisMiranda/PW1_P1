@@ -473,6 +473,7 @@ const itemStore = useItemStore()
 const battleStore = useBattleStore()
 const characterStore = useCharacterStore()
 
+// Controla a tab ativa e respetivas labels de navegação
 const activeTab = ref('dashboard')
 const tabs = [
   { id: 'dashboard', label: 'Dashboard' },
@@ -482,6 +483,7 @@ const tabs = [
   { id: 'system', label: 'Sistema' }
 ]
 
+// Estados auxiliares para formulários/modais do painel
 const showAddPhase = ref(false)
 const xpAdjustment = ref(0)
 const levelAdjustment = ref(1)
@@ -497,6 +499,7 @@ const showModal = ref(false)
 const modalType = ref('success') // 'success' ou 'error'
 const modalMessage = ref('')
 
+// Métricas de armazenamento local para ajudar na manutenção
 const storageSize = computed(() => {
   let total = 0
   for (let key in localStorage) {
@@ -522,6 +525,7 @@ function getRarityColor(rarity) {
   return colors[rarity] || colors.common
 }
 
+// Permite editar rapidamente HP/Ataque sem UI dedicada
 function editPhase(phase) {
   // Implementar edição de fase
   const newHP = prompt(`Novo HP para ${phase.name}:`, phase.enemyHP)
@@ -536,6 +540,7 @@ function editPhase(phase) {
   }
 }
 
+// Remove fase selecionada após confirmação
 function deletePhase(phaseId) {
   if (confirm('Tem a certeza que deseja eliminar esta fase?')) {
     battleStore.phases = battleStore.phases.filter(p => p.id !== phaseId)
@@ -543,6 +548,7 @@ function deletePhase(phaseId) {
   }
 }
 
+// Feedback para operações positivas/negativas
 function showSuccessModal(message) {
   modalType.value = 'success'
   modalMessage.value = message
@@ -560,6 +566,7 @@ function closeModal() {
   modalMessage.value = ''
 }
 
+// Cria um item manual usando os valores do formulário de admin
 function createCustomItem() {
   // Validação dos campos
   if (!newItem.value.name || !newItem.value.name.trim()) {
@@ -610,16 +617,19 @@ function createCustomItem() {
   showSuccessModal('Item criado com sucesso! Verifica o inventário.')
 }
 
+// Cria rapidamente um item randômico da raridade indicada
 function generateRandomItem(rarity) {
   const item = itemStore.generateItem(rarity)
   alert(`Item ${rarity} gerado: ${item.name}`)
 }
 
+// Atalho para creditar loot boxes ao jogador ativo
 function addLootBoxes(count) {
   itemStore.addBox('phase1', count)
   alert(`${count} loot boxes adicionadas!`)
 }
 
+// Incrementa/diminui XP diretamente para debugging/administração
 function adjustXP(amount) {
   if (amount > 0) {
     userStore.gainXP(amount)
@@ -629,6 +639,7 @@ function adjustXP(amount) {
   xpAdjustment.value = 0
 }
 
+// Ajusta o nível calculando a diferença de XP necessária
 function setLevel(level) {
   if (level < 1) level = 1
   const currentXP = userStore.xp
@@ -642,6 +653,7 @@ function setLevel(level) {
   levelAdjustment.value = 1
 }
 
+// Injeta uma badge específica no perfil
 function addBadge(badgeId) {
   if (badgeId && !userStore.badges.includes(badgeId)) {
     userStore.badges.push(badgeId)
@@ -651,6 +663,7 @@ function addBadge(badgeId) {
   }
 }
 
+// Ações perigosas que limpam partes do estado local
 function resetAllData() {
   if (confirm('Tem a certeza que deseja reiniciar TODOS os dados? Esta ação é irreversível!')) {
     localStorage.clear()

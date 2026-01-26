@@ -3,6 +3,7 @@ import { ref, computed } from 'vue'
 import { get } from '../api/client'
 import { getLevelState } from '../constants/progression'
 
+// Store que centraliza XP, nível, badges e streak do utilizador
 export const useUserStore = defineStore('user', () => {
   const xp = ref(parseInt(localStorage.getItem('xp') || '0'))
   const level = ref(parseInt(localStorage.getItem('level') || '1'))
@@ -19,6 +20,7 @@ export const useUserStore = defineStore('user', () => {
     Math.max(0, levelState.value.xpNeeded - levelState.value.xpIntoLevel)
   )
 
+  // Persistir estado calculado para sobreviver a refreshes
   function saveState() {
     localStorage.setItem('xp', xp.value.toString())
     localStorage.setItem('level', level.value.toString())
@@ -26,6 +28,7 @@ export const useUserStore = defineStore('user', () => {
     localStorage.setItem('streak', streak.value.toString())
   }
 
+  // Recalcula o nível baseado na curva de XP e desbloqueia badges se necessário
   function recalcLevel() {
     const computedLevel = levelState.value.level
     if (computedLevel > level.value) {
@@ -48,6 +51,7 @@ export const useUserStore = defineStore('user', () => {
     saveState()
   }
 
+  // Verifica critérios simples de conquista e devolve as recém-desbloqueadas
   function checkBadges() {
     const newBadges = []
     
@@ -75,6 +79,7 @@ export const useUserStore = defineStore('user', () => {
     saveState()
   }
 
+  // Carrega o registo persistido no mock server e atualiza o store local
   async function loadUserData(userId) {
     const data = await get('/userData', { userId })
     const record = data?.[0]

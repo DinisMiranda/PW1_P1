@@ -279,6 +279,7 @@ import LevelIndicator from '../components/LevelIndicator.vue'
 import StreakCounter from '../components/StreakCounter.vue'
 import XPBar from '../components/XPBar.vue'
 
+// Sprites utilizados para mostrar conquistas de streak
 const streakImages = {
   1: new URL('../imagens/streak/streak1.png', import.meta.url).href,
   2: new URL('../imagens/streak/streak2.png', import.meta.url).href,
@@ -299,6 +300,7 @@ onMounted(() => {
 
 const today = new Date().toISOString().split('T')[0]
 
+// Controla qual hábito está visível no carrossel "Hábitos de hoje"
 const slideIndex = ref(0)
 
 watch(
@@ -322,6 +324,7 @@ const maxStreak = computed(() => {
   return Math.max(...habitStore.activeHabits.map(h => h.streak))
 })
 
+// Converte nº de dias para um tier visual (1-3)
 function resolveStreakLevel(days) {
   if (days >= 8) return 3
   if (days >= 4) return 2
@@ -340,6 +343,7 @@ const completionRate = computed(() => {
   return Math.round((completed / habitStore.activeHabits.length) * 100)
 })
 
+// Helpers para perceber se o hábito já está concluído e o progresso atual
 function isCompletedToday(habitId) {
   const habit = habitStore.habits.find(h => h.id === habitId)
   return habit?.completedDays.includes(today) || false
@@ -369,6 +373,7 @@ const currentHabitProgress = computed(() => {
   return { goal, progress, remaining }
 })
 
+// Marcar/Desmarcar diretamente no dashboard e sincronizar streak global
 function toggleHabit(habitId) {
   habitStore.toggleHabitDone(habitId, today)
   // Atualizar streak global
@@ -391,6 +396,7 @@ const currentMonth = computed(() => {
   return new Date().toLocaleDateString('pt-PT', { month: 'long', year: 'numeric' })
 })
 
+// Monte um calendário mensal simples marcando dias completos
 const calendarDays = computed(() => {
   const days = []
   const today = new Date()

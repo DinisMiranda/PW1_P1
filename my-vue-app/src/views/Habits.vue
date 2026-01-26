@@ -174,6 +174,7 @@ import { DIFFICULTY_XP_MAP } from '../constants/progression'
 const habitStore = useHabitStore()
 const route = useRoute()
 
+// Opções base para popular selects e sugestões rápidos
 const baseCategories = Object.freeze(['Saúde', 'Educação', 'Trabalho', 'Bem-estar', 'Produtividade', 'Finanças', 'Criatividade'])
 const categoryOptions = ref([...baseCategories])
 const customHabitOptionValue = '__custom_habit__'
@@ -205,6 +206,7 @@ const formData = ref(getDefaultForm())
 const selectedDifficultyLabel = computed(() => difficultyLabel(formData.value.difficulty))
 const selectedDifficultyXp = computed(() => getXpForDifficulty(formData.value.difficulty))
 
+// Garante que categorias/hábitos personalizados aparecem nas dropdowns futuras
 function ensureCategoryOption(value) {
   if (!value) return
   if (!categoryOptions.value.includes(value)) {
@@ -248,6 +250,7 @@ function difficultyLabel(value) {
   return difficultyLabelMap[value] || difficultyLabelMap.medium
 }
 
+// Preenche o formulário com os dados existentes para edição rápida
 function editHabit(habit) {
   editingHabit.value = habit
   ensureHabitNameOption(habit.name)
@@ -263,6 +266,7 @@ function editHabit(habit) {
   showForm.value = true
 }
 
+// Decide entre criar novo hábito ou atualizar um existente
 function saveHabit() {
   if (editingHabit.value) {
     habitStore.updateHabit(editingHabit.value.id, formData.value)

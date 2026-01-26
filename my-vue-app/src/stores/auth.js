@@ -3,13 +3,17 @@ import { ref, computed } from 'vue'
 import { get, post, patch } from '../api/client'
 import { createUser } from '../api/users'
 
+// Store responsável por autenticação e sincronização básica de sessão
 export const useAuthStore = defineStore('auth', () => {
+
   const user = ref(null)
   const token = ref(localStorage.getItem('token') || null)
 
+  // Flags derivadas ajudam a proteger rotas/funcionalidades
   const isAuthenticated = computed(() => !!token.value)
   const isAdmin = computed(() => user.value?.role === 'admin' || user.value?.username === 'admin')
 
+  // Remove todos os fragmentos de estado local ligados a uma sessão anterior
   function clearLocalSessionData() {
     const keys = [
       'xp',
@@ -35,6 +39,7 @@ export const useAuthStore = defineStore('auth', () => {
     keys.forEach((k) => localStorage.removeItem(k))
   }
 
+  // Cria utilizador novo garantindo unicidade de username/email e preparando dados dependentes
   async function register({ username, email, password }) {
     const trimmedUser = username?.trim()
     const trimmedEmail = email?.trim().toLowerCase()
@@ -53,6 +58,7 @@ export const useAuthStore = defineStore('auth', () => {
       if (existingUser?.length) throw new Error('Username já em uso.')
       if (existingEmail?.length) throw new Error('Email já em uso.')
 
+      // Persistir o utilizador principal no mock server
       const newUser = await createUser({
         username: trimmedUser,
         email: trimmedEmail,
@@ -61,7 +67,7 @@ export const useAuthStore = defineStore('auth', () => {
         createdAt: new Date().toISOString()
       })
 
-      // Criar registo inicial do utilizador no mock server
+      // Seed inicial no /userData para XP, nível, badges, etc.
       await post('/userData', {
         userId: newUser.id,
         xp: 0,
@@ -87,6 +93,7 @@ export const useAuthStore = defineStore('auth', () => {
       localStorage.setItem(`characterUser:${safeUser.id}`, '1')
 
       try {
+        // Carregar stores dependentes assim que a conta é criada para já mostrar dados
         const [{ useHabitStore }, { useUserStore }, { useCharacterStore }, { useItemStore }] = await Promise.all([
           import('./habit'),
           import('./user'),
@@ -120,13 +127,14 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  // Autentica via username ou email (mock server) e reidrata dados relacionados
   async function login(identifier, password) {
     // Autentica usando apenas os utilizadores do mock server
     const trimmedId = identifier?.trim()
     if (!trimmedId || !password) return false
 
     try {
-      // Busca por username e (se tiver @) por email
+      // Busca por username e, se aplicável, por email numa só batelada
       const [byUsername, byEmail] = await Promise.all([
         get('/users', { username: trimmedId }),
         trimmedId.includes('@') ? get('/users', { email: trimmedId }) : Promise.resolve([])
@@ -168,6 +176,7 @@ export const useAuthStore = defineStore('auth', () => {
         ])
         let characterRecord = characterRes?.[0]
 
+        // Se o dispositivo nunca tinha criado personagem, limpamos dados remotos para evitar bleed
         if (characterRecord && !hasDeviceMarker && characterRecord.characterType) {
           const resetPayload = {
             userId: safeUser.id,
@@ -198,6 +207,7 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  // Limpa completamente a sessão atual (memória + localStorage + stores)
   function logout() {
     user.value = null
     token.value = null
