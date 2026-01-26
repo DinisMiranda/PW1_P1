@@ -4,20 +4,24 @@ import { useUserStore } from './user'
 import { fetchHabits } from '../api/habits'
 import { DIFFICULTY_XP_MAP } from '../constants/progression'
 
+// Store que agrega hábitos, respetivas métricas e integração com XP
 export const useHabitStore = defineStore('habit', () => {
   const storedHabits = JSON.parse(localStorage.getItem('habits') || '[]')
   const habits = ref((storedHabits || []).map((habit) => normalizeHabit(habit)))
 
+  // Persistência simples no localStorage para funcionar offline
   function saveHabits() {
     localStorage.setItem('habits', JSON.stringify(habits.value))
   }
 
+  // Busca hábitos do utilizador autenticado na API mock
   async function loadHabits(userId) {
     const data = await fetchHabits(userId)
     habits.value = (data || []).map((habit) => normalizeHabit(habit))
     saveHabits()
   }
 
+  // Cria hábito local com defaults e normalização de campos críticos
   function createHabit(habitData) {
     const newHabit = normalizeHabit({
       id: Date.now(),
@@ -39,6 +43,7 @@ export const useHabitStore = defineStore('habit', () => {
     return newHabit
   }
 
+  // Atualiza um hábito existente preservando a estrutura normalizada
   function updateHabit(id, updates) {
     const index = habits.value.findIndex(h => h.id === id)
     if (index !== -1) {
@@ -49,6 +54,7 @@ export const useHabitStore = defineStore('habit', () => {
     return null
   }
 
+  // Remove hábito por id e devolve sucesso/falha
   function deleteHabit(id) {
     const index = habits.value.findIndex(h => h.id === id)
     if (index !== -1) {
@@ -59,6 +65,7 @@ export const useHabitStore = defineStore('habit', () => {
     return false
   }
 
+  // Marca/desmarca progresso diário do hábito, tratando XP, streaks e logging
   function toggleHabitDone(habitId, date = new Date().toISOString().split('T')[0]) {
     const habit = habits.value.find(h => h.id === habitId)
     if (!habit) return { status: 'error' }
@@ -113,6 +120,7 @@ export const useHabitStore = defineStore('habit', () => {
     return { status: 'completed', progress: goal, remaining: 0 }
   }
 
+  // Calcula quantos dias consecutivos o hábito foi concluído
   function calculateStreak(completedDays) {
     if (completedDays.length === 0) return 0
 

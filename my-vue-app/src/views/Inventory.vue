@@ -160,6 +160,7 @@ const itemStore = useItemStore()
 const characterStore = useCharacterStore()
 const boxCount = computed(() => itemStore.lootBoxes.phase1 || 0)
 
+// Auxiliares para apresentar o nome e sprite corretos do personagem
 const typeLabelMap = {
   warrior: 'Guerreiro',
   mage: 'Mago',
@@ -188,6 +189,7 @@ const characterSprite = computed(() => {
   return key.includes('assin') ? standardSpriteMap.barbaro : null
 })
 
+// Helpers para puxar/equipar/des-equipar itens dos slots
 function getEquippedItem(slot) {
   return itemStore.equippedItems.find(item => item.slot === slot)
 }
@@ -200,6 +202,7 @@ function unequipItem(itemId) {
   itemStore.unequipItem(itemId)
 }
 
+// Abre loot boxes pré-configuradas e gera um item adequado
 function openBox() {
   if (boxCount.value <= 0) {
     alert('Não tens caixas para abrir.')
@@ -212,6 +215,7 @@ function deleteItem(itemId) {
   itemStore.removeItem(itemId)
 }
 
+// Junta dois itens do mesmo slot/raridade para fabricar versão melhor
 function upgradeItem(itemId) {
   const base = itemStore.inventory.find(i => i.id === itemId)
   if (!base) return

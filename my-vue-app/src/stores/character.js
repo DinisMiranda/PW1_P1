@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { post, patch } from '../api/client'
 
+// Tabela com a distribuição base de atributos para cada classe jogável
 const ROLE_BASE_STATS = {
   warrior: { str: 14, vit: 12, agi: 8, int: 6 },
   mage: { str: 6, vit: 8, agi: 10, int: 14 },
@@ -10,6 +11,7 @@ const ROLE_BASE_STATS = {
   generic: { str: 10, vit: 10, agi: 10, int: 10 }
 }
 
+// Lista de aliases para mapear nomes diferentes para uma classe única
 const ROLE_ALIASES = {
   guerreiro: 'warrior',
   warrior: 'warrior',
@@ -22,6 +24,7 @@ const ROLE_ALIASES = {
   barbarian: 'barbaro'
 }
 
+// Normaliza qualquer input para o identificador de classe suportado
 function normalizeRole(type) {
   if (!type) return 'generic'
   const key = type.toString().trim().toLowerCase()
@@ -29,13 +32,14 @@ function normalizeRole(type) {
   return ROLE_ALIASES[key] || 'generic'
 }
 
+// Seleciona os stats base corretos para a classe solicitada
 function baseStatsFor(type) {
   const key = normalizeRole(type)
   return ROLE_BASE_STATS[key] || ROLE_BASE_STATS.generic
 }
 
 export const useCharacterStore = defineStore('character', () => {
-  // Personagem
+  // Estado inicial é reconstruído a partir do localStorage para manter persistência offline
   const storedType = localStorage.getItem('characterType')
   const normalizedStoredType = storedType && storedType.toString().toLowerCase().includes('assin') ? 'barbaro' : storedType
   if (normalizedStoredType && normalizedStoredType !== storedType) {
@@ -53,7 +57,7 @@ export const useCharacterStore = defineStore('character', () => {
   const currentUserId = ref(localStorage.getItem('characterUserId') || null)
   const characterRecordId = ref(localStorage.getItem('characterRecordId') || null)
 
-  // Stats totais (base + itens) - será calculado externamente para evitar dependência circular
+  // Stats totais (base + itens) - neste store só refletimos os valores base
   const totalStats = computed(() => {
     return {
       str: stats.value.str,
@@ -63,6 +67,7 @@ export const useCharacterStore = defineStore('character', () => {
     }
   })
 
+  // Guarda o estado atual no localStorage para resistir a refreshes
   function saveState() {
     localStorage.setItem('characterType', characterType.value || '')
     localStorage.setItem('stat_str', stats.value.str.toString())
@@ -77,6 +82,7 @@ export const useCharacterStore = defineStore('character', () => {
     else localStorage.removeItem('characterRecordId')
   }
 
+  // Atualiza o store com o payload vindo da API (ou aplica defaults se não existir)
   function setFromServer(record, userId) {
     if (userId) currentUserId.value = userId.toString()
     else if (record?.userId) currentUserId.value = record.userId.toString()
@@ -106,6 +112,7 @@ export const useCharacterStore = defineStore('character', () => {
     saveState()
   }
 
+  // Sincroniza o estado local com o mock server (POST se não existir, PATCH se já existir)
   async function persistToServer() {
     if (!currentUserId.value) return
 
@@ -137,6 +144,7 @@ export const useCharacterStore = defineStore('character', () => {
     }
   }
 
+  // Cria/define uma personagem escolhendo a classe e os stats base respetivos
   async function createCharacter(type) {
     const normalized = normalizeRole(type)
     characterType.value = normalized
@@ -147,6 +155,7 @@ export const useCharacterStore = defineStore('character', () => {
     await persistToServer()
   }
 
+  // Regressa o store ao estado neutro (usado no logout ou limpeza de dados)
   function reset() {
     characterType.value = null
     stats.value = { ...ROLE_BASE_STATS.generic }
@@ -157,6 +166,7 @@ export const useCharacterStore = defineStore('character', () => {
     saveState()
   }
 
+  // Gasta um ponto disponível para aumentar um atributo específico
   function addStatPoint(stat) {
     if (availablePoints.value > 0 && stats.value[stat] !== undefined) {
       stats.value[stat]++
@@ -166,6 +176,7 @@ export const useCharacterStore = defineStore('character', () => {
     }
   }
 
+  // Incrementa o nível e recompensa o jogador com novos pontos distribuíveis
   function levelUp() {
     level.value++
     availablePoints.value += 3
@@ -173,6 +184,7 @@ export const useCharacterStore = defineStore('character', () => {
     persistToServer()
   }
 
+  // Garante que o estado regravado no localStorage reflete valores válidos ao inicializar a app
   function init() {
     saveState()
   }

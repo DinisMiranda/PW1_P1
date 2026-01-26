@@ -65,6 +65,7 @@ import { useUserStore } from '../stores/user'
 
 const userStore = useUserStore()
 
+// Mapeia o identificador técnico para um nome amigável
 function getBadgeName(badge) {
   const names = {
     'primeiro-passo': 'Primeiro Passo',

@@ -3,6 +3,7 @@
 
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
 
+// Wrapper genérico em torno do fetch para falar com o JSON Server
 async function request(endpoint, { method = 'GET', body = null, params = null } = {}) {
   const url = new URL(endpoint, BASE_URL)
 
@@ -35,6 +36,7 @@ async function request(endpoint, { method = 'GET', body = null, params = null } 
   return response.json()
 }
 
+// Helpers semânticos por método HTTP
 function get(endpoint, params) {
   return request(endpoint, { method: 'GET', params })
 }

@@ -77,6 +77,7 @@ import { useUserStore } from '../stores/user'
 const habitStore = useHabitStore()
 const userStore = useUserStore()
 
+// Métricas derivadas mostradas nos cartões
 const maxStreak = computed(() => {
   if (habitStore.activeHabits.length === 0) return 0
   return Math.max(...habitStore.activeHabits.map(h => h.streak))

@@ -141,10 +141,12 @@ const userStore = useUserStore()
 
 const showBattleModal = ref(false)
 
+// Garante que fases e estado inicial da batalha são carregados
 onMounted(() => {
   battleStore.init()
 })
 
+// Calcula stats finais do jogador juntando personagem + itens para enviar ao modal
 const playerStats = computed(() => {
   if (!characterStore.characterType) {
     return { hp: 0, maxHP: 0, attack: 0, defense: 0, speed: 0 }
@@ -154,6 +156,7 @@ const playerStats = computed(() => {
 
 const playerCharacterType = computed(() => characterStore.characterType || 'generic')
 
+// Determina qual boss sprite/anim usar com base na fase atual
 const currentBossKey = computed(() => {
   const phaseId = battleStore.currentPhase
   if (!phaseId) {
@@ -164,6 +167,7 @@ const currentBossKey = computed(() => {
   return `Boss${bossIndex}`
 })
 
+// Dados simplificados do inimigo atual para o modal
 const enemyStats = computed(() => {
   return {
     hp: battleStore.currentPhaseData.enemyHP,
@@ -171,6 +175,7 @@ const enemyStats = computed(() => {
   }
 })
 
+// Impede início de batalha quando não existe personagem criado
 function startBattle() {
   if (!characterStore.characterType) {
     alert('Precisas criar um personagem primeiro!')
@@ -183,6 +188,7 @@ function closeBattleModal() {
   showBattleModal.value = false
 }
 
+// Recebe o resultado emitido pelo modal e atualiza o store
 function handleBattleFinished(result) {
   // Processar resultado da batalha
   battleStore.processBattleResult(result, characterStore, itemStore)

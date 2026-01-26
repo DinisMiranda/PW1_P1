@@ -1,6 +1,7 @@
 const FREESOUND_BASE_URL = 'https://freesound.org/apiv2/'
 const DEFAULT_FREESOUND_KEY = 'yRWGJSzwwYuSMymKS5VYfK0aVTLDviUSPpVgVT1G'
 
+// Seleciona a API key da env (ou fallback para desenvolvimento)
 function getApiKey() {
   const key = import.meta.env.VITE_FREESOUND_API_KEY || DEFAULT_FREESOUND_KEY
   if (!key) {
@@ -9,6 +10,7 @@ function getApiKey() {
   return key
 }
 
+// Constrói o URL completo com query params sanitizados
 function buildUrl(path, params) {
   const normalizedPath = path.startsWith('/') ? path.slice(1) : path
   const url = new URL(normalizedPath, FREESOUND_BASE_URL)
@@ -22,6 +24,7 @@ function buildUrl(path, params) {
   return url
 }
 
+// Efetua pedidos autenticados à API do Freesound
 async function freesoundRequest(path, params) {
   const url = buildUrl(path, {
     ...(params || {}),
@@ -42,6 +45,7 @@ function getSoundDetails(soundId) {
   return freesoundRequest(`/sounds/${soundId}/`)
 }
 
+// Pesquisa sons com paginação básica
 function searchSounds(query, { page = 1, pageSize = 15 } = {}) {
   if (!query) {
     throw new Error('Query is required to search Freesound sounds.')
@@ -53,6 +57,7 @@ function searchSounds(query, { page = 1, pageSize = 15 } = {}) {
   })
 }
 
+// Escolhe o melhor preview disponível seguindo uma ordem de preferência
 function findBestPreviewUrl(previews) {
   if (!previews) return null
   const preferredOrder = [

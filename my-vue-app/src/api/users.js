@@ -1,6 +1,6 @@
 import { get, post, put } from './client'
 
-// Users
+// Camada de conveniência para lidar com /users no JSON Server
 function fetchUsers() {
   return get('/users')
 }

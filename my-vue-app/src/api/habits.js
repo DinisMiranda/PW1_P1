@@ -1,6 +1,6 @@
 import { get, post, put, del } from './client'
 
-// Habitos
+// Endpoints REST relacionados com hábitos no JSON Server
 function fetchHabits(userId) {
   return get('/habits', userId ? { userId } : undefined)
 }

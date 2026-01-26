@@ -127,6 +127,7 @@ import { useItemStore } from '../stores/items'
 const characterStore = useCharacterStore()
 const itemStore = useItemStore()
 
+// Lista das classes disponíveis para criação
 const characterTypes = [
   { label: 'Guerreiro', value: 'warrior' },
   { label: 'Mago', value: 'mage' },
@@ -134,6 +135,7 @@ const characterTypes = [
   { label: 'Barbaro', value: 'barbaro' }
 ]
 
+// Ajuda a apresentar rótulos humanizados para tipos já escolhidos
 const typeLabelMap = characterTypes.reduce((acc, type) => {
   acc[type.value] = type.label
   return acc
@@ -146,10 +148,12 @@ const characterTypeLabel = computed(() => {
   return key.includes('assin') ? 'Barbaro' : key
 })
 
+// Encaminha para o store para efetivamente criar/sincronizar personagem
 async function createCharacter(type) {
   await characterStore.createCharacter(type)
 }
 
+// Combina stats base do personagem com bônus dos itens equipados
 const totalStats = computed(() => {
   const base = characterStore.totalStats
   const itemBonus = itemStore.equippedItems.reduce((acc, item) => {
